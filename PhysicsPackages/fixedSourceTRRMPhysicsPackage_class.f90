@@ -51,7 +51,7 @@ module fixedSourceTRRMPhysicsPackage_class
   private
 
   ! Parameter for when to skip a tiny volume
-  real(defReal), parameter :: volume_tolerance = 1.0E-15
+  real(defFlt), parameter :: volume_tolerance = 1.0E-12
 
   !!
   !! Physics package to perform The Random Ray Method (TRRM) fixed source calculations
@@ -150,6 +150,7 @@ module fixedSourceTRRMPhysicsPackage_class
     type(RNG)                             :: rand
     integer(shortInt)                     :: nG          = 0
     integer(shortInt)                     :: nCells      = 0
+    integer(shortInt)                     :: nMat        = 0
     real(defReal)                         :: lengthPerIt = ZERO
 
     ! Settings
@@ -170,15 +171,23 @@ module fixedSourceTRRMPhysicsPackage_class
     class(tallyMap), allocatable :: resultsMap
     real(defReal), dimension(:), allocatable      :: samplePoints
     character(nameLen), dimension(:), allocatable :: sampleNames
+    integer(shortInt)  :: volRays = 0
+    real(defReal)      :: volLength = ZERO
+
+    ! Data space - absorb all nuclear data for speed
+    real(defFlt), dimension(:), allocatable     :: sigmaT
+    real(defFlt), dimension(:), allocatable     :: nuSigmaF
+    real(defFlt), dimension(:), allocatable     :: sigmaS
+    real(defFlt), dimension(:), allocatable     :: chi
 
     ! Results space
-    real(defReal), dimension(:), allocatable     :: scalarFlux
-    real(defReal), dimension(:), allocatable     :: prevFlux
-    real(defReal), dimension(:,:), allocatable   :: fluxScores
-    real(defReal), dimension(:), allocatable     :: source
-    real(defReal), dimension(:), allocatable     :: fixedSource
-    real(defReal), dimension(:), allocatable     :: volume
-    real(defReal), dimension(:), allocatable     :: volumeTracks
+    real(defFlt), dimension(:), allocatable     :: scalarFlux
+    real(defFlt), dimension(:), allocatable     :: prevFlux
+    real(defFlt), dimension(:,:), allocatable   :: fluxScores
+    real(defFlt), dimension(:), allocatable     :: source
+    real(defFlt), dimension(:), allocatable     :: fixedSource
+    real(defFlt), dimension(:), allocatable     :: volume
+    real(defFlt), dimension(:), allocatable     :: volumeTracks
 
     ! Tracking cell properites
     integer(shortInt), dimension(:), allocatable :: cellHit
@@ -213,6 +222,7 @@ module fixedSourceTRRMPhysicsPackage_class
     procedure, private :: finaliseFluxScores
     procedure, private :: printResults
     procedure, private :: printSettings
+    procedure, private :: scoreVolume
 
   end type fixedSourceTRRMPhysicsPackage
 
@@ -226,7 +236,7 @@ contains
   subroutine init(self,dict)
     class(fixedSourceTRRMPhysicsPackage), intent(inout) :: self
     class(dictionary), intent(inout)                    :: dict
-    integer(shortInt)                                   :: seed_temp, n, nPoints, i
+    integer(shortInt)                                   :: seed_temp, n, nPoints, i, m, g, g1
     integer(longInt)                                    :: seed
     character(10)                                       :: time
     character(8)                                        :: date
@@ -237,6 +247,8 @@ contains
     character(nameLen)                                  :: geomName, graphType, nucData
     class(geometry), pointer                            :: geom
     type(outputFile)                                    :: test_out
+    class(baseMgNeutronMaterial), pointer               :: mat
+    class(materialHandle), pointer                      :: matPtr
     character(100), parameter :: Here = 'init (fixedSourceTRRMPhysicsPackage_class.f90)'
 
     call cpu_time(self % CPU_time_start)
@@ -421,10 +433,37 @@ contains
     ! Set active length traveled per iteration
     self % lengthPerIt = (self % termination - self % dead) * self % pop
     
+    ! Check whether to precompute volumes
+    call dict % getOrDefault(self % volRays,'volRays',0)
+    if (self % volRays > 0) call dict % get(self % volLength, 'volLength')
+
     ! Initialise OMP locks
     allocate(self % locks(self % nCells))
     do i = 1, self % nCells
       call omp_init_lock(self % locks(i))
+    end do
+
+    ! Initialise local nuclear data
+    ! TODO: clean nuclear database afterwards! It is no longer used
+    !       and takes up memory.
+    self % nMat = mm_nMat()
+    allocate(self % sigmaT(self % nMat * self % nG))
+    allocate(self % nuSigmaF(self % nMat * self % nG))
+    allocate(self % chi(self % nMat * self % nG))
+    allocate(self % sigmaS(self % nMat * self % nG * self % nG))
+
+    do m = 1, self % nMat
+      matPtr  => self % mgData % getMaterial(m)
+      mat     => baseMgNeutronMaterial_CptrCast(matPtr)
+      do g = 1, self % nG
+        self % sigmaT(self % nG * (m - 1) + g) = real(mat % getTotalXS(g, self % rand),defFlt)
+        self % nuSigmaF(self % nG * (m - 1) + g) = real(mat % getNuFissionXS(g, self % rand),defFlt)
+        self % chi(self % nG * (m - 1) + g) = real(mat % getChi(g, self % rand),defFlt)
+        do g1 = 1, self % nG
+          self % sigmaS(self % nG * self % nG * (m - 1) + self % nG * (g - 1) + g1)  = &
+                  real(mat % getScatterXS(g1, g, self % rand), defFlt)
+        end do
+      end do
     end do
 
   end subroutine init
@@ -439,7 +478,7 @@ contains
     class(fixedSourceTRRMPhysicsPackage), intent(inout) :: self
     class(dictionary), intent(inout)                    :: dict
     character(nameLen),dimension(:), allocatable        :: names
-    real(defReal), dimension(:), allocatable            :: sourceStrength
+    real(defFlt), dimension(:), allocatable             :: sourceStrength
     integer(shortInt)                                   :: cIdx, i
     integer(shortInt), save                             :: g, matIdx, idx
     logical(defBool)                                    :: found
@@ -534,15 +573,15 @@ contains
     call timerStart(self % timerMain)
     
     ! Initialise fluxes 
-    self % scalarFlux = ZERO
-    self % prevFlux   = ZERO
-    self % fluxScores = ZERO
-    self % source     = ZERO
+    self % scalarFlux = 0.0_defFlt
+    self % prevFlux   = 0.0_defFlt
+    self % fluxScores = 0.0_defFlt
+    self % source     = 0.0_defFlt
 
     ! Initialise cell information
     self % cellHit      = 0
-    self % volume       = ZERO
-    self % volumeTracks = ZERO
+    self % volume       = 0.0_defFlt
+    self % volumeTracks = 0.0_defFlt
     self % cellFound = .false.
     self % cellPos = -INFINITY
 
@@ -552,6 +591,31 @@ contains
     itAct  = 0
     isActive = .false.
     stoppingCriterion = .true.
+
+    if (self % volRays > 0) then
+      !$omp parallel do schedule(dynamic)
+      do i = 1, self % volRays 
+        ! Set seed
+        pRNG = self % rand
+        call pRNG % stride(i)
+        r % pRNG => pRNG 
+        
+        call self % initialiseRay(r)
+        call self % scoreVolume(r)
+
+      end do
+      !$omp end parallel do
+ 
+      !$omp parallel do schedule(static)
+      do i = 1, self % nCells
+        self % volume(i) = self % volumeTracks(i) /(self % volRays * real(self % volLength, defFlt))
+      end do
+      !$omp end parallel do
+
+      ! Update RNG 
+      call self % rand % stride(self % volRays + 1)
+    
+    end if
 
     ! Source iteration
     do while( stoppingCriterion )
@@ -697,23 +761,84 @@ contains
     end if
 
   end subroutine initialiseRay
+  
+  !!
+  !! Moves ray through geometry, scoring volume
+  !!
+  subroutine scoreVolume(self, r)
+    class(fixedSourceTRRMPhysicsPackage), intent(inout) :: self
+    type(ray), intent(inout)                            :: r
+    integer(shortInt)                                   :: cIdx, event
+    integer(longInt)                                    :: ints
+    real(defReal)                                       :: totalLength, length
+    type(distCache)                                     :: cache
+    real(defReal), dimension(3)                         :: r0, mu0
+    logical(defBool)                                    :: hitVacuum
+    
+    totalLength = ZERO
+    ints = 0_longInt
+    
+    do while (totalLength < self % volLength)
+
+      ! Get cell the ray is moving through
+      cIdx = r % coords % uniqueID
+
+      ! Remember co-ordinates to set new cell's position
+      if (.not. self % cellFound(cIdx)) then
+        r0 = r % rGlobal()
+        mu0 = r % dirGlobal()
+      end if
+          
+      ! Set maximum flight distance 
+      length = self % volLength - totalLength 
+
+      ! Move ray
+      ! Use distance caching or standard ray tracing
+      ! Distance caching seems a little bit more unstable
+      ! due to FP error accumulation, but is faster.
+      ! This can be fixed by resetting the cache after X number
+      ! of distance calculations.
+      if (self % cache) then
+        if (mod(ints,100_longInt) == 0)  cache % lvl = 0
+        call self % geom % moveRay_withCache(r % coords, length, event, cache, hitVacuum)
+      else
+        call self % geom % moveRay_noCache(r % coords, length, event, hitVacuum)
+      end if
+      totalLength = totalLength + length
+      
+      ! Set new cell's position. Use half distance across cell
+      ! to try and avoid FP error
+      if (.not. self % cellFound(cIdx)) then
+        !$omp critical 
+        self % cellFound(cIdx) = .true.
+        self % cellPos(cIdx,:) = r0 + length/2 * mu0
+        !$omp end critical
+      end if
+
+      !$omp atomic
+      self % volumeTracks(cIdx) = self % volumeTracks(cIdx) + real(length,defFlt)
+      
+    end do
+
+  end subroutine scoreVolume
+
 
   !!
-  !! Moves ray through geometry, used for generating uncollided flux
+  !! Moves ray through geometry, updating angular flux and
+  !! scoring scalar flux and volume.
   !! Records the number of integrations/ray movements.
   !!
   subroutine transportSweep(self, r, ints)
     class(fixedSourceTRRMPhysicsPackage), target, intent(inout) :: self
-    type(ray), intent(inout)                                    :: r
-    integer(longInt), intent(out)                               :: ints
-    integer(shortInt)                                           :: matIdx, g, cIdx, idx, event, matIdx0, baseIdx
-    real(defReal)                                               :: totalLength, length
-    logical(defBool)                                            :: activeRay, hitVacuum
-    type(distCache)                                             :: cache
-    class(baseMgNeutronMaterial), pointer                       :: mat
-    class(materialHandle), pointer                              :: matPtr
-    real(defReal), dimension(self % nG)                         :: attenuate, delta, fluxVec
-    real(defReal), pointer, dimension(:)                        :: scalarVec, sourceVec, totVec
+    type(ray), intent(inout)                              :: r
+    integer(longInt), intent(out)                         :: ints
+    integer(shortInt)                                     :: matIdx, g, cIdx, idx, event, matIdx0, baseIdx
+    real(defReal)                                         :: totalLength, length
+    logical(defBool)                                      :: activeRay, hitVacuum
+    type(distCache)                                       :: cache
+    real(defFlt), dimension(self % nG)                    :: attenuate, delta, fluxVec
+    real(defFlt), pointer, dimension(:)                   :: scalarVec, sourceVec, totVec
+    real(defReal), dimension(3)                           :: r0, mu0
     
     ! Set initial angular flux to angle average of cell source
     cIdx = r % coords % uniqueID
@@ -721,7 +846,7 @@ contains
       idx = (cIdx - 1) * self % nG + g
       fluxVec(g) = self % source(idx)
     end do
-    
+
     ints = 0
     matIdx0 = 0
     totalLength = ZERO
@@ -732,20 +857,16 @@ contains
       matIdx  = r % coords % matIdx
       cIdx    = r % coords % uniqueID
       if (matIdx0 /= matIdx) then
-        matPtr  => self % mgData % getMaterial(matIdx)
-        mat     => baseMgNeutronMaterial_CptrCast(matPtr)
         matIdx0 = matIdx
         
         ! Cache total cross section
-        totVec => mat % getTotalPtr()
+        totVec => self % sigmaT((matIdx - 1) * self % nG + 1:self % nG)
       end if
 
-      ! Remember new cell positions
+      ! Remember co-ordinates to set new cell's position
       if (.not. self % cellFound(cIdx)) then
-        !$omp critical 
-        self % cellFound(cIdx) = .true.
-        self % cellPos(cIdx,:) = r % rGlobal()
-        !$omp end critical
+        r0 = r % rGlobal()
+        mu0 = r % dirGlobal()
       end if
           
       ! Set maximum flight distance and ensure ray is active
@@ -769,16 +890,25 @@ contains
         call self % geom % moveRay_noCache(r % coords, length, event, hitVacuum)
       end if
       totalLength = totalLength + length
+      
+      ! Set new cell's position. Use half distance across cell
+      ! to try and avoid FP error
+      if (.not. self % cellFound(cIdx)) then
+        !$omp critical 
+        self % cellFound(cIdx) = .true.
+        self % cellPos(cIdx,:) = r0 + length/2 * mu0
+        !$omp end critical
+      end if
 
       ints = ints + 1
 
       baseIdx = (cIdx - 1) * self % nG
       sourceVec => self % source(baseIdx + 1 : baseIdx + self % nG)
       scalarVec => self % scalarFlux(baseIdx + 1 : baseIdx + self % nG)
-      
+
       !$omp simd
       do g = 1, self % nG
-        attenuate(g) = exponential(totVec(g) * length)
+        attenuate(g) = exponential(totVec(g) * real(length,defFlt))
         delta(g) = (fluxVec(g) - sourceVec(g)) * attenuate(g)
         fluxVec(g) = fluxVec(g) - delta(g)
       end do
@@ -791,10 +921,10 @@ contains
         do g = 1, self % nG
           scalarVec(g) = scalarVec(g) + delta(g) 
         end do
-        self % volumeTracks(cIdx) = self % volumeTracks(cIdx) + length
+        self % volumeTracks(cIdx) = self % volumeTracks(cIdx) + real(length,defFlt)
         call OMP_unset_lock(self % locks(cIdx))
 
-        self % cellHit(cIdx) = 1
+        if (self % cellHit(cIdx) == 0) self % cellHit(cIdx) = 1
       
       end if
 
@@ -802,7 +932,7 @@ contains
       if (hitVacuum) then
         !$omp simd
         do g = 1, self % nG
-          fluxVec(g) = ZERO
+          fluxVec(g) = 0.0_defFlt
         end do
       end if
 
@@ -817,32 +947,28 @@ contains
   subroutine normaliseFluxAndVolume(self, it)
     class(fixedSourceTRRMPhysicsPackage), intent(inout) :: self
     integer(shortInt), intent(in)                       :: it
-    real(defReal)                                       :: norm, normVol
-    real(defReal), save                                 :: total
+    real(defFlt)                                        :: norm, normVol
+    real(defFlt), save                                  :: total
     integer(shortInt), save                             :: g, matIdx, idx
     integer(shortInt)                                   :: cIdx
-    class(baseMgNeutronMaterial), pointer, save         :: mat
-    class(materialHandle), pointer, save                :: matPtr
-    !$omp threadprivate(mat, matPtr, total, idx, g, matIdx)
+    !$omp threadprivate(total, idx, g, matIdx)
 
-    norm = ONE / self % lengthPerIt
-    normVol = ONE / (self % lengthPerIt * it)
+    norm = real(ONE / self % lengthPerIt, defFlt)
+    normVol = real(ONE / (self % lengthPerIt * it), defFlt)
 
     !$omp parallel do schedule(static)
     do cIdx = 1, self % nCells
       matIdx =  self % geom % geom % graph % getMatFromUID(cIdx) 
-      matPtr => self % mgData % getMaterial(matIdx)
-      mat    => baseMgNeutronMaterial_CptrCast(matPtr)
       
-      ! Update volume due to additional rays
-      self % volume(cIdx) = self % volumeTracks(cIdx) * normVol
+      ! Update volume due to additional rays unless volume was precomputed
+      if (self % volRays <= 0) self % volume(cIdx) = self % volumeTracks(cIdx) * normVol
 
       do g = 1, self % nG
 
-        total =  mat % getTotalXS(g, self % rand)
+        total = self % sigmaT((matIdx - 1) * self % nG + g)
         idx   = self % nG * (cIdx - 1) + g
 
-        if (self % volume(cIdx) > ZERO) then
+        if (self % volume(cIdx) > volume_tolerance) then
           self % scalarFlux(idx) = self % scalarFlux(idx) * norm / ( total * self % volume(cIdx))
         end if
         self % scalarFlux(idx) = self % scalarFlux(idx) + self % source(idx)
@@ -858,79 +984,53 @@ contains
   !! Kernel to update sources given a cell index
   !!
   subroutine sourceUpdateKernel(self, cIdx)
-    class(fixedSourceTRRMPhysicsPackage), target, intent(inout) :: self
-    integer(shortInt), intent(in)                               :: cIdx
-    real(defReal)                                               :: scatter, fission
-    real(defReal), dimension(:), pointer                        :: nuFission, total, chi 
-    real(defReal), dimension(:,:), pointer                      :: scatterXS
-    integer(shortInt)                                           :: matIdx, g, gIn 
-    integer(shortInt)                                           :: baseIdx, idx
-    class(baseMgNeutronMaterial), pointer                       :: mat
-    class(materialHandle), pointer                              :: matPtr
-    logical(defBool)                                            :: isFiss
-    real(defReal), pointer, dimension(:)                        :: fluxVec
+    class(fixedSourceTRRmPhysicsPackage), target, intent(inout) :: self
+    integer(shortInt), intent(in)                         :: cIdx
+    real(defFlt)                                          :: scatter, fission
+    real(defFlt), dimension(:), pointer                   :: nuFission, total, chi, scatterXS 
+    integer(shortInt)                                     :: matIdx, g, gIn, baseIdx, idx
+    real(defFlt), pointer, dimension(:)                   :: fluxVec, scatterVec
 
     ! Identify material
     matIdx  =  self % geom % geom % graph % getMatFromUID(cIdx) 
-    matPtr  => self % mgData % getMaterial(matIdx)
-    mat     => baseMgNeutronMaterial_CptrCast(matPtr)
 
     ! Obtain XSs
-    scatterXS =>  mat % getScatterPtr()
-    total     =>  mat % getTotalPtr()
-    isFiss    = mat % isFissile()
-    if (isFiss) then
-      nuFission =>  mat % getNuFissionPtr()
-      chi       =>  mat % getChiPtr()
-    end if
+    matIdx = (matIdx - 1) * self % nG
+    total => self % sigmaT(matIdx + (1):(self % nG))
+    scatterXS => self % sigmaS(matIdx * self % nG + (1):(self % nG*self % nG))
+    nuFission => self % nuSigmaF(matIdx + (1):(self % nG))
+    chi => self % chi(matIdx + (1):(self % nG))
 
     baseIdx = self % ng * (cIdx - 1)
-    fluxVec => self % prevFlux(baseIdx+1:baseIdx+self % nG)
+    fluxVec => self % prevFlux(baseIdx+(1):(self % nG))
 
-    ! There is a scattering and fission source
-    if (isFiss) then
-      do g = 1, self % nG
+    ! Calculate fission source
+    fission = 0.0_defFlt
+    !$omp simd reduction(+:fission)
+    do gIn = 1, self % nG
+      fission = fission + fluxVec(gIn) * nuFission(gIn)
+    end do
 
-        ! Calculate fission and scattering source
-        scatter = ZERO
-        fission = ZERO
+    do g = 1, self % nG
 
-        ! Sum contributions from all energies
-        !$omp simd reduction(+:fission, scatter)
-        do gIn = 1, self % nG
-          fission = fission + fluxVec(gIn) * nuFission(gIn)
-          scatter = scatter + fluxVec(gIn) * scatterXS(g,gIn)
-        end do
+      scatterVec => scatterXS(self % nG * (g - 1) + (1):self % nG)
 
-        ! Output index
-        idx = baseIdx + g
+      ! Calculate scattering source
+      scatter = 0.0_defFlt
 
-        self % source(idx) = chi(g) * fission + scatter + self % fixedSource(idx)
-        self % source(idx) = self % source(idx) / total(g)
-
+      ! Sum contributions from all energies
+      !$omp simd reduction(+:scatter)
+      do gIn = 1, self % nG
+        scatter = scatter + fluxVec(gIn) * scatterVec(gIn)
       end do
 
-    ! There is only a scattering source
-    else
-      do g = 1, self % nG
+      ! Output index
+      idx = baseIdx + g
 
-        ! Calculate scattering source
-        scatter = ZERO
+      self % source(idx) = chi(g) * fission + scatter + self % fixedSource(idx)
+      self % source(idx) = self % source(idx) / total(g)
 
-        ! Sum contributions from all energies
-        !$omp simd reduction(+:scatter)
-        do gIn = 1, self % nG
-          scatter = scatter + fluxVec(gIn) * scatterXS(g,gIn)
-        end do
-
-        ! Output index
-        idx = baseIdx + g
-
-        self % source(idx) = (self % fixedSource(idx) + scatter) / total(g)
-
-      end do
-
-    end if
+    end do
 
   end subroutine sourceUpdateKernel
 
@@ -944,7 +1044,7 @@ contains
     !$omp parallel do schedule(static)
     do idx = 1, size(self % scalarFlux)
       self % prevFlux(idx) = self % scalarFlux(idx)
-      self % scalarFlux(idx) = ZERO
+      self % scalarFlux(idx) = 0.0_defFlt
     end do
     !$omp end parallel do
 
@@ -955,7 +1055,7 @@ contains
   !!
   subroutine accumulateFluxScores(self)
     class(fixedSourceTRRMPhysicsPackage), intent(inout) :: self
-    real(defReal), save                                 :: flux
+    real(defFlt), save                                  :: flux
     integer(shortInt)                                   :: idx
     !$omp threadprivate(flux)
 
@@ -976,14 +1076,14 @@ contains
     class(fixedSourceTRRMPhysicsPackage), intent(inout) :: self
     integer(shortInt), intent(in)                       :: it
     integer(shortInt)                                   :: idx
-    real(defReal)                                       :: N1, Nm1
+    real(defFlt)                                        :: N1, Nm1
 
     if (it /= 1) then
-      Nm1 = ONE/(it - 1)
+      Nm1 = 1.0_defFlt/(it - 1)
     else
-      Nm1 = ONE
+      Nm1 = 1.0_defFlt
     end if
-    N1 = ONE/it
+    N1 = 1.0_defFlt/it
 
     !$omp parallel do schedule(static)
     do idx = 1, size(self % scalarFlux)
@@ -991,8 +1091,8 @@ contains
       self % fluxScores(idx,2) = self % fluxScores(idx, 2) * N1
       self % fluxScores(idx,2) = Nm1 *(self % fluxScores(idx,2) - &
             self % fluxScores(idx,1) * self % fluxScores(idx,1)) 
-      if (self % fluxScores(idx,2) <= ZERO) then
-        self % fluxScores(idx,2) = ZERO
+      if (self % fluxScores(idx,2) <= 0.0_defFlt) then
+        self % fluxScores(idx,2) = 0.0_defFlt
       else
         self % fluxScores(idx,2) = sqrt(self % fluxScores(idx,2))
       end if
@@ -1013,11 +1113,11 @@ contains
     character(nameLen)                                  :: name
     integer(shortInt)                                   :: cIdx, g1
     integer(shortInt), save                             :: idx, matIdx, i, g
-    real(defReal), save                                 :: vol, SigmaF
+    real(defFlt), save                                  :: vol, SigmaF
     type(particleState), save                           :: s
     type(ray), save                                     :: point
     integer(shortInt),dimension(:),allocatable          :: resArrayShape
-    real(defReal), dimension(:), allocatable            :: groupFlux, fiss, fissSTD
+    real(defFlt), dimension(:), allocatable             :: groupFlux, fiss, fissSTD
     class(baseMgNeutronMaterial), pointer, save         :: mat
     class(materialHandle), pointer, save                :: matPtr
     !$omp threadprivate(idx, matIdx, i, mat, matPtr, vol, s, SigmaF, g)
@@ -1053,7 +1153,7 @@ contains
       resArrayShape = [size(self % volume)]
       call out % startArray(name, resArrayShape)
       do cIdx = 1, self % nCells
-        call out % addResult(self % volume(cIdx), ZERO)
+        call out % addResult(real(self % volume(cIdx),defReal), ZERO)
       end do
       call out % endArray()
       call out % endBlock()
@@ -1083,7 +1183,8 @@ contains
         call out % startArray(name, resArrayShape)
         do cIdx = 1, self % nCells
           idx = (cIdx - 1)* self % nG + g
-          call out % addResult(self % fluxScores(idx,1), self % fluxScores(idx,2))
+          call out % addResult(real(self % fluxScores(idx,1),defReal),&
+                  real(self % fluxScores(idx,2),defReal))
         end do
         call out % endArray()
         call out % endBlock()
@@ -1095,8 +1196,8 @@ contains
       resArrayShape = self % resultsMap % binArrayShape()
       allocate(fiss(self % resultsMap % bins(0)))
       allocate(fissSTD(self % resultsMap % bins(0)))
-      fiss    = ZERO
-      fissSTD = ZERO
+      fiss    = 0.0_defFlt
+      fissSTD = 0.0_defFlt
 
       ! Find whether cells are in map and sum their contributions
       !$omp parallel do reduction(+: fiss, fissSTD)
@@ -1138,7 +1239,7 @@ contains
       call out % startArray(name, resArrayShape)
       ! Add all map elements to results
       do idx = 1, self % resultsMap % bins(0)
-        call out % addResult(fiss(idx), fissSTD(idx))
+        call out % addResult(real(fiss(idx),defReal), real(fissSTD(idx),defReal))
       end do
       call out % endArray()
       call out % endBlock()
@@ -1160,8 +1261,8 @@ contains
         cIdx = point % coords % uniqueID
         do g = 1, self % nG
           idx = (cIdx - 1)* self % nG + g
-          call out % addResult(self % fluxScores(idx,1), &
-                  self % fluxScores(idx,2) / self % fluxScores(idx,1))
+          call out % addResult(real(self % fluxScores(idx,1),defReal), &
+                  real(self % fluxScores(idx,2) / self % fluxScores(idx,1),defReal))
         end do
         call out % endArray()
         call out % endBlock()
@@ -1181,7 +1282,7 @@ contains
           groupFlux(cIdx) = self % fluxScores(idx,1)
         end do
         !$omp end parallel do
-        call self % viz % addVTKData(groupFlux,name)
+        call self % viz % addVTKData(real(groupFlux,defReal),name)
       end do
       do g1 = 1, self % nG
         name = 'std_g'//numToChar(g1)
@@ -1191,7 +1292,7 @@ contains
           groupFlux(cIdx) = self % fluxScores(idx,2) / self % fluxScores(idx,1)
         end do
         !$omp end parallel do
-        call self % viz % addVTKData(groupFlux,name)
+        call self % viz % addVTKData(real(groupFlux,defReal),name)
       end do
       do g1 = 1, self % nG
         name = 'source_g'//numToChar(g1)
@@ -1201,7 +1302,7 @@ contains
           groupFlux(cIdx) = self % source(idx)
         end do
         !$omp end parallel do
-        call self % viz % addVTKData(groupFlux,name)
+        call self % viz % addVTKData(real(groupFlux,defReal),name)
       end do
       call self % viz % finaliseVTK
     end if
@@ -1266,6 +1367,11 @@ contains
       deallocate(self % locks)
     end if
     self % nCells    = 0
+    self % nMat      = 0
+    if(allocated(self % sigmaT)) deallocate(self % sigmaT)
+    if(allocated(self % sigmaS)) deallocate(self % sigmaS)
+    if(allocated(self % nusigmaF)) deallocate(self % nuSigmaF)
+    if(allocated(self % chi)) deallocate(self % chi)
 
     self % termination = ZERO
     self % dead        = ZERO
@@ -1278,6 +1384,8 @@ contains
     self % printFlux   = .false.
     self % printVolume = .false.
     self % printCells  = .false.
+    self % volRays     = 0
+    self % volLength   = ZERO
 
     if(allocated(self % scalarFlux)) deallocate(self % scalarFlux)
     if(allocated(self % prevFlux)) deallocate(self % prevFlux)
