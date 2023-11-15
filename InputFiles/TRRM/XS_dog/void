@@ -4,7 +4,7 @@ numberOfGroups 1;
 
 capture (
 //0.5E-4 // scatter case
-1E-4  // absorber case
+1.0E-4  // absorber case
 );
  
 scatteringMultiplicity ( 1.0  ); 
