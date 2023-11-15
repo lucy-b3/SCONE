@@ -276,7 +276,7 @@ contains
     ! and specify spacing in each direction
     write(file,'(A)') 'DATASET STRUCTURED_POINTS'
     write(file,'(A,I0,A,I0,A,I0)') 'DIMENSIONS ',self % nVox(1),' ',self % nVox(2),' ',self % nVox(3)
-    write(file,'(A,F0.3,A,F0.3,A,F0.3)') 'ORIGIN ',self % corner(1),' ',self % corner(2),' ',self % corner(3)
+    write(file,'(A,F0.4,A,F0.4,A,F0.4)') 'ORIGIN ',self % corner(1),' ',self % corner(2),' ',self % corner(3)
     write(file,'(A,F0.3,A,F0.3,A,F0.3)') 'SPACING ',self % width(1)/self % nVox(1),' ',self % width(2)/self % nVox(2),&
             ' ',self % width(3) / self % nVox(3)
     write(file,'(A,I0)') 'POINT_DATA ',self % nCells
@@ -294,7 +294,7 @@ contains
       write(file,'(A)') 'LOOKUP_TABLE default'
 
       if (self % dataReal(l)) then
-        write(file,'(F0.6)') self % values(l,:,:,:)
+        write(file,'(ES18.9)') real(self % values(l,:,:,:),defReal)
       else
         write(file,'(I0)') int(self % values(l,:,:,:),shortInt)
       endif

@@ -334,7 +334,11 @@ contains
     do i = 1, self % vtk % nVox(1)
       do j = 1, self % vtk % nVox(2)
         do k = 1, self % vtk % nVox(3)
-          values(i,j,k) = dataArray(int(self % vtk % values(1,i,j,k)))
+          if (int(self % vtk % values(1,i,j,k)) < 1) then
+            values(i,j,k) = 0
+          else
+            values(i,j,k) = dataArray(int(self % vtk % values(1,i,j,k)))
+          end if
         end do
       end do
     end do

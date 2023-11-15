@@ -32,7 +32,7 @@ module latUniverse_class
   !! Background cell can have any filling given by keyword (material or universe)
   !!
   !! Every lattice cell has an offset to its centere (so the centre of the nested universe
-  !! is in the center of the lattice cell).
+  !! is in the center of the lattice cell). This can be disabled.
   !!
   !! Minimum lattice pitch is set to 10 * SURF_TOL
   !!
@@ -41,6 +41,7 @@ module latUniverse_class
   !!          type latUniverse;
   !!          #origin (0.0 0.0 0.0); #
   !!          #rotation (30.0 0.0 0.0); #
+  !!          #offset 1; #
   !!          shape (3 2 2);
   !!          pitch (1.0 1.0 1.0);
   !!          padMat <u13>;
@@ -70,6 +71,7 @@ module latUniverse_class
   !!  a_bar      -> Halfwidth of lattice cell reduced by surface tolerance
   !!  outline    -> Box type surface that is a boundary between lattice & background
   !!  outLocalID -> LocalID of the background cell
+  !!  doOffset   -> Offset lower universes? Yes by default
   !!
   !! Interface:
   !!   universe interface
@@ -82,6 +84,7 @@ module latUniverse_class
     real(defReal), dimension(3)     :: a_bar  = ZERO
     type(box)                       :: outline
     integer(shortInt)               :: outLocalID = 0
+    logical(defBool)                :: doOffset = .true.
   contains
     ! Superclass procedures
     procedure :: init
@@ -132,6 +135,9 @@ contains
       call self % setTransform(origin=temp)
 
     end if
+
+    ! Perform offsets?
+    call dict % getOrDefault(self % doOffset, 'offset', .true.)
 
     ! Load rotation
     if (dict % isPresent('rotation')) then
@@ -352,7 +358,7 @@ contains
     type(coord), intent(in)         :: coords
     real(defReal), dimension(3)     :: offset
 
-    if (coords % localID == self % outLocalID) then
+    if (coords % localID == self % outLocalID .or. .not. self % doOffset) then
       offset = ZERO
 
     else

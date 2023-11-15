@@ -167,6 +167,7 @@ module randomRayPhysicsPackage_class
     integer(shortInt)  :: inactive    = 0
     integer(shortInt)  :: active      = 0
     logical(defBool)   :: cache       = .false.
+    logical(defBool)   :: volCorr     = .false.
     character(pathLen) :: outputFile
     character(nameLen) :: outputFormat
     logical(defBool)   :: plotResults = .false.
@@ -195,6 +196,12 @@ module randomRayPhysicsPackage_class
     real(defFlt), dimension(:), allocatable     :: volume
     real(defFlt), dimension(:), allocatable     :: volumeTracks
 
+    ! Can delete eventually
+    real(defReal), dimension(:), allocatable     :: delta
+    real(defReal), dimension(:), allocatable     :: deltaSquared
+    real(defReal), dimension(:), allocatable     :: lengthSquared
+    integer(longInt), dimension(:), allocatable  :: hit
+    
     ! Tracking cell properites
     integer(shortInt), dimension(:), allocatable :: cellHit
     logical(defBool), dimension(:), allocatable  :: cellFound
@@ -221,12 +228,15 @@ module randomRayPhysicsPackage_class
     procedure, private :: cycles
     procedure, private :: initialiseRay
     procedure, private :: transportSweep
+    procedure, private :: transportSweepDD
     procedure, private :: sourceUpdateKernel
     procedure, private :: calculateKeff
     procedure, private :: normaliseFluxAndVolume
+    procedure, private :: normaliseFluxAndVolumeDD
     procedure, private :: resetFluxes
     procedure, private :: accumulateFluxAndKeffScores
     procedure, private :: finaliseFluxAndKeffScores
+    procedure, private :: finaliseOtherStats
     procedure, private :: printResults
     procedure, private :: printSettings
 
@@ -268,6 +278,9 @@ contains
     
     ! Perform distance caching?
     call dict % getOrDefault(self % cache, 'cache', .false.)
+
+    ! Perform volume correction?
+    call dict % getOrDefault(self % volCorr, 'volCorr', .false.)
 
     ! Print fluxes?
     call dict % getOrDefault(self % printFlux, 'printFlux', .false.)
@@ -394,7 +407,7 @@ contains
       print *, "Constructing visualisation"
       call self % viz % makeViz()
       call self % viz % kill()
-    endif
+    end if
     
     ! Check for results plotting and initialise VTK
     call dict % getOrDefault(self % plotResults,'plot',.false.)
@@ -420,7 +433,13 @@ contains
     allocate(self % cellHit(self % nCells))
     allocate(self % cellFound(self % nCells))
     allocate(self % cellPos(self % nCells, 3))
-    
+
+    ! Other results - can delete eventually
+    allocate(self % delta(self % nCells * self % nG))
+    allocate(self % deltaSquared(self % nCells * self % nG))
+    allocate(self % hit(self % nCells))
+    allocate(self % lengthSquared(self % nCells))
+
     ! Set active length traveled per iteration
     self % lengthPerIt = (self % termination - self % dead) * self % pop
     
@@ -514,6 +533,12 @@ contains
     self % volumeTracks = 0.0_defFlt
     self % intersectionsTotal  = 0
 
+    ! Stuff to delete eventually
+    self % delta = ZERO
+    self % deltaSquared = ZERO
+    self % hit = 0_longInt
+    self % lengthSquared = ZERO
+    
     ! Initialise cell information
     self % cellFound = .false.
     self % cellPos = -INFINITY
@@ -561,6 +586,7 @@ contains
 
         ! Transport ray until termination criterion met
         call self % transportSweep(r,ints)
+        !call self % transportSweepDD(r,ints)
         intersections = intersections + ints
 
       end do
@@ -575,6 +601,7 @@ contains
 
       ! Normalise flux estimate and combines with source
       call self % normaliseFluxAndVolume(it)
+      !call self % normaliseFluxAndVolumeDD(it)
 
       ! Calculate new k
       call self % calculateKeff()
@@ -628,6 +655,9 @@ contains
 
     ! Finalise flux scores
     call self % finaliseFluxAndKeffScores(itAct)
+
+    ! Finalise length and delta stats
+    call self % finaliseOtherStats()
 
   end subroutine cycles
 
@@ -692,6 +722,7 @@ contains
     type(distCache)                                       :: cache
     real(defFlt), dimension(self % nG)                    :: attenuate, delta, fluxVec
     real(defFlt), pointer, dimension(:)                   :: scalarVec, sourceVec, totVec
+    real(defReal), pointer, dimension(:)                  :: dSquared, d
     real(defReal), dimension(3)                           :: r0, mu0
     
     ! Set initial angular flux to angle average of cell source
@@ -757,8 +788,10 @@ contains
       ints = ints + 1
 
       baseIdx = (cIdx - 1) * self % nG
-      sourceVec => self % source(baseIdx + 1 : baseIdx + self % nG)
-      scalarVec => self % scalarFlux(baseIdx + 1 : baseIdx + self % nG)
+      sourceVec => self % source(baseIdx + 1:self % nG)
+      scalarVec => self % scalarFlux(baseIdx + 1:self % nG)
+      dSquared => self % deltaSquared(baseIdx + 1:self % nG)
+      d => self % delta(baseIdx + 1:self % nG)
 
       !$omp simd
       do g = 1, self % nG
@@ -773,9 +806,13 @@ contains
         call OMP_set_lock(self % locks(cIdx))
         !$omp simd
         do g = 1, self % nG
-          scalarVec(g) = scalarVec(g) + delta(g) 
+          scalarVec(g) = scalarVec(g) + delta(g)
+          d(g) = d(g) + attenuate(g)
+          dSquared(g) = dSquared(g) + attenuate(g) * attenuate(g)
         end do
+        self % hit(cIdx) = self % hit(cIdx) + 1
         self % volumeTracks(cIdx) = self % volumeTracks(cIdx) + real(length,defFlt)
+        self % lengthSquared(cIdx) = self % lengthSquared(cIdx) + length * length
         call OMP_unset_lock(self % locks(cIdx))
 
         if (self % cellHit(cIdx) == 0) self % cellHit(cIdx) = 1
@@ -795,6 +832,126 @@ contains
   end subroutine transportSweep
 
   !!
+  !! Moves ray through geometry, updating angular flux and
+  !! scoring scalar flux and volume.
+  !! Records the number of integrations/ray movements.
+  !!
+  subroutine transportSweepDD(self, r, ints)
+    class(randomRayPhysicsPackage), target, intent(inout) :: self
+    type(ray), intent(inout)                              :: r
+    integer(longInt), intent(out)                         :: ints
+    integer(shortInt)                                     :: matIdx, g, cIdx, idx, event, matIdx0, baseIdx
+    real(defReal)                                         :: totalLength, length
+    real(defFlt)                                          :: lenFlt
+    logical(defBool)                                      :: activeRay, hitVacuum
+    type(distCache)                                       :: cache
+    real(defFlt), dimension(self % nG)                    :: tau, delta, fluxVec
+    real(defFlt), pointer, dimension(:)                   :: scalarVec, sourceVec, totVec
+    real(defReal), dimension(3)                           :: r0, mu0
+    
+    ! Set initial angular flux to angle average of cell source
+    cIdx = r % coords % uniqueID
+    do g = 1, self % nG
+      idx = (cIdx - 1) * self % nG + g
+      fluxVec(g) = self % source(idx)
+    end do
+
+    ints = 0
+    matIdx0 = 0
+    totalLength = ZERO
+    activeRay = .false.
+    do while (totalLength < self % termination)
+
+      ! Get material and cell the ray is moving through
+      matIdx  = r % coords % matIdx
+      cIdx    = r % coords % uniqueID
+      if (matIdx0 /= matIdx) then
+        matIdx0 = matIdx
+        
+        ! Cache total cross section
+        totVec => self % sigmaT((matIdx - 1) * self % nG + 1:self % nG)
+      end if
+
+      ! Remember co-ordinates to set new cell's position
+      if (.not. self % cellFound(cIdx)) then
+        r0 = r % rGlobal()
+        mu0 = r % dirGlobal()
+      end if
+          
+      ! Set maximum flight distance and ensure ray is active
+      if (totalLength >= self % dead) then
+        length = self % termination - totalLength 
+        activeRay = .true.
+      else
+        length = self % dead - totalLength
+      end if
+
+      ! Move ray
+      ! Use distance caching or standard ray tracing
+      ! Distance caching seems a little bit more unstable
+      ! due to FP error accumulation, but is faster.
+      ! This can be fixed by resetting the cache after X number
+      ! of distance calculations.
+      if (self % cache) then
+        if (mod(ints,100_longInt) == 0)  cache % lvl = 0
+        call self % geom % moveRay_withCache(r % coords, length, event, cache, hitVacuum)
+      else
+        call self % geom % moveRay_noCache(r % coords, length, event, hitVacuum)
+      end if
+      totalLength = totalLength + length
+      
+      lenFlt = real(length,defFlt)
+
+      ! Set new cell's position. Use half distance across cell
+      ! to try and avoid FP error
+      if (.not. self % cellFound(cIdx)) then
+        !$omp critical 
+        self % cellFound(cIdx) = .true.
+        self % cellPos(cIdx,:) = r0 + length/2 * mu0
+        !$omp end critical
+      end if
+
+      ints = ints + 1
+
+      baseIdx = (cIdx - 1) * self % nG
+      sourceVec => self % source(baseIdx + 1 : baseIdx + self % nG)
+      scalarVec => self % scalarFlux(baseIdx + 1 : baseIdx + self % nG)
+
+      !$omp simd
+      do g = 1, self % nG
+        tau(g) = totVec(g) * lenFlt * half
+        delta(g) = (fluxVec(g) + sourceVec(g) * tau(g)) / (1.0_defFlt + tau(g)) 
+        fluxVec(g) = 2 * delta(g) - fluxVec(g)
+      end do
+
+      ! Accumulate to scalar flux
+      if (activeRay) then
+      
+        call OMP_set_lock(self % locks(cIdx))
+        !$omp simd
+        do g = 1, self % nG
+          scalarVec(g) = scalarVec(g) + delta(g) * lenFlt 
+        end do
+        self % volumeTracks(cIdx) = self % volumeTracks(cIdx) + real(length,defFlt)
+        call OMP_unset_lock(self % locks(cIdx))
+
+        if (self % cellHit(cIdx) == 0) self % cellHit(cIdx) = 1
+      
+      end if
+
+      ! Check for a vacuum hit
+      if (hitVacuum) then
+        !$omp simd
+        do g = 1, self % nG
+          fluxVec(g) = 0.0_defFlt
+        end do
+      end if
+
+    end do
+
+  end subroutine transportSweepDD
+
+  !!
   !! Normalise flux and volume by total track length and increments
   !! the flux by the neutron source
   !!
@@ -802,10 +959,10 @@ contains
     class(randomRayPhysicsPackage), intent(inout) :: self
     integer(shortInt), intent(in)                 :: it
     real(defFlt)                                  :: norm, normVol
-    real(defFlt), save                            :: total
+    real(defFlt), save                            :: total, corr
     integer(shortInt), save                       :: g, matIdx, idx
     integer(shortInt)                             :: cIdx
-    !$omp threadprivate(total, idx, g, matIdx)
+    !$omp threadprivate(total, idx, g, matIdx, corr)
 
     norm = real(ONE / self % lengthPerIt, defFlt)
     normVol = real(ONE / (self % lengthPerIt * it), defFlt)
@@ -813,26 +970,97 @@ contains
     !$omp parallel do schedule(static)
     do cIdx = 1, self % nCells
       matIdx =  self % geom % geom % graph % getMatFromUID(cIdx) 
+
+      ! Calculate volume correction term
+      if (self % volCorr) then
+        corr = self % volumeTracks(cIdx) * norm 
+        self % volume(cIdx) = self % volume(cIdx) * self % lengthPerIt * (it - 1) + self % volumeTracks(cIdx)
+        self % volume(cIdx) = self % volume(cIdx) * normVol
+        corr = corr / self % volume(cIdx) 
       
       ! Update volume due to additional rays
-      self % volume(cIdx) = self % volumeTracks(cIdx) * normVol
+      else
+        self % volume(cIdx) = self % volumeTracks(cIdx) * normVol
+      end if
 
       do g = 1, self % nG
 
-        total = self % sigmaT((matIdx - 1) * self % nG + g)
         idx   = self % nG * (cIdx - 1) + g
 
         if (self % volume(cIdx) > volume_tolerance) then
+          total = self % sigmaT((matIdx - 1) * self % nG + g)
           self % scalarFlux(idx) = self % scalarFlux(idx) * norm / ( total * self % volume(cIdx))
         end if
-        self % scalarFlux(idx) = self % scalarFlux(idx) + self % source(idx)
-
+        
+        if (self % volCorr .and. (self % volume(cIdx) > volume_tolerance)) then    
+          self % scalarFlux(idx) = self % scalarFlux(idx) + self % source(idx) * corr
+        else   
+          self % scalarFlux(idx) = self % scalarFlux(idx) + self % source(idx)
+        end if
+        
       end do
+      
+      if (self % volCorr) self % volumeTracks(cIdx) = ZERO
 
     end do
     !$omp end parallel do
 
   end subroutine normaliseFluxAndVolume
+  
+  !!
+  !! Normalise flux and volume by total track length and increments
+  !! the flux by the neutron source
+  !!
+  subroutine normaliseFluxAndVolumeDD(self, it)
+    class(randomRayPhysicsPackage), intent(inout) :: self
+    integer(shortInt), intent(in)                 :: it
+    real(defFlt)                                  :: norm, normVol
+    real(defFlt), save                            :: total, volCorr
+    integer(shortInt), save                       :: g, idx
+    integer(shortInt)                             :: cIdx
+    !$omp threadprivate(total, idx, g, volCorr)
+
+    norm = real(ONE / self % lengthPerIt, defFlt)
+    normVol = real(ONE / (self % lengthPerIt * it), defFlt)
+
+    !$omp parallel do schedule(static)
+    do cIdx = 1, self % nCells
+      
+      ! New volume calculator
+      !self % volCorr(cIdx) = self % volumeTracks(cIdx) * norm 
+      !self % volume(cIdx) = self % volume(cIdx) * self % lengthPerIt * (it - 1) + self % volumeTracks(cIdx)
+      !self % volume(cIdx) = self % volume(cIdx) * normVol
+      !self % volCorr(cIdx) = self % volCorr(cIdx) / self % volume(cIdx) 
+
+      ! Old volume calculator
+      ! Update volume due to additional rays
+      self % volume(cIdx) = self % volumeTracks(cIdx) * normVol
+
+      do g = 1, self % nG
+
+        idx   = self % nG * (cIdx - 1) + g
+        
+        !if (self % volume(cIdx) > volume_tolerance) then
+        if (self % volume(cIdx) > volume_tolerance) then
+          self % scalarFlux(idx) = self % scalarFlux(idx) * norm /  self % volume(cIdx)
+        !else
+        !  self % volCorr(cIdx) = ZERO
+        end if
+        
+        ! Flux fixup for the first few generations  
+        !if ((self % scalarFlux(idx) < 0) .and. (it < 200)) then
+        !if ((self % scalarFlux(idx) < 0)) then
+        !  print *, self % scalarFlux(idx)
+        !end if
+
+      end do
+
+      !!self % volumeTracks(cIdx) = ZERO
+
+    end do
+    !$omp end parallel do
+
+  end subroutine normaliseFluxAndVolumeDD
   
   !!
   !! Kernel to update sources given a cell index
@@ -930,7 +1158,7 @@ contains
       end do
 
       fissionRate     = fissionRate     + fissLocal * vol
-      prevFissionRate = prevFissionRate + prevFissLocal * vol
+      prevFissionRate = prevFissionRate + prevFissLocal * vol 
 
     end do
     !$omp end parallel do
@@ -1014,6 +1242,51 @@ contains
             self % keffScore(1) * self % keffScore(1))) 
 
   end subroutine finaliseFluxAndKeffScores
+  
+  !!
+  !! Finalise other stats
+  !!
+  subroutine finaliseOtherStats(self)
+    class(randomRayPhysicsPackage), intent(inout) :: self
+    integer(shortInt)                             :: cIdx
+    integer(shortInt), save                       :: g, idx
+    integer(longInt), save                        :: hit
+    !$omp threadprivate(hit, g, idx)
+
+    !$omp parallel do schedule(static)
+    do cIdx = 1, self % nCells
+      hit = self % hit(cIdx)
+      if (hit < 1) hit = 1
+
+      self % volumeTracks(cIdx) = self % volume(cIdx) * (self % active + self % inactive) &
+              * self % lengthPerIt / hit
+      self % lengthSquared(cIdx) = self % lengthSquared(cIdx) / hit
+      self % lengthSquared(cIdx) = (self % lengthSquared(cIdx) - &
+              self % volumeTracks(cIdx) * self % volumeTracks(cIdx)) / (hit - 1)
+      if (self % lengthSquared(cIdx) <= ZERO) then
+        self % lengthSquared(cIdx) = ZERO
+      else
+        self % lengthSquared(cIdx) = sqrt(self % lengthSquared(cIdx))
+      end if
+
+      do g = 1, self % nG
+      
+        idx = self % ng * (cIdx - 1) + g
+
+        self % delta(idx) = self % delta(idx) / hit
+        self % deltaSquared(idx) = self % deltaSquared(idx) / hit
+        self % deltaSquared(idx) = (self % deltaSquared(idx) -  self % delta(idx) * self % delta(idx)) / (hit - 1)
+        if (self % deltaSquared(idx) <= ZERO) then
+          self % deltaSquared(idx) = ZERO
+        else
+          self % deltaSquared(idx) = sqrt(self % deltaSquared(idx))
+        end if
+      end do
+    end do
+    !$omp end parallel do
+
+  end subroutine finaliseOtherStats
+  
   
   !!
   !! Output calculation results to a file
@@ -1249,6 +1522,31 @@ contains
         !$omp end parallel do
         call self % viz % addVTKData(real(groupFlux,defReal),name)
       end do
+      do g1 = 1, self % nG
+        name = 'deltaStd_g'//numToChar(g1)
+        !$omp parallel do schedule(static)
+        do cIdx = 1, self % nCells
+          idx = (cIdx - 1)* self % nG + g1
+          if (abs(self % delta(idx)) > ZERO) then
+            groupFlux(cIdx) = self % deltaSquared(idx) /abs(self % delta(idx))
+          else
+            groupFlux(cIdx) = self % deltaSquared(idx)
+          end if
+        end do
+        !$omp end parallel do
+        call self % viz % addVTKData(real(groupFlux,defReal),name)
+      end do
+      name = 'lengthStd'
+      !$omp parallel do schedule(static)
+      do cIdx = 1, self % nCells
+        if (self % volumeTracks(cIdx) > ZERO) then
+          groupFlux(cIdx) = self % lengthSquared(cIdx) /self % volumeTracks(cIdx)
+        else
+          groupFlux(cIdx) = self % lengthSquared(cIdx)
+        end if
+      end do
+      !$omp end parallel do
+      call self % viz % addVTKData(real(groupFlux,defReal),name)
       call self % viz % finaliseVTK
     end if
 

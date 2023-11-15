@@ -33,6 +33,9 @@ module cellUniverse_class
   !! (undefined material) filling. If position is not in any user-defined cell, it is in this
   !! extra cell. Extra cell exists to enable plotting of geometry without fatalErrors.
   !!
+  !! After the elements of a universe have been visited 5000 times, the search order of the cells
+  !! is changed to be more optimal according to the frequency of visits. 
+  !!
   !! Sample Input Dictionary:
   !!   uni { type cellUniverse;
   !!         id 7;
@@ -48,11 +51,19 @@ module cellUniverse_class
   !! Public Members:
   !!   cells -> Structure that stores cellIdx and pointers to the cells
   !!
+  !! Private Members:
+  !!   visits   -> Number of times a given cell in the universe has been visited. Used for reordering.
+  !!   doUpdate -> Whether to update the cell ordering
+  !!   permute  -> Array of permutation indices to change the cell search order
+  !!
   !! Interface:
   !!   universe interface
   !!
   type, public, extends(universe) :: cellUniverse
-    type(localCell), dimension(:), allocatable :: cells
+    type(localCell), dimension(:), allocatable            :: cells
+    integer(longInt), private, dimension(:), allocatable  :: visits
+    logical(defBool), private                             :: doUpdate = .true.
+    integer(shortInt), private, dimension(:), allocatable :: permute
   contains
     ! Superclass procedures
     procedure :: init
@@ -115,6 +126,17 @@ contains
     allocate(self % cells(N))
     self % cells % idx = cellTemp
 
+    ! Create array of times a cell has been visited
+    allocate(self % visits(N))
+    self % visits = 0
+    self % doUpdate = .true.
+
+    ! Create a permutation array - initially boring, stores new cell indices after permutation
+    allocate(self % permute(N))
+    do i = 1, N
+      self % permute(i) = i
+    end do
+
     ! Load pointers and convert cell ID to IDX
     do i = 1, N
       ! Convert cell ID to IDX
@@ -138,20 +160,50 @@ contains
   !! See universe_inter for details.
   !!
   subroutine findCell(self, localID, cellIdx, r, u)
-    class(cellUniverse), intent(inout)      :: self
-    integer(shortInt), intent(out)          :: localID
-    integer(shortInt), intent(out)          :: cellIdx
-    real(defReal), dimension(3), intent(in) :: r
-    real(defReal), dimension(3), intent(in) :: u
+    class(cellUniverse), intent(inout)         :: self
+    integer(shortInt), intent(out)             :: localID
+    integer(shortInt), intent(out)             :: cellIdx
+    real(defReal), dimension(3), intent(in)    :: r
+    real(defReal), dimension(3), intent(in)    :: u
+    integer(shortInt)                          :: idx
+
+    ! Reorder cells after maximum number of samples
+    if (self % doUpdate .and. sum(self % visits) >= 5000) then
+      
+      !$omp critical
+      self % doUpdate = .false.
+      do idx = 1, size(self % cells)
+        localID = maxloc(self % visits, 1)
+        if (self % visits(localID) == -1) exit
+        self % permute(idx) = localID
+        self % visits(localID) = -1
+      end do      
+      !$omp end critical
+    
+    end if
 
     ! Search all cells
-    do localID = 1, size(self % cells)
+    do idx = 1, size(self % cells)
+      localID = self % permute(idx)
       if (self % cells(localID) % ptr % inside(r, u)) then
         cellIdx = self % cells(localID) % idx
+        if (self % doUpdate) then
+          !$omp atomic
+          self % visits(idx) = self % visits(idx) + 1
+        end if
         return
 
       end if
     end do
+    
+    ! Previous code for a naive search without reordering
+    !do localID = 1, size(self % cells)
+    !  if (self % cells(localID) % ptr % inside(r, u)) then
+    !    cellIdx = self % cells(localID) % idx
+    !    return
+    !
+    !  end if
+    !end do
 
     ! If not found return undefined cell
     ! Already set to localID (== size(self % cells) + 1) by the do loop
