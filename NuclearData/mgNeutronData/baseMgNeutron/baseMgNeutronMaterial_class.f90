@@ -32,8 +32,16 @@ module baseMgNeutronMaterial_class
   integer(shortInt), parameter, public :: TOTAL_XS      = 1
   integer(shortInt), parameter, public :: IESCATTER_XS  = 2
   integer(shortInt), parameter, public :: CAPTURE_XS    = 3
-  integer(shortInt), parameter, public :: FISSION_XS    = 4
-  integer(shortInt), parameter, public :: NU_FISSION    = 5
+
+  integer(shortInt), parameter, public :: TOTAL_XS_GRAD      = 4
+  integer(shortInt), parameter, public :: IESCATTER_XS_GRAD  = 5
+  integer(shortInt), parameter, public :: CAPTURE_XS_GRAD    = 6
+  
+  integer(shortInt), parameter, public :: FISSION_XS    = 7
+  integer(shortInt), parameter, public :: NU_FISSION    = 8
+  
+  integer(shortInt), parameter, public :: FISSION_XS_GRAD    = 9
+  integer(shortInt), parameter, public :: NU_FISSION_GRAD    = 10
 
   !!
   !! Basic type of MG material data
@@ -70,7 +78,9 @@ module baseMgNeutronMaterial_class
   type, public, extends(mgNeutronMaterial) :: baseMgNeutronMaterial
     real(defReal),dimension(:,:), allocatable :: data
     class(multiScatterMG), allocatable        :: scatter
+    class(multiScatterMG), allocatable        :: scatterGrad
     type(fissionMG), allocatable              :: fission
+    type(fissionMG), allocatable              :: fissionGrad
     integer(shortInt)                         :: nG
 
   contains
@@ -78,10 +88,14 @@ module baseMgNeutronMaterial_class
     procedure :: kill
     procedure :: getMacroXSs_byG
     procedure :: getTotalXS
+    procedure :: getTotalXSgrad
     procedure :: getNuFissionXS
+    procedure :: getNuFissionXSgrad
     procedure :: getFissionXS
+    procedure :: getFissionXSgrad
     procedure :: getChi
     procedure :: getScatterXS
+    procedure :: getScatterXSgrad
 
     ! Local procedures
     procedure :: init
@@ -107,7 +121,9 @@ contains
     ! Kill local content
     if(allocated(self % data))    deallocate(self % data)
     if(allocated(self % scatter)) deallocate(self % scatter)
-    if(allocated(self % fission)) deallocate(self % fission)
+    if(allocated(self % scatterGrad)) deallocate(self % scatterGrad)
+    if(allocated(self % fission)) deallocate(self % fission) 
+    if(allocated(self % fissionGrad)) deallocate(self % fissionGrad)
 
   end subroutine kill
 
@@ -146,6 +162,40 @@ contains
   end subroutine getMacroXSs_byG
 
   !!
+  !! Load Macroscopic XS temperature gradients into the provided package for a given group index G
+  !!
+  !! See mgNeutronMaterial documentation for more details
+  !!
+  subroutine getMacroGrads_byG(self, xss, G, rand)
+    class(baseMgNeutronMaterial), intent(in) :: self
+    type(neutronMacroXSs), intent(out)       :: xss
+    integer(shortInt), intent(in)            :: G
+    class(RNG), intent(inout)                :: rand
+    character(100), parameter :: Here = ' getMacroGrads (baseMgNeutronMaterial_class.f90)'
+
+    ! Verify bounds
+    if(G < 1 .or. self % nGroups() < G) then
+      call fatalError(Here,'Invalid group number: '//numToChar(G)// &
+                           ' Data has only: ' // numToChar(self % nGroups()))
+    end if
+
+    ! Get XSs
+    xss % total            = self % data(TOTAL_XS_GRAD, G)
+    xss % elasticScatter   = ZERO
+    xss % inelasticScatter = self % data(IESCATTER_XS_GRAD, G)
+    xss % capture          = self % data(CAPTURE_XS_GRAD, G)
+
+    if(self % isFissile()) then
+      xss % fission        = self % data(FISSION_XS_GRAD, G)
+      xss % nuFission      = self % data(NU_FISSION_GRAD, G)
+    else
+      xss % fission        = ZERO
+      xss % nuFission      = ZERO
+    end if
+
+  end subroutine getMacroGrads_byG
+
+  !!
   !! Return Total XSs for energy group G
   !!
   !! See mgNeutronMaterial documentationfor details
@@ -167,6 +217,30 @@ contains
     xs = self % data(TOTAL_XS, G)
 
   end function getTotalXS
+
+
+  !!
+  !! Return Total XS temperature gradient for energy group G
+  !!
+  !! See mgNeutronMaterial documentationfor details
+  !!
+  function getTotalXSgrad(self, G, rand) result(xs)
+    class(baseMgNeutronMaterial), intent(in) :: self
+    integer(shortInt), intent(in)            :: G
+    class(RNG), intent(inout)                :: rand
+    real(defReal)                            :: xs
+    character(100), parameter :: Here = ' getTotalXSgrad (baseMgNeutronMaterial_class.f90)'
+
+    ! Verify bounds
+    if (G < 1 .or. self % nGroups() < G) then
+      call fatalError(Here,'Invalid group number: '//numToChar(G)// &
+                           ' Data has only: ' // numToChar(self % nGroups()))
+      xs = ZERO ! Avoid warning
+    end if
+
+    xs = self % data(TOTAL_XS_GRAD, G)
+
+  end function getTotalXSgrad
 
   !!
   !! Return NuFission XS for energy group G
@@ -195,6 +269,33 @@ contains
   end function getNuFissionXS
 
   !!
+  !! Return NuFission XS temperature gradient for energy group G
+  !!
+  !! See mgNeutronMaterial documentation for details
+  !!
+  function getNuFissionXSgrad(self, G, rand) result(xs)
+    class(baseMgNeutronMaterial), intent(in) :: self
+    integer(shortInt), intent(in)            :: G
+    class(RNG), intent(inout)                :: rand
+    real(defReal)                            :: xs
+    character(100), parameter :: Here = ' getNuFissionXSgrad (baseMgNeutronMaterial_class.f90)'
+
+    ! Verify bounds
+    if (self % isFissile()) then
+      if(G < 1 .or. self % nGroups() < G) then
+        call fatalError(Here,'Invalid group number: '//numToChar(G)// &
+                             ' Data has only: ' // numToChar(self % nGroups()))
+        xs = ZERO ! Avoid warning
+      end if
+      xs = self % data(NU_FISSION_GRAD, G)
+    else
+      xs = ZERO
+    end if
+
+
+  end function getNuFissionXSgrad
+
+  !!
   !! Return Fission XS for energy group G
   !!
   !! See mgNeutronMaterial documentationfor details
@@ -219,6 +320,32 @@ contains
     end if
 
   end function getFissionXS
+
+  !!
+  !! Return Fission XS temperature gradient for energy group G
+  !!
+  !! See mgNeutronMaterial documentation for details
+  !!
+  function getFissionXSgrad(self, G, rand) result(xs)
+    class(baseMgNeutronMaterial), intent(in) :: self
+    integer(shortInt), intent(in)            :: G
+    class(RNG), intent(inout)                :: rand
+    real(defReal)                            :: xs
+    character(100), parameter :: Here = ' getFissionXS (baseMgNeutronMaterial_class.f90)'
+
+    ! Verify bounds
+    if (self % isFissile()) then
+      if(G < 1 .or. self % nGroups() < G) then
+        call fatalError(Here,'Invalid group number: '//numToChar(G)// &
+                             ' Data has only: ' // numToChar(self % nGroups()))
+        xs = ZERO ! Avoid warning
+      end if
+      xs = self % data(FISSION_XS_GRAD, G)
+    else
+      xs = ZERO
+    end if
+
+  end function getFissionXSgrad
 
   !!
   !! Return chi for energy group G
@@ -272,6 +399,30 @@ contains
 
 
   !!
+  !! Return scatter XS temperature gradient for incoming energy group Gin and outgoing group Gout
+  !!
+  !! See mgNeutronMaterial documentationfor details
+  !!
+  function getScatterXSgrad(self, Gin, Gout, rand) result(xs)
+    class(baseMgNeutronMaterial), intent(in) :: self
+    integer(shortInt), intent(in)            :: Gin
+    integer(shortInt), intent(in)            :: Gout
+    class(RNG), intent(inout)                :: rand
+    real(defReal)                            :: xs
+    character(100), parameter :: Here = ' getScatterXSgrad (baseMgNeutronMaterial_class.f90)'
+
+    ! Verify bounds
+    if(Gin < 1 .or. self % nGroups() < Gin .or. Gout < 1 .or. self % nGroups() < Gout) then
+      call fatalError(Here,'Invalid group numbers: '//numToChar(Gin)//' and '//numToChar(Gout) &
+                           //' Data has only: ' // numToChar(self % nGroups()))
+      xs = ZERO ! Avoid warning
+    end if
+    xs = self % scatterGrad % P0(Gout,Gin)
+
+  end function getScatterXSgrad
+  
+
+  !!
   !! Initialise Base MG Neutron Material fromdictionary
   !!
   !! Args:
@@ -299,12 +450,11 @@ contains
     type(dictDeck)                              :: deck
     character(100), parameter :: Here = 'init (baseMgNeutronMaterial_class.f90)'
 
-
     ! Read number of groups
     call dict % get(nG, 'numberOfGroups')
     if(nG < 1) call fatalError(Here,'Number of groups is invalid' // numToChar(nG))
     self % nG = nG
-
+    
     ! Set fissile flag
     call self % set(fissile = dict % isPresent('fission'))
 
@@ -316,9 +466,11 @@ contains
     select case(scatterKey)
       case ('P0')
         allocate( multiScatterMG :: self % scatter)
+        allocate( multiScatterMG :: self % scatterGrad)
 
       case ('P1')
         allocate( multiScatterP1MG :: self % scatter)
+        allocate( multiScatterP1MG :: self % scatterGrad)
 
       case default
         call fatalError(Here,'scatterKey: '//trim(scatterKey)//'is wrong. Must be P0 or P1')
@@ -326,17 +478,20 @@ contains
     end select
 
     ! Initialise
-    call self % scatter % init(deck, macroAllScatter)
-
+    call self % scatter % init(deck, macroAllScatter, .false.)
+    call self % scatterGrad % init(deck, macroAllScatter, .true.)
+    
     ! Deal with fission
     if(self % isFissile()) allocate(self % fission)
-    if(self % isFissile()) call self % fission % init(deck, macroFission)
+    if(self % isFissile()) allocate(self % fissionGrad)
+    if(self % isFissile()) call self % fission % init(deck, macroFission, .false.)
+    !if(self % isFissile()) call self % fissionGrad % init(deck, macroFission, .true.)
 
     ! Allocate space for data
     if(self % isFissile()) then
-      N = 5
+      N = 10
     else
-      N = 3
+      N = 6
     end if
 
     allocate(self % data(N, nG))
@@ -382,6 +537,50 @@ contains
         self % data(TOTAL_XS, i) = self % data(TOTAL_XS, i) + self % data(FISSION_XS, i)
       end if
     end do
+
+    ! Load XS temperature gradients
+
+    call dict % get(temp, 'captureGrad')
+    if(size(temp) /= nG) then
+      call fatalError(Here,'Capture XSs have wong size. Must be: ' &
+                          // numToChar(nG)//' is '//numToChar(size(temp)))
+    end if
+    self % data(CAPTURE_XS_GRAD,:) = temp
+
+    ! Extract values of scattering XS temperature gradient
+    if(size(self % scatter % scatterXSs) /= nG) then
+      call fatalError(Here, 'Somthing went wrong. Inconsistent # of groups in material and reaction&
+                            &. Clearly programming error.')
+    end if
+    self % data(IESCATTER_XS_GRAD,:) = self % scatter % scatterXSs
+
+    ! Load Fission-data temperature gradient
+    if( self % isFissile()) then
+      ! Load Fission
+      call dict % get(temp, 'fissionGrad')
+      if(size(temp) /= nG) then
+        call fatalError(Here,'Fission XSs have wong size. Must be: ' &
+                            // numToChar(nG)//' is '//numToChar(size(temp)))
+      end if
+      self % data(FISSION_XS_GRAD,:) = temp
+
+      ! Calculate nuFission temperature gradient
+      call dict % get(temp, 'nu')
+      if(size(temp) /= nG) then
+        call fatalError(Here,'Nu vector has wong size. Must be: ' &
+                            // numToChar(nG)//' is '//numToChar(size(temp)))
+      end if
+      self % data(NU_FISSION_GRAD,:) = temp * self % data(FISSION_XS_GRAD,:)
+    end if
+
+    ! Calculate total XS temperature gradient
+    do i =1,nG
+      self % data(TOTAL_XS_GRAD, i) = self % data(IESCATTER_XS_GRAD, i) + self % data(CAPTURE_XS_GRAD, i)
+      if(self % isFissile()) then
+        self % data(TOTAL_XS_GRAD, i) = self % data(TOTAL_XS_GRAD, i) + self % data(FISSION_XS_GRAD, i)
+      end if
+    end do
+
   end subroutine init
 
   !!

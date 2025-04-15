@@ -31,11 +31,12 @@ module reactionHandle_inter
     !!   May return fatalError if type of dataDeck is not supported or
     !!   if build fails for any reason
     !!
-    subroutine init(self, data, MT)
-      import :: reactionHandle, dataDeck, shortInt
+    subroutine init(self, data, MT, grad)
+      import :: reactionHandle, dataDeck, shortInt, defBool
       class(reactionHandle), intent(inout) :: self
       class(dataDeck), intent(inout)       :: data
       integer(shortInt), intent(in)        :: MT
+      logical(defBool), intent(in)         :: grad
     end subroutine init
 
     !!

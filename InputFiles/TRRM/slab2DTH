@@ -1,0 +1,139 @@
+type thermRandomRayPhysicsPackage; 
+
+pop      1750; 
+active   2600;  
+inactive 1000; 
+dead     20;  
+termination 220;  
+plot 0;
+cache 1;
+XSdata   mg; 
+dataType mg;
+outputFile slab2DTH;
+outputFormat asciiJSON;
+
+
+t_0 300;
+
+fissionMap {type multiMap;
+            maps (xax yax);
+            xax { type spaceMap; axis x; grid lin; min -50.0; max 50.0; N 50;}
+            yax { type spaceMap; axis y; grid lin; min -50.0; max 50.0; N 20;}
+}
+fluxMap {type multiMap;
+            maps (xax yax);
+            xax { type spaceMap; axis x; grid lin; min -50.0; max 50.0; N 50;}
+            yax { type spaceMap; axis y; grid lin; min -50.0; max 50.0; N 20;}
+}
+
+!field { 
+!     type tempScalarField;
+!     file /home/temperatures.txt;
+!}
+                   
+geometry {
+    type geometryStd;
+    boundary (0 0 0 0 1 1);
+    graph {type extended;}
+
+    surfaces
+    {
+      squareBound { id 1; type box; origin ( 0.0  0.0  0.0); halfwidth (50.0 50.0 0.5); }
+    }
+
+
+
+    cells
+    {
+    }
+
+    universes
+    {
+
+      pin1 { id 2; type pinUniverse; radii (0.0); fills (fuel);}
+
+      root
+      {
+          id 1;
+          type rootUniverse;
+          border 1;
+          fill u<3>;
+      }
+
+    fuellattice{
+      id 3;
+      type latUniverse;
+      pitch (2.00 5.0 1.0);
+      shape (50 20 1);
+      padMat void;
+      map (
+
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+
+          );
+    }
+    }
+}
+
+viz {
+  myVTK {
+    type vtk;
+    what uniqueID;
+    corner (-50.0 -50.0 -0.5);
+    width (100.0 100.0 1.0);
+    vox (2000 2000 1);
+  }
+  bmp1 {
+    type bmp;
+    output myGeometry;
+    what uniqueID; ! Could also be material
+    centre (0.0 0.0 0.0);
+    !width (25.0 25.0); ! This is optional - SCONE should do the whole geometry by default, but you can zoom in by using this
+    axis z; ! This is the perpendicular axis, so you'll get an xy plot
+    res (1500 1500); !Resolution in x and y. Can be tuned to taste.
+  }
+}
+
+
+
+nuclearData {
+  handles { 
+    mg { type baseMgNeutronDatabase; PN P0;} 
+  } 
+  materials { 
+		
+    fuel {
+       temp 300; 
+       xsFile ../XS_C5G7/UO2;
+	composition { }
+    }
+
+    water {
+	temp 300;
+        xsFile ../XS_C5G7/moder;
+        composition { }
+    }
+
+
+}
+}
+

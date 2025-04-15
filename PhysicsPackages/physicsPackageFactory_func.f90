@@ -1,4 +1,4 @@
-!!
+!
 !! Module to generate physicsPackages
 !!
 module physicsPackageFactory_func
@@ -15,7 +15,8 @@ module physicsPackageFactory_func
   use fixedSourcePhysicsPackage_class,     only : fixedSourcePhysicsPackage
   use vizPhysicsPackage_class,             only : vizPhysicsPackage
   use rayVolPhysicsPackage_class,          only : rayVolPhysicsPackage
-  use randomRayPhysicsPackage_class,       only : randomRayPhysicsPackage
+!  use randomRayPhysicsPackage_class,       only : randomRayPhysicsPackage
+  use thermRandomRayPhysicsPackage_class,  only : thermRandomRayPhysicsPackage
 !  use dynamPhysicsPackage_class, only : dynamPhysicsPackage
 
   implicit none
@@ -28,9 +29,10 @@ module physicsPackageFactory_func
   character(nameLen),dimension(*),parameter :: AVAILABLE_physicsPackages = [ 'eigenPhysicsPackage          ',&
                                                                              'fixedSourcePhysicsPackage    ',&
                                                                              'vizPhysicsPackage            ',&
-                                                                             'randomRayPhysicsPackage      ',&
+                                                                             'thermRandomRayPhysicsPackage ',&
                                                                              'rayVolPhysicsPackage         ']
 
+! 'randomRayPhysicsPackage      ',&
   !!
   !! Public interface
   !!
@@ -62,8 +64,11 @@ contains
       case('vizPhysicsPackage')
         allocate( vizPhysicsPackage :: new)
 
-      case('randomRayPhysicsPackage')
-        allocate( randomRayPhysicsPackage :: new)
+      case('thermRandomRayPhysicsPackage')
+        allocate( thermRandomRayPhysicsPackage :: new)
+       
+ !     case('randomRayPhysicsPackage')
+ !      allocate( randomRayPhysicsPackage :: new)
 
       case('rayVolPhysicsPackage')
         allocate( rayVolPhysicsPackage :: new)

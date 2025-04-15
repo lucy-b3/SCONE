@@ -1,0 +1,31 @@
+// This XSS are from the C5G7 Benchamrk Problem 
+// Source: OECD-NEA 
+//        ‘Benchmark specification for deterministic 2D/3D MOX
+//         fuel assembly transport calculations without spatial
+//         homogenisation (C5G7 MOX)’
+//
+
+numberOfGroups 7; 
+
+capture (0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00);
+ 
+scatteringMultiplicity ( 
+1.0 1.0 1.0 1.0 1.0 1.0 1.0 
+1.0 1.0 1.0 1.0 1.0 1.0 1.0 
+1.0 1.0 1.0 1.0 1.0 1.0 1.0 
+1.0 1.0 1.0 1.0 1.0 1.0 1.0 
+1.0 1.0 1.0 1.0 1.0 1.0 1.0 
+1.0 1.0 1.0 1.0 1.0 1.0 1.0 
+1.0 1.0 1.0 1.0 1.0 1.0 1.0 
+); 
+
+P0 ( 
+0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00
+0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00
+0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00
+0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00
+0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00
+0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00
+0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00    0.0E+00
+); 
+

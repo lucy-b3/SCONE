@@ -72,7 +72,7 @@ contains
     end if
 
   end function map
-
+  
   !!
   !! Return string that describes variable used to divide event space
   !!

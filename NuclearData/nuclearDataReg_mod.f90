@@ -168,7 +168,7 @@ contains
 
     ! Get names of databases
     call handles % keys(dataNames, 'dict')
-
+    
     ! Allocate space
     allocate(databases(size(dataNames)))
 
@@ -227,9 +227,11 @@ contains
     call databases(idx) % def % get(type, 'type')
     call new_nuclearDatabase(databases(idx) % nd, type)
 
+    print *, 'x'
     ! Initialise
     ptr => databases(idx) % nd
     call databases(idx) % nd % init( databases(idx) % def, ptr, silent = silent_loc)
+    print *, 'z'
 
   end subroutine make
 
@@ -285,7 +287,7 @@ contains
     ! Process Optional Arguments
     silent_loc = .false.
     if (present(silent)) silent_loc = silent
-
+    
     ! Get index
     idx = databaseNameMap % getOrDefault(name, 0)
     if(idx == 0 ) then
@@ -296,11 +298,12 @@ contains
 
     ! Make if it is not already made
     if(.not.allocated(databases(idx) % nd)) call make(name, silent = silent_loc)
-
+    
+    print *, 'y'
     ! Activate
     call databases(idx) % nd % activate(activeMat, silent_loc)
     ptr => databases(idx) % nd
-
+    
     ! Register as active
     ! This is a bit of a messy code. Could be better. Blame me. - MAK
     select case(type)

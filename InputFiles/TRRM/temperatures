@@ -1,0 +1,4 @@
+
+map {type materialMap; materials (UO21 UO22 mox431 mox432 mox71 mox72 mox871 mox872 water1 water2 GT FC);} 
+   
+values (900 800 900 800 900 800 900 800 550 480 600 600 ) ;

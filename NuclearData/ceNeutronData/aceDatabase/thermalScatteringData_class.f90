@@ -89,12 +89,12 @@ contains
 
     ! initalise inelastic scattering
     allocate(thInelasticScatter :: self % inelasticOut)
-    call self % inelasticOut % init(data, N_N_ThermINEL)
+    call self % inelasticOut % init(data, N_N_ThermINEL, .false.)
 
     ! initialise elastic scattering if data is present
     if (self % hasElastic) then
       allocate(thElasticScatter :: self % elasticOut)
-      call self % elasticOut % init(data, N_N_ThermEL)
+      call self % elasticOut % init(data, N_N_ThermEL, .false.)
     end if
 
   end subroutine init

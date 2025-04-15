@@ -10,6 +10,7 @@ module fieldFactory_func
   ! Fields
   use field_inter,              only : field
   use uniformScalarField_class, only : uniformScalarField
+  use tempScalarField_class,    only : tempScalarField
   use uniformVectorField_class, only : uniformVectorField
   use uniFissSitesField_class,  only : uniFissSitesField
   use weightWindowsField_class, only : weightWindowsField
@@ -23,6 +24,7 @@ module fieldFactory_func
 
   !! Parameters
   character(nameLen), dimension(*), parameter :: AVAILABLE_FIELDS = ['uniformScalarField',&
+                                                                     'tempScalarField   ',&
                                                                      'uniformVectorField',&
                                                                      'uniFissSitesField ',&
                                                                      'weightWindowsField']
@@ -57,6 +59,9 @@ contains
     select case (type)
       case ('uniformScalarField')
         allocate(uniformScalarField :: kentta)
+
+      case ('tempScalarField')
+        allocate(tempScalarField :: kentta)
 
       case ('uniformVectorField')
         allocate(uniformVectorField :: kentta)

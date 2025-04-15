@@ -43,6 +43,7 @@ module multiScatterP1MG_class
     procedure :: kill
     procedure :: sampleOut
     procedure :: buildFromDict
+    procedure :: buildFromDictGrad
   end type multiScatterP1MG
 
 contains
@@ -126,6 +127,51 @@ contains
     end where
 
   end subroutine buildFromDict
+
+
+  !!
+  !! Builds multiScatterP1MG from SCONE dictionary
+  !!
+  !! Extends multiScatterMG procedure!
+  !! See its documentation for extra details.
+  !!
+  !! Errors:
+  !!   FatalError if size of P1 scattering matrix does not match numer of group
+  !!
+  subroutine buildFromDictGrad(self, dict)
+    class(multiScatterP1MG), intent(inout)  :: self
+    class(dictionary), intent(in)           :: dict
+    real(defReal),dimension(:),allocatable  :: temp
+    integer(shortInt)                       :: nG
+    character(100),parameter :: Here = 'buildFromDict (multiScatterMG_class.f90)'
+
+    ! Call superclass procedure
+    call buildFromDict_super(self, dict)
+
+    ! Re-read number of groups
+    call dict % get(nG,'numberOfGroups')
+
+    ! Read P1 scattering matrix
+    call dict % get(temp, 'P1Grad')
+    if( size(temp) /= nG*nG) then
+      call fatalError(Here,'Invalid size of P1. Expected: '//numToChar(nG**2)//&
+                           ' got: '//numToChar(size(temp)))
+    end if
+    self % P1 = reshape(temp,[nG, nG])
+
+    ! Normalise P1 coefficients
+    ! Also Multiply by the factor 3.0 according to the definition of Coefficients Legendre Series
+    ! f(x) = a_0 * P0(x) + 3 * a_1 * P1(x) + 5/2 * a_2 * P2(x) + ...
+    where (self % P0 /= ZERO)
+      self % P1 = self % P1 / self % P0 * 3.0_defReal
+
+    elsewhere
+      self % P1 = ZERO
+
+    end where
+
+  end subroutine buildFromDictGrad
+
 
   !!
   !! Cast reactionHandle pointer to multiScatterP1MG pointer

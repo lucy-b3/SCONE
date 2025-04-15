@@ -1,0 +1,77 @@
+Determining if the Fortran sgemm exists failed with the following output:
+Change Dir: /home/lb831/SCONE/Build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_24a46/fast && /usr/bin/make -f CMakeFiles/cmTC_24a46.dir/build.make CMakeFiles/cmTC_24a46.dir/build
+make[1]: Entering directory '/home/lb831/SCONE/Build/CMakeFiles/CMakeTmp'
+Building Fortran object CMakeFiles/cmTC_24a46.dir/testFortranCompiler.f.o
+/usr/bin/gfortran   -std=f2008 -O3 -g -pedantic -Wall -Wno-unused-dummy-argument -cpp -fopenmp    -c /home/lb831/SCONE/Build/CMakeFiles/CMakeTmp/testFortranCompiler.f -o CMakeFiles/cmTC_24a46.dir/testFortranCompiler.f.o
+Linking Fortran executable cmTC_24a46
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_24a46.dir/link.txt --verbose=1
+/usr/bin/gfortran    -std=f2008 -O3 -g -pedantic -Wall -Wno-unused-dummy-argument -cpp -fopenmp  CMakeFiles/cmTC_24a46.dir/testFortranCompiler.f.o  -o cmTC_24a46 
+/usr/bin/ld: CMakeFiles/cmTC_24a46.dir/testFortranCompiler.f.o: in function `main':
+/home/lb831/SCONE/Build/CMakeFiles/CMakeTmp/testFortranCompiler.f:4: undefined reference to `sgemm_'
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_24a46.dir/build.make:87: cmTC_24a46] Error 1
+make[1]: Leaving directory '/home/lb831/SCONE/Build/CMakeFiles/CMakeTmp'
+make: *** [Makefile:121: cmTC_24a46/fast] Error 2
+
+
+
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/lb831/SCONE/Build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_e2c52/fast && /usr/bin/make -f CMakeFiles/cmTC_e2c52.dir/build.make CMakeFiles/cmTC_e2c52.dir/build
+make[1]: Entering directory '/home/lb831/SCONE/Build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_e2c52.dir/src.c.o
+/usr/bin/cc   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_e2c52.dir/src.c.o   -c /home/lb831/SCONE/Build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_e2c52
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e2c52.dir/link.txt --verbose=1
+/usr/bin/cc  -DCMAKE_HAVE_LIBC_PTHREAD    CMakeFiles/cmTC_e2c52.dir/src.c.o  -o cmTC_e2c52 
+/usr/bin/ld: CMakeFiles/cmTC_e2c52.dir/src.c.o: in function `main':
+src.c:(.text+0x46): undefined reference to `pthread_create'
+/usr/bin/ld: src.c:(.text+0x52): undefined reference to `pthread_detach'
+/usr/bin/ld: src.c:(.text+0x63): undefined reference to `pthread_join'
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_e2c52.dir/build.make:87: cmTC_e2c52] Error 1
+make[1]: Leaving directory '/home/lb831/SCONE/Build/CMakeFiles/CMakeTmp'
+make: *** [Makefile:121: cmTC_e2c52/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/lb831/SCONE/Build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_f624f/fast && /usr/bin/make -f CMakeFiles/cmTC_f624f.dir/build.make CMakeFiles/cmTC_f624f.dir/build
+make[1]: Entering directory '/home/lb831/SCONE/Build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_f624f.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_f624f.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.16/Modules/CheckFunctionExists.c
+Linking C executable cmTC_f624f
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f624f.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_f624f.dir/CheckFunctionExists.c.o  -o cmTC_f624f  -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_f624f.dir/build.make:87: cmTC_f624f] Error 1
+make[1]: Leaving directory '/home/lb831/SCONE/Build/CMakeFiles/CMakeTmp'
+make: *** [Makefile:121: cmTC_f624f/fast] Error 2
+
+
+

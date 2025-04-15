@@ -11,15 +11,30 @@ module arraysRR_class
   use baseMgNeutronDatabase_class,    only : baseMgNeutronDatabase
   use dataRR_class,                   only : dataRR
 
+  use rng_class,                      only : RNG
+
   ! Geometry
   use coord_class,                    only : coordList
   use geometryStd_class,              only : geometryStd
 
+  use geometry_inter,                 only : geometry
+  use geometryReg_mod,                only : gr_geomPtr  => geomPtr, gr_geomIdx  => geomIdx, &
+                                             gr_fieldIdx => fieldIdx, gr_fieldPtr => fieldPtr
+  use geometryFactory_func,           only : new_geometry
+
   ! Visualisation
   use tallyMap_inter,                 only : tallyMap
   use visualiser_class,               only : visualiser
-  use particle_class,                 only : particleState
-  
+  use particle_class,                 only : particleState, particle
+ 
+  use scalarField_inter,              only : scalarField
+  use tempScalarField_class,          only : tempScalarField, tempScalarField_TptrCast
+  use field_inter,                    only : field
+  use fieldFactory_func,              only : new_field
+
+  ! Random ray - or a standard particle
+  use particle_class,                 only : ray => particle
+
   ! For locks
   use omp_lib
 
@@ -75,6 +90,11 @@ module arraysRR_class
     real(defFlt)                          :: rho         = 0.0_defFlt
     integer(shortInt)                     :: ani         = 0
     integer(shortInt)                     :: simulationType = 0
+    class(tempScalarField),pointer        :: tempField      => null()
+
+    type(RNG)                             :: rand
+
+    integer(shortInt)                     :: nMat
     
     ! Flux arrays
     real(defFlt), dimension(:), allocatable    :: scalarFlux
@@ -94,6 +114,10 @@ module arraysRR_class
     logical(defBool), dimension(:), allocatable  :: cellFound
     real(defReal), dimension(:,:), allocatable   :: cellPos
     
+    ! Temperature field
+    !class(tempScalarField), allocatable            :: tempField
+    real(defReal), dimension(:), allocatable     :: t_0
+
     ! OMP locks
     integer(kind=omp_lock_kind), dimension(:), allocatable :: locks
 
@@ -108,6 +132,7 @@ module arraysRR_class
     procedure :: getGeomPointer
     procedure :: getSourcePointer
     procedure :: getFluxPointer
+    procedure :: getTemp
     procedure :: getSource
     procedure :: getPrevFlux
     procedure :: getFluxScore
@@ -118,6 +143,7 @@ module arraysRR_class
     procedure :: getCellHitRate
     procedure :: getSimulationType
     procedure :: found
+    procedure :: getT0
 
     ! Change individual elements of the type
     ! Predominantly for use in the transport sweep
@@ -171,7 +197,7 @@ contains
   !! The object is fed sizes and requirements by the physics package.
   !! This will allocate the necessary arrays
   !!
-  subroutine init(self, db, geom, lengthPerIt, rho, lin, ani, doKinetics, loud, dictFS)
+  subroutine init(self, db, geom, lengthPerIt, rho, lin, ani, doKinetics, loud,dict, dictFS)
     class(arraysRR), intent(inout)                      :: self
     class(baseMgNeutronDatabase), pointer, intent(in)   :: db
     class(geometryStd), pointer, intent(in)             :: geom
@@ -181,8 +207,10 @@ contains
     integer(shortInt), intent(in)                       :: ani
     logical(defBool), intent(in)                        :: doKinetics
     logical(defBool), intent(in)                        :: loud
+    class(dictionary), intent(inout)                    :: dict
     class(dictionary), pointer, intent(inout), optional :: dictFS
     integer(shortInt)                                   :: i
+    class(field), pointer                               :: field
     character(100), parameter :: Here = 'init (arraysRR_class.f90)'
 
     call self % XSData % init(db, doKinetics, ani, loud)
@@ -216,6 +244,11 @@ contains
     allocate(self % cellHit(self % nCells))
     allocate(self % cellFound(self % nCells))
     allocate(self % cellPos(3, self % nCells))
+    !allocate(self % t_0(nMat))
+    !allocate(self % t_0(5))
+
+    self % nMat = self % XSData %  getNMat()
+    allocate(self % t_0(self % nMat))
     
     self % scalarFlux    = 0.0_defFlt
     self % prevFlux      = 1.0_defFlt
@@ -227,6 +260,7 @@ contains
     self % cellHit       = 0
     self % cellFound     = .false.
     self % cellPos       = -INFINITY
+    self % t_0           = 300
 
     ! Initialise the fixed source if present
     if (present(dictFS)) then
@@ -242,6 +276,13 @@ contains
     if (ani > 0) then
 
     end if
+
+    ! Initialise the temperature field from temperature results file
+    !call self % tempField  % init(dict)
+
+    call new_field(dict, 'tempField')
+    field => gr_fieldPtr(gr_fieldIdx('tempField'))
+    self % tempField => tempScalarField_TptrCast(field)
     
     ! Initialise OMP locks
     allocate(self % locks(self % nCells))
@@ -378,7 +419,33 @@ contains
     sourceVec => self % source(baseIdx1:baseIdx2)
 
   end subroutine getSourcePointer
-  
+
+  !!
+  !! Return temperature value based on the ray position
+  !!
+  function getTempState(self, r) result(temp)
+    class(arraysRR), intent(in)    :: self
+    class(particleState), intent(inout)    :: r
+    real(defReal)                  :: temp
+
+    temp = self % tempField % at(r)
+
+  end function getTempState
+
+  !!
+  !! Return temperature value based on the ray position
+  !!
+  function getTempParticle(self, r) result(temp)
+    class(arraysRR), intent(in)    :: self
+    class(particle), intent(inout)    :: r
+    real(defReal)                  :: temp
+
+    temp = self % tempField % at(r)
+
+  end function getTempParticle
+
+
+
   !!
   !! Return source value given cell and group
   !!
@@ -401,7 +468,7 @@ contains
     integer(shortInt), intent(in) :: g
     real(defFlt)                  :: flux
 
-    flux = self % prevFlux(self % nG * (cIdx - 1) + g)
+    flux = self % prevFlux(self % nG * (cIdx - 1) + g)  
 
   end function getPrevFlux
   
@@ -444,6 +511,18 @@ contains
     x = self % cellPos(1:3, cIdx)
 
   end function getCellPos
+  
+  !!
+  !! Return T_0 for a given material index
+  !!
+  function getT0(self, matIdx) result(t)
+    class(arraysRR), intent(in)    :: self
+    integer(shortInt), intent(in)  :: matIdx
+    real(defReal)                  :: t
+
+    t = self % t_0(matIdx)
+
+  end function
   
   !!
   !! Return the simulation type
@@ -616,13 +695,14 @@ contains
   !!
   subroutine normaliseFluxAndVolumeFlatIso(self, it)
     class(arraysRR), intent(inout)            :: self
+    type(particleState), save                 :: s
     integer(shortInt), intent(in)             :: it
-    real(defReal)                             :: norm, normVol
-    real(defReal), save                       :: vol
+    real(defReal)                             :: norm, normVol, temp, t_0
+    real(defReal), save                       :: vol, total
     real(defFlt), save                        :: sigGG, D, norm_V
-    real(defFlt), dimension(:), pointer, save :: total
     integer(shortInt), save                   :: g, matIdx, idx
     integer(shortInt)                         :: cIdx
+
     !$omp threadprivate(total, vol, norm_V, idx, g, matIdx, sigGG, D)
 
     norm = ONE / self % lengthPerIt
@@ -630,8 +710,14 @@ contains
 
     !$omp parallel do 
     do cIdx = 1, self % nCells
+
+      ! Dummy particle state
+      s % r = self % cellPos(:,cIdx)
+      temp = self % tempField % at(s)
+
       matIdx = self % geom % geom % graph % getMatFromUID(cIdx) 
-      
+      t_0 = self % getT0(matIdx)
+
       ! Update volume due to additional rays
       self % volume(cIdx) = self % volumeTracks(cIdx) * normVol
       vol = self % volume(cIdx)
@@ -646,28 +732,30 @@ contains
       end if
       norm_V = real(norm / vol, defFlt)
 
-      call self % XSData % getTotalPointer(matIdx, total)
+      !call self % XSData % getTotalPointer(matIdx, total)
 
       do g = 1, self % nG
 
         idx   = self % nG * (cIdx - 1) + g
         self % scalarFlux(idx) = self % scalarFlux(idx) * norm_V 
 
+        total = self % XSData % getTotalXS(matIdx, g, temp, t_0)
+        
         ! Apply the standard MoC post-sweep treatment and
         ! stabilisation for negative XSs
-        if (matIdx <= self % XSData % getNMat() .and. total(g) > 0) then
+        if (matIdx <= self % XSData % getNMat() .and. total > 0) then
           
-          self % scalarFlux(idx) = self % scalarFlux(idx) / total(g)
+          self % scalarFlux(idx) = self % scalarFlux(idx) / total
           
-          sigGG = self % XSData % getScatterXS(matIdx, g, g)
+          sigGG = self % XSData % getScatterXS(matIdx, g, g, temp, t_0)
 
           ! Presumes non-zero total XS
-          if ((sigGG < 0) .and. (total(g) > 0)) then
-            D = -self % rho * sigGG / total(g)
+          if ((sigGG < 0) .and. (total > 0)) then
+            D = -self % rho * sigGG / total
           else
             D = 0.0_defFlt
           end if
-          self % scalarFlux(idx) =  (self % scalarFlux(idx) + self % source(idx)/total(g) &
+          self % scalarFlux(idx) =  (self % scalarFlux(idx) + self % source(idx)/total &
                 + D * self % prevFlux(idx) ) / (1 + D)
         
         ! Alternatively, handle unidentified/void regions
@@ -746,8 +834,11 @@ contains
     class(arraysRR), target, intent(inout)   :: self
     integer(shortInt), intent(in)            :: cIdx
     real(defFlt), intent(in)                 :: ONE_KEFF
-    real(defFlt)                             :: scatter, fission
-    real(defFlt), dimension(:), pointer      :: nuFission, chi, scatterXS, fluxVec 
+    type(particleState), save                :: s
+    real(defFlt)                             :: scatter, fission, nuFission, scatterXS
+    real(defReal)                            :: temp, t_0
+    real(defFlt), dimension(:), pointer      :: fluxVec, chi
+    !real(defFlt), dimension(:), pointer     :: nuFission, chi, scatterXS, fluxVec 
     integer(shortInt)                        :: matIdx, g, gIn, baseIdx, idx, sIdx1, sIdx2
 
     ! Identify material
@@ -763,8 +854,16 @@ contains
       return
     end if
 
+    ! Dummy particle state
+    s % r = self % cellPos(:,cIdx)
+
+    temp = self % tempField % at(s)
+    t_0 = self % getT0(matIdx)
+
     ! Obtain XSs
-    call self % XSData % getProdPointers(matIdx, nuFission, scatterXS, chi)
+    !call self % XSData % getProdPointers(matIdx, temp, nuFission, scatterXS, chi)
+
+    call self % XSData % getChiPointer(matIdx, chi)
 
     baseIdx = self % nG * (cIdx - 1)
     fluxVec => self % prevFlux((baseIdx + 1):(baseIdx + self % nG))
@@ -773,7 +872,8 @@ contains
     fission = 0.0_defFlt
     !$omp simd reduction(+:fission)
     do gIn = 1, self % nG
-      fission = fission + fluxVec(gIn) * nuFission(gIn)
+      nuFission = self % XSData % getNuFissionXS(matIdx, g, temp, t_0)
+      fission = fission + fluxVec(gIn) * nuFission
     end do
     fission = fission * ONE_KEFF
 
@@ -781,20 +881,22 @@ contains
 
       sIdx1 = self % nG * (g - 1) + 1
       sIdx2 = self % nG * g
-      associate(scatterVec => scatterXS(sIdx1:sIdx2))
+      !associate(scatterVec => scatterXS(sIdx1:sIdx2))
 
         ! Calculate scattering source
         scatter = 0.0_defFlt
         !$omp simd reduction(+:scatter)
         do gIn = 1, self % nG
-          scatter = scatter + fluxVec(gIn) * scatterVec(gIn)
+          scatterXS = self % XSData % getScatterXS(matIdx, gIn, g, temp, t_0)
+          scatter = scatter + fluxVec(gIn) * scatterXS
         end do
 
-      end associate
+      !end associate
 
       ! Output index
       idx = baseIdx + g
 
+       
       self % source(idx) = chi(g) * fission + scatter
       if (allocated(self % fixedSource)) then
         self % source(idx) = self % source(idx) + self % fixedSource(idx)
@@ -872,30 +974,38 @@ contains
     class(arraysRR), target, intent(in)  :: self
     integer(shortInt), intent (in)       :: cIdx
     real(defReal), intent(out)           :: fissionRate, prevFissionRate
-    real(defReal)                        :: vol
+    type(particleState), save            :: s
+    real(defReal)                        :: vol, temp, nuSigmaF, t_0
     integer(shortInt)                    :: g, matIdx
-    real(defFlt), dimension(:), pointer  :: nuSigmaF, flux, prevFlux
+    real(defFlt), dimension(:), pointer  :: flux, prevFlux
 
     fissionRate     = ZERO
     prevFissionRate = ZERO
 
     ! Identify material
     matIdx = self % geom % geom % graph % getMatFromUID(cIdx) 
-      
+
+    ! Dummy particle state
+    s % r = self % cellPos(:,cIdx)
+
+    temp = self % tempField % at(s)
+    t_0 = self % getT0(matIdx)
+
     ! Check whether to continue in this cell
     if (matIdx > self % XSData % getNMat()) return
     if (.not. self % XSData % isFissile(matIdx)) return
     vol = self % volume(cIdx)
     if (vol < volume_tolerance) return
 
-    call self % XSData % getNuFissPointer(matIdx, nuSigmaF)
+    !call self % XSData % getNuFissPointer(matIdx, nuSigmaF)
     flux => self % scalarFlux((self % nG * (cIdx - 1) + 1):(self % nG * cIdx))
     prevFlux => self % prevFlux((self % nG * (cIdx - 1) + 1):(self % nG * cIdx))
 
     !$omp simd reduction(+: fissionRate, prevFissionRate)
     do g = 1, self % nG
-      fissionRate     = fissionRate     + real(flux(g) * nuSigmaF(g), defReal)
-      prevFissionRate = prevFissionRate + real(prevFlux(g) * nuSigmaF(g), defReal)
+      nuSigmaF = self % XSData % getNuFissionXS(matIdx, g, temp, t_0)
+      fissionRate     = fissionRate     + real(flux(g) * nuSigmaF, defReal)
+      prevFissionRate = prevFissionRate + real(prevFlux(g) * nuSigmaF, defReal)
     end do
 
     fissionRate     = fissionRate * vol
@@ -1051,7 +1161,7 @@ contains
     integer(shortInt)                          :: cIdx
     integer(shortInt),dimension(:),allocatable :: resArrayShape
     type(particleState), save                  :: s
-    real(defReal), save                        :: vol
+    real(defReal), save                        :: vol, temp, t_0
     real(defFlt), save                         :: sig
     integer(shortInt), save                    :: i, matIdx, g
     real(defReal), dimension(:), allocatable   :: res, resSD
@@ -1074,11 +1184,14 @@ contains
       s % r = self % cellPos(:,cIdx)
       i = map % map(s)
 
+      temp = self % tempField % at(s)
+
       if (i > 0) then
         matIdx = self % geom % geom % graph % getMatFromUID(cIdx) 
+        t_0 = self % getT0(matIdx)
         do g = 1, self % nG
           if (doFission) then
-            sig = self % XSData % getFissionXS(matIdx, g)
+            sig = self % XSData % getFissionXS(matIdx, g, temp, t_0)
           else
             sig = 1.0_defFlt
           end if

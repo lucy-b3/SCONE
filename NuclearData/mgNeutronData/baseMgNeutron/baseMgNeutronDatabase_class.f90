@@ -329,8 +329,9 @@ contains
     do i=1,nMat
       ! Get Path to the xsFile
       matDef => mm_getMatPtr(i)
+      
       call matDef % extraInfo % get(path,'xsFile')
-
+      
       ! Print status
       if(loud) then
         print '(A)', "Building material: " // trim(matDef % name) // " From: " // trim(path)
@@ -339,7 +340,6 @@ contains
       ! Load dictionary
       call fileToDict(tempDict, path)
       call self % mats(i) % init(tempDict, scatterKey)
-
     end do
 
     ! Load and verify number of groups
@@ -363,7 +363,7 @@ contains
     logical(defBool), optional, intent(in)      :: silent
     logical(defBool)                            :: loud
     integer(shortInt)                           :: idx
-
+    
     if(allocated(self % activeMats)) deallocate(self % activeMats)
     self % activeMats = activeMat
 

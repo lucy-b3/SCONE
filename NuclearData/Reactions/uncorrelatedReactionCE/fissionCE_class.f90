@@ -90,10 +90,11 @@ contains
   !! Errors:
   !!   fatalError if MT /= N_FISSION
   !!
-  subroutine init(self, data, MT)
+  subroutine init(self, data, MT, grad)
     class(fissioNCE), intent(inout) :: self
     class(dataDeck), intent(inout)  :: data
     integer(shortInt), intent(in)   :: MT
+    logical(defBool), intent(in)    :: grad
     character(100),parameter :: Here ='init (fissionCE_class.f90)'
 
     if( MT /= N_FISSION .and. MT /= N_f) then

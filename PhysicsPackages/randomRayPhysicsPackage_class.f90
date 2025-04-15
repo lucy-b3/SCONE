@@ -44,7 +44,7 @@ module randomRayPhysicsPackage_class
 
   ! Random ray - or a standard particle
   use particle_class,                 only : ray => particle
-
+  
   implicit none
   private
 
@@ -152,6 +152,8 @@ module randomRayPhysicsPackage_class
     class(tallyMap), allocatable :: fissionMap
     logical(defBool)   :: mapFlux     = .false.
     class(tallyMap), allocatable :: fluxMap
+
+    !class(scalarField), allocatable :: tempField
 
     ! Results space
     ! keffScore is public for integration testing

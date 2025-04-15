@@ -70,10 +70,11 @@ contains
   !! Errors:
   !!   fatalError if MT is not neutron elastic scattering
   !!
-  subroutine init(self, data, MT)
+  subroutine init(self, data, MT, grad)
     class(thElasticScatter), intent(inout) :: self
     class(dataDeck), intent(inout)         :: data
     integer(shortInt), intent(in)          :: MT
+    logical(defBool), intent(in)           :: grad
     character(100), parameter :: Here = 'init (elasticNeutronScatter_class.f90)'
 
     ! Select buld procedure approperiate for given dataDeck

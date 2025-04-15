@@ -682,7 +682,7 @@ contains
     self % mainData(CAPTURE_XS,:)   = ACE % ESZ_XS('absorptionXS')
 
     ! Get elastic kinematics
-    call self % elasticScatter % init(ACE, N_N_ELASTIC)
+    call self % elasticScatter % init(ACE, N_N_ELASTIC, .false.)
 
     ! Load Fission XS data
     ! Set 'bottom' variable to the start index of fission data
@@ -724,9 +724,9 @@ contains
       ! Build Fission reaction object
       ! Again select between MT=18 and 19 based on presence of FIS block
       if (ACE % hasFIS()) then
-        call self % fission % init(ACE, N_FISSION)
+        call self % fission % init(ACE, N_FISSION, .false.)
       else
-        call self % fission % init(ACE, N_f)
+        call self % fission % init(ACE, N_f, .false.)
       end if
 
       ! Calculate nuFission
@@ -768,7 +768,7 @@ contains
       self % MTdata(i) % xs       = ACE % xsMT(MT)
 
       allocate(neutronScatter :: self % MTdata(i) % kinematics)
-      call self % MTdata(i) % kinematics % init(ACE, MT)
+      call self % MTdata(i) % kinematics % init(ACE, MT, .false.)
     end do
 
     ! Load capture reactions
@@ -780,7 +780,7 @@ contains
       self % MTdata(i) % xs       = ACE % xsMT(MT)
 
       allocate(pureCapture :: self % MTdata(i) % kinematics)
-      call self % MTdata(i) % kinematics % init(ACE, MT)
+      call self % MTdata(i) % kinematics % init(ACE, MT, .false.)
     end do
 
     ! Calculate Inelastic scattering XS

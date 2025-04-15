@@ -53,10 +53,11 @@ contains
   !!
   !! Errors:
   !!   None
-  subroutine init(self, data, MT)
+  subroutine init(self, data, MT, grad)
     class(pureCapture), intent(inout) :: self
     class(dataDeck), intent(inout)       :: data
     integer(shortInt), intent(in)        :: MT
+    logical(defBool), intent(in)         :: grad
 
   end subroutine init
 

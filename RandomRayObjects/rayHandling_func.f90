@@ -18,7 +18,7 @@ module rayHandling_func
   use mathsRR_func,                   only : F1
 
   ! Random ray - or a standard particle
-  use particle_class,                 only : ray => particle
+  use particle_class,                 only : ray => particle, particleState
 
   implicit none
   private
@@ -176,15 +176,26 @@ contains
     real(defReal), intent(in)                             :: dead
     real(defReal), intent(in)                             :: termination
     class(arraysRR), pointer, intent(in)                  :: arrays
+    class(particleState), allocatable, save               :: s 
+    real(defReal)                                         :: temp, t_0
     class(dataRR), pointer                                :: XSData
     class(geometryStd), pointer                           :: geom
-    integer(shortInt)                                     :: matIdx, g, cIdx, event, matIdx0
+    integer(shortInt)                                     :: matIdx, g, cIdx, event, matIdx0, status
     real(defReal)                                         :: totalLength, length
     logical(defBool)                                      :: activeRay, hitVacuum
     type(distCache)                                       :: cache
     real(defFlt)                                          :: lenFlt
     real(defFlt), dimension(nG)                           :: attenuate, delta, fluxVec, tau
-    real(defFlt), pointer, dimension(:)                   :: scalarVec, sourceVec, totVec
+    real(defFlt), pointer, dimension(:)                   :: scalarVec, sourceVec!, totVec
+    real(defReal), dimension(nG)                          :: totVec
+
+    allocate(s, STAT=status)
+    !if (status /= 0) then
+      !print *, "Failed to allocate memory for s."
+    !else
+      ! Initialize and use s here as needed
+      !print *, "Successfully allocated memory for s."
+    !end if
     
     XSData => arrays % getDataPointer()
     geom => arrays % getGeomPointer()
@@ -192,13 +203,21 @@ contains
     ! Set initial angular flux to angle average of cell source
     cIdx = r % coords % uniqueID
     matIdx  = r % coords % matIdx
-    call XSData % getTotalPointer(matIdx, totVec)
+    !call XSData % getTotalPointer(matIdx, totVec)
+
+    ! Dummy particle state
+    s % r = arrays % getCellPos(cIdx, 1) ! getCellPos requires group number?
+    
+    ! Get cell temperature
+    temp = arrays % getTemp(s)
+    t_0 = arrays % getT0(matIdx)
     
     ! Catch for regions with voids
     ! Assumes these are defined as 'void'
     ! TODO: Use a more robust criterion, as for branching later
     if (matIdx <= XSData % getNMat()) then
       do g = 1, nG
+        totVec(g) = XSData % getTotalXS(matIdx,g,temp, t_0)
         fluxVec(g) = arrays % getSource(cIdx,g) / totVec(g)
       end do
     else
@@ -216,11 +235,16 @@ contains
       ! Get material and cell the ray is moving through
       matIdx = r % coords % matIdx
       cIdx   = r % coords % uniqueID
+      
+      ! Dummy particle state
+      s % r = arrays % getCellPos(cIdx, 1) ! getCellPos requires group number?
+      temp = arrays % getTemp(s)
+
       if (matIdx0 /= matIdx) then
         matIdx0 = matIdx
         
         ! Cache total cross section
-        call XSData % getTotalPointer(matIdx, totVec)
+        ! call XSData % getTotalPointer(matIdx, totVec)
       end if
 
       ! Set maximum flight distance and ensure ray is active
@@ -246,6 +270,7 @@ contains
 
         !$omp simd
         do g = 1, nG
+          totVec(g) = XSData % getTotalXS(matIdx,g,temp,t_0)
           tau(g) = totVec(g) * lenFlt
           attenuate(g) = lenFlt * F1(tau(g))
           delta(g) = (totVec(g) * fluxVec(g) - sourceVec(g)) * attenuate(g)
@@ -302,6 +327,8 @@ contains
       end if
 
     end do
+
+    if(allocated(s)) deallocate(s)
 
   end subroutine transportSweepFlatIso
   

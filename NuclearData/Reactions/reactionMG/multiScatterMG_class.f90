@@ -24,6 +24,7 @@ module multiScatterMG_class
   !!
   public :: kill
   public :: buildFromDict
+  public :: buildFromDictGrad
 
   !!
   !! Isotropic multiplicative scattering
@@ -68,6 +69,7 @@ module multiScatterMG_class
 
     ! Local procedures
     procedure :: buildFromDict
+    procedure :: buildFromDictGrad
     procedure, non_overridable :: sampleGout
     procedure, non_overridable :: scatterXS
     procedure, non_overridable :: production
@@ -87,16 +89,21 @@ contains
   !! NOTE:
   !!   Ignores MT for now.
   !!
-  subroutine init(self, data, MT)
+  subroutine init(self, data, MT, grad)
     class(multiScatterMG), intent(inout) :: self
     class(dataDeck), intent(inout)       :: data
     integer(shortInt), intent(in)        :: MT
+    logical(defBool), intent(in)         :: grad
     character(100), parameter :: Here = 'init (multiScatterMG_class.f90)'
 
     ! Select dynamic type of data deck and build
     select type(data)
       type is(dictDeck)
-        call self % buildFromDict(data % dict)
+        if (grad) then
+          call self % buildFromDictGrad(data % dict)
+        else
+          call self % buildFromDict(data % dict)
+        endif
 
       class default
         call fatalError(Here,'multiScatterMG cannot be build from: '//data % myType())
@@ -353,6 +360,55 @@ contains
     self % scatterXSs = sum(self % P0, 1)
 
   end subroutine buildFromDict
+
+
+  !!
+  !! Builds multiScatterMG from SCONE dictionary
+  !!
+  !! Args:
+  !!   dict [in] -> dictionary that contains data
+  !!
+  !! Errors:
+  !!   FatalError if number of groups is not +ve
+  !!   FatalError if P1 or scatteringMultiplicity does not match # of groups
+  !!
+  subroutine buildFromDictGrad(self, dict)
+    class(multiScatterMG), intent(inout)    :: self
+    class(dictionary), intent(in)           :: dict
+    real(defReal),dimension(:),allocatable  :: temp
+    integer(shortInt)                       :: nG
+    character(100),parameter :: Here = 'buildFromDict (multiScatterMG_class.f90)'
+
+    ! Read number of groups
+    call dict % get(nG,'numberOfGroups')
+    if(nG <= 0) call fatalError(Here, 'Not +ve number of energy groups')
+
+    ! Read scattering matrix
+    call dict % get(temp, 'P0Grad')
+    if( size(temp) /= nG*nG) then
+      call fatalError(Here,'Invalid size of P0. Expected: '//numToChar(nG**2)//&
+                           ' got: '//numToChar(size(temp)))
+    end if
+    self % P0 = reshape(temp,[nG, nG])
+
+    ! Read production matrix
+    call dict % get(temp, 'scatteringMultiplicity')
+    if( size(temp) /= nG*nG) then
+      call fatalError(Here,'Invalid size of scatteringMultiplicity. Expected: '//numToChar(nG**2)//&
+                           ' got: '//numToChar(size(temp)))
+    end if
+
+    self % prod = reshape(temp,[nG, nG])
+
+    ! Calculate P0 total scattering XSs
+    ! Behold the GLORY of Fortran you lowly C++ slaves!
+    ! ...Sadly slightly diminished by a compiler bug which
+    ! sizes scatterXSs as 1 before it's allocated. But this
+    ! should work without the allocation, normally!
+    allocate(self % scatterXSs(nG))
+    self % scatterXSs = sum(self % P0, 1)
+
+  end subroutine buildFromDictGrad
 
   !!
   !! Cast reactionHandle pointer to multiScatterMG pointer

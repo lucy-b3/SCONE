@@ -46,6 +46,7 @@ module fissionMG_class
 
     ! Local procedures
     procedure :: buildFromDict
+    procedure :: buildFromDictGrad
 
   end type fissionMG
 
@@ -65,10 +66,11 @@ contains
   !!   Returns a fatalError if any data deck diffrent from SCONE dictionary is given
   !!   Returns fatalError if MT is diffrent from macroFission
   !!
-  subroutine init(self, data, MT)
+  subroutine init(self, data, MT, grad)
     class(fissionMG), intent(inout) :: self
     class(dataDeck), intent(inout)  :: data
     integer(shortInt), intent(in)   :: MT
+    logical(defBool), intent(in)     :: grad
     character(100), parameter :: Here = 'init (fissionMG_class.f90)'
 
     ! Verify that MT is OK
@@ -79,7 +81,11 @@ contains
     ! Select approperiate build procedure for a
     select type(data)
       type is(dictDeck)
-        call self % buildFromDict(data % dict)
+        if (grad) then
+          call self % buildFromDictGrad(data % dict)
+        else
+          call self % buildFromDict(data % dict)
+        endif
 
       class default
         call fatalError(Here, 'fissionMG cannot be build from: '//data % myType())
@@ -247,6 +253,23 @@ contains
   end subroutine buildFromDict
 
   !!
+  !! Builds fissionMG from SCONE dictionary
+  !!
+  !! Args:
+  !!   dict [in] -> dictionary that contains data
+  !!
+  !! Errors:
+  !!   FatalError if required data is not present in the dictionary
+  !!   FatalError if chi is not normalised to 1.0 within FP_REL_TOL
+  !!
+  subroutine buildFromDictGrad(self, dict)
+    class(fissionMG), intent(inout)        :: self
+    class(dictionary), intent(in)          :: dict
+    character(100),parameter :: Here = 'buildFromDict (fissionMG_class.f90)'
+  
+  end subroutine buildFromDictGrad
+
+  !
   !! Cast reactionHandle pointer to fissionMG pointer
   !!
   !! Args:

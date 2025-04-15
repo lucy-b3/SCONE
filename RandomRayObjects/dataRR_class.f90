@@ -29,11 +29,17 @@ module dataRR_class
     integer(shortInt)                     :: nG2    = 0
     integer(shortInt)                     :: nMat   = 0
 
+    real(defReal)                         :: t_0
+
     ! Data space - absorb all nuclear data for speed
     real(defFlt), dimension(:), allocatable       :: sigmaT
     real(defFlt), dimension(:), allocatable       :: nuSigmaF
     real(defFlt), dimension(:), allocatable       :: sigmaF
     real(defFlt), dimension(:), allocatable       :: sigmaS
+    real(defFlt), dimension(:), allocatable       :: sigmaTgrad
+    real(defFlt), dimension(:), allocatable       :: nuSigmaFgrad
+    real(defFlt), dimension(:), allocatable       :: sigmaFgrad
+    real(defFlt), dimension(:), allocatable       :: sigmaSgrad
     real(defFlt), dimension(:), allocatable       :: chi
     logical(defBool), dimension(:), allocatable   :: fissile
     character(nameLen), dimension(:), allocatable :: names
@@ -70,6 +76,7 @@ module dataRR_class
     procedure :: getScatterVecPointer
     procedure :: getTotalXS
     procedure :: getFissionXS
+    procedure :: getNuFissionXS
     procedure :: getScatterXS
     procedure :: getNG
     procedure :: getNMat
@@ -110,6 +117,8 @@ contains
     self % nG = db % nGroups()
     self % nG2 = self % nG * self % nG
 
+    ! self % t_0 = % getT0
+
     ! Initialise local nuclear data
     ! Allocate nMat + 1 materials to catch any undefined materials
     ! TODO: clean nuclear database afterwards! It is no longer used
@@ -122,10 +131,18 @@ contains
     self % nuSigmaF = 0.0_defFlt
     allocate(self % sigmaF(matP1 * self % nG))
     self % sigmaF = 0.0_defFlt
+    allocate(self % sigmaTgrad(matP1 * self % nG))
+    self % sigmaTgrad = 0.0_defFlt
+    allocate(self % nuSigmaFgrad(matP1 * self % nG))
+    self % nuSigmaFgrad = 0.0_defFlt
+    allocate(self % sigmaFgrad(matP1 * self % nG))
+    self % sigmaFgrad = 0.0_defFlt
     allocate(self % chi(matP1 * self % nG))
     self % chi = 0.0_defFlt
     allocate(self % sigmaS(matP1 * self % nG * self % nG))
     self % sigmaS = 0.0_defFlt
+    allocate(self % sigmaSgrad(matP1 * self % nG * self % nG))
+    self % sigmaSgrad = 0.0_defFlt
     allocate(self % fissile(matP1))
     self % fissile = .false.
     allocate(self % names(matP1))
@@ -143,12 +160,19 @@ contains
         self % sigmaT(self % nG * (m - 1) + g) = real(mat % getTotalXS(g, rand),defFlt)
         self % nuSigmaF(self % nG * (m - 1) + g) = real(mat % getNuFissionXS(g, rand),defFlt)
         self % sigmaF(self % nG * (m - 1) + g) = real(mat % getFissionXS(g, rand),defFlt)
+
+        self % sigmaTgrad(self % nG * (m - 1) + g) = real(mat % getTotalXSgrad(g, rand),defFlt)
+        self % nuSigmaFgrad(self % nG * (m - 1) + g) = real(mat % getNuFissionXSgrad(g, rand),defFlt)
+        self % sigmaFgrad(self % nG * (m - 1) + g) = real(mat % getFissionXSgrad(g, rand),defFlt)
+
         if (self % nuSigmaF(self % nG * (m - 1) + g) > 0) fiss = .true.
         self % chi(self % nG * (m - 1) + g) = real(mat % getChi(g, rand),defFlt)
         ! Include scattering multiplicity
         do g1 = 1, self % nG
           self % sigmaS(self % nG * self % nG * (m - 1) + self % nG * (g - 1) + g1)  = &
                   real(mat % getScatterXS(g1, g, rand) * mat % scatter % prod(g1, g) , defFlt)
+          self % sigmaSgrad(self % nG * self % nG * (m - 1) + self % nG * (g - 1) + g1)  = &
+                  real(mat % getScatterXSgrad(g1, g, rand) * mat % scatter % prod(g1, g) , defFlt)
         end do
       end do
       self % fissile(m) = fiss
@@ -326,9 +350,10 @@ contains
   !! Return pointers to all commonly used XSs for neutron production
   !! This is done for a given material, across all energies
   !!
-  subroutine getProdPointers(self, matIdx, nuSigF, sigS, chi)
+  subroutine getProdPointers(self, matIdx, temp, nuSigF, sigS, chi)
     class(dataRR), target, intent(in)                :: self
     integer(shortInt), intent(in)                    :: matIdx
+    real(defFlt), intent(in)                         :: temp
     real(defFlt), dimension(:), pointer, intent(out) :: nuSigF, sigS, chi
     integer(shortInt)                                :: idx1, idx2, idx1s, idx2s, mIdx
 
@@ -386,11 +411,34 @@ contains
   end subroutine getNuFissPointer
 
   !!
-  !! Return total XS in a given material and group
+  !! Return fission XS in a given material and group
   !!
-  elemental function getTotalXS(self, matIdx, g) result(sigT)
+  elemental function getNuFissionXS(self, matIdx, g, temp, t_0) result(nuSigF)
     class(dataRR), intent(in)     :: self
     integer(shortInt), intent(in) :: matIdx, g
+    real(defReal), intent(in)     :: temp
+    real(defReal), intent(in)     :: t_0
+    real(defFlt)                  :: nuSigF
+    integer(shortInt)             :: mIdx
+
+    if (matIdx > self % nMat) then
+      mIdx = self % nMat + 1
+    else
+      mIdx = matIdx
+    end if
+    nuSigF = self % nuSigmaF((mIdx - 1) * self % nG + g) + &
+            ((self % nuSigmaFgrad((mIdx - 1) * self % nG + g)) * (temp - t_0)) !replace 300 with t_0
+
+  end function getNuFissionXS
+
+  !!
+  !! Return total XS in a given material and group
+  !!
+  elemental function getTotalXS(self, matIdx, g, temp, t_0) result(sigT)
+    class(dataRR), intent(in)     :: self
+    integer(shortInt), intent(in) :: matIdx, g
+    real(defReal), intent(in)     :: temp
+    real(defReal), intent(in)     :: t_0
     real(defFlt)                  :: sigT
     integer(shortInt)             :: mIdx
 
@@ -399,16 +447,19 @@ contains
     else
       mIdx = matIdx
     end if
-    sigT = self % sigmaT((mIdx - 1) * self % nG + g)
+    sigT = (self % sigmaT((mIdx - 1) * self % nG + g)) + &
+            ((self % sigmaTgrad((mIdx - 1) * self % nG + g)) * (temp - t_0)) !replace 300 with t_0
 
   end function getTotalXS
   
   !!
   !! Return fission XS in a given material and group
   !!
-  elemental function getFissionXS(self, matIdx, g) result(sigF)
+  elemental function getFissionXS(self, matIdx, g, temp, t_0) result(sigF)
     class(dataRR), intent(in)     :: self
     integer(shortInt), intent(in) :: matIdx, g
+    real(defReal), intent(in)     :: temp
+    real(defReal), intent(in)     :: t_0
     real(defFlt)                  :: sigF
     integer(shortInt)             :: mIdx
 
@@ -417,16 +468,19 @@ contains
     else
       mIdx = matIdx
     end if
-    sigF = self % sigmaF((mIdx - 1) * self % nG + g)
+    sigF = self % sigmaF((mIdx - 1) * self % nG + g) + &
+            ((self % sigmaFgrad((mIdx - 1) * self % nG + g)) * (temp - t_0)) !replace 300 with t_0
 
   end function getFissionXS
   
   !!
   !! Return scatter XS in a given material, ingoing group, and outgoing group
   !!
-  elemental function getScatterXS(self, matIdx, gIn, gOut) result(sigS)
+  elemental function getScatterXS(self, matIdx, gIn, gOut, temp, t_0) result(sigS)
     class(dataRR), intent(in)     :: self
     integer(shortInt), intent(in) :: matIdx, gIn, gOut
+    real(defReal), intent(in)     :: temp
+    real(defReal), intent(in)     :: t_0
     real(defFlt)                  :: sigS
     integer(shortInt)             :: mIdx
 
@@ -435,7 +489,8 @@ contains
     else
       mIdx = matIdx
     end if
-    sigS = self % sigmaS((mIdx - 1) * self % nG2 + self % nG * (gIn - 1) + gOut)
+    sigS = self % sigmaS((mIdx - 1) * self % nG2 + self % nG * (gIn - 1) + gOut) + &
+            ((self % sigmaS((mIdx - 1) * self % nG2 + self % nG * (gIn - 1) + gOut)) * (temp-t_0))   
 
   end function getScatterXS
 

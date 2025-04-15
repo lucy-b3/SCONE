@@ -84,10 +84,11 @@ contains
   !! Errors:
   !!   fatalError if MT is not neutron elastic scattering
   !!
-  subroutine init(self, data, MT)
+  subroutine init(self, data, MT, grad)
     class(thInelasticScatter), intent(inout) :: self
     class(dataDeck), intent(inout)           :: data
     integer(shortInt), intent(in)            :: MT
+    logical(defBool), intent(in)             :: grad
     character(100), parameter :: Here = 'init (thermalScatterInelastic_class.f90)'
 
     ! Select build procedure appropriate for given dataDeck
