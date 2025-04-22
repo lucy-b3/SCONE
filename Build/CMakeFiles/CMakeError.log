@@ -1,0 +1,77 @@
+Determining if the Fortran sgemm exists failed with the following output:
+Change Dir: /home/lb831/SCONE/Build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_bb5ab/fast && /usr/bin/make -f CMakeFiles/cmTC_bb5ab.dir/build.make CMakeFiles/cmTC_bb5ab.dir/build
+make[1]: Entering directory '/home/lb831/SCONE/Build/CMakeFiles/CMakeTmp'
+Building Fortran object CMakeFiles/cmTC_bb5ab.dir/testFortranCompiler.f.o
+/usr/bin/gfortran   -std=f2008 -O3 -g -pedantic -Wall -Wno-unused-dummy-argument -cpp -march=native -fopenmp    -c /home/lb831/SCONE/Build/CMakeFiles/CMakeTmp/testFortranCompiler.f -o CMakeFiles/cmTC_bb5ab.dir/testFortranCompiler.f.o
+Linking Fortran executable cmTC_bb5ab
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bb5ab.dir/link.txt --verbose=1
+/usr/bin/gfortran    -std=f2008 -O3 -g -pedantic -Wall -Wno-unused-dummy-argument -cpp -march=native -fopenmp  CMakeFiles/cmTC_bb5ab.dir/testFortranCompiler.f.o  -o cmTC_bb5ab 
+/usr/bin/ld: CMakeFiles/cmTC_bb5ab.dir/testFortranCompiler.f.o: in function `main':
+/home/lb831/SCONE/Build/CMakeFiles/CMakeTmp/testFortranCompiler.f:4: undefined reference to `sgemm_'
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_bb5ab.dir/build.make:87: cmTC_bb5ab] Error 1
+make[1]: Leaving directory '/home/lb831/SCONE/Build/CMakeFiles/CMakeTmp'
+make: *** [Makefile:121: cmTC_bb5ab/fast] Error 2
+
+
+
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/lb831/SCONE/Build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_d33be/fast && /usr/bin/make -f CMakeFiles/cmTC_d33be.dir/build.make CMakeFiles/cmTC_d33be.dir/build
+make[1]: Entering directory '/home/lb831/SCONE/Build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_d33be.dir/src.c.o
+/usr/bin/cc   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_d33be.dir/src.c.o   -c /home/lb831/SCONE/Build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_d33be
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d33be.dir/link.txt --verbose=1
+/usr/bin/cc  -DCMAKE_HAVE_LIBC_PTHREAD    CMakeFiles/cmTC_d33be.dir/src.c.o  -o cmTC_d33be 
+/usr/bin/ld: CMakeFiles/cmTC_d33be.dir/src.c.o: in function `main':
+src.c:(.text+0x46): undefined reference to `pthread_create'
+/usr/bin/ld: src.c:(.text+0x52): undefined reference to `pthread_detach'
+/usr/bin/ld: src.c:(.text+0x63): undefined reference to `pthread_join'
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_d33be.dir/build.make:87: cmTC_d33be] Error 1
+make[1]: Leaving directory '/home/lb831/SCONE/Build/CMakeFiles/CMakeTmp'
+make: *** [Makefile:121: cmTC_d33be/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/lb831/SCONE/Build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_23b23/fast && /usr/bin/make -f CMakeFiles/cmTC_23b23.dir/build.make CMakeFiles/cmTC_23b23.dir/build
+make[1]: Entering directory '/home/lb831/SCONE/Build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_23b23.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_23b23.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.16/Modules/CheckFunctionExists.c
+Linking C executable cmTC_23b23
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_23b23.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_23b23.dir/CheckFunctionExists.c.o  -o cmTC_23b23  -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_23b23.dir/build.make:87: cmTC_23b23] Error 1
+make[1]: Leaving directory '/home/lb831/SCONE/Build/CMakeFiles/CMakeTmp'
+make: *** [Makefile:121: cmTC_23b23/fast] Error 2
+
+
+
