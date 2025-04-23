@@ -13,7 +13,6 @@ transportOperator { type transportOperatorST;  }
                    
 inactiveTally {
 	  } 
-					} 
 
 activeTally {
   fissionMap {type collisionClerk;
@@ -207,5 +206,4 @@ nuclearData {
 	   
 }
 }
-
 

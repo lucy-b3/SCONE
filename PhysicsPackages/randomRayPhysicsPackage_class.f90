@@ -525,7 +525,11 @@ contains
     self % keffScore(1) = self % keffScore(1) * N1
     self % keffScore(2) = self % keffScore(2) * N1
     self % keffScore(2) = sqrt(Nm1*(self % keffScore(2) - &
-            self % keffScore(1) * self % keffScore(1))) 
+            self % keffScore(1) * self % keffScore(1)))
+
+    print *, "keff: " // numtochar(self % keffScore(1))
+    print *, "keff error: " // numtochar(self % keffScore(2)) 
+
 
   end subroutine cycles
 

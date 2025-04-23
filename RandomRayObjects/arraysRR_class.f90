@@ -1013,7 +1013,7 @@ contains
     class(arraysRR), intent(inout) :: self
     integer(shortInt), intent(in)  :: it
     integer(shortInt)              :: idx
-    real(defReal)                  :: N1, Nm1
+    real(defReal)                  :: N1, Nm1, avErr, maxErr
 
     if (it /= 1) then
       Nm1 = 1.0_defReal/(it - 1)
@@ -1035,6 +1035,12 @@ contains
       end if
     end do
     !$omp end parallel do
+
+    avErr = sum(self % fluxScores(2, :)) / size(self % fluxScores, dim=2)
+    maxErr = maxval(self % fluxScores(2, :))
+
+    print *, "Average flux error: " // numtochar(avErr) 
+    print *, "Maximum flux error: " // numtochar(maxErr)
 
   end subroutine finaliseFluxScores
 

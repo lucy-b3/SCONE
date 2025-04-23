@@ -1,6 +1,6 @@
 type randomRayPhysicsPackage; 
 
-pop      1750; 
+pop      2250; 
 active   2600;  
 inactive 1000; 
 dead     20;  
