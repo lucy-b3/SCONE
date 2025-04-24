@@ -678,7 +678,11 @@ contains
       end do
 
     end do
+
     !$omp end parallel do
+
+    print *, maxval(self % scalarflux(:))
+    print *, minval(self % scalarflux(:))
 
   end subroutine normaliseFluxAndVolumeFlatIso
   
@@ -1041,6 +1045,9 @@ contains
 
     print *, "Average flux error: " // numtochar(avErr) 
     print *, "Maximum flux error: " // numtochar(maxErr)
+    !print *, self % fluxScores(1,:)
+    !print *, " "
+    !print *, self % fluxScores(2,:)
 
   end subroutine finaliseFluxScores
 
