@@ -1,9 +1,9 @@
 type eigenPhysicsPackage; 
 
 pop      12000;
-active   20;
-inactive 300;
 XSdata   mg; 
+active   10400;
+inactive 50;
 dataType mg;
 outputFile C5G7_MGMC_2D ;
 
