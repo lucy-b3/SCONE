@@ -192,6 +192,7 @@ set(CMAKE_DEPENDS_CHECK_Fortran
   "/home/lb831/SCONE/Tallies/TallyClerks/tallyClerkFactory_func.f90" "/home/lb831/SCONE/Build/CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerkFactory_func.f90.o"
   "/home/lb831/SCONE/Tallies/TallyClerks/tallyClerkSlot_class.f90" "/home/lb831/SCONE/Build/CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerkSlot_class.f90.o"
   "/home/lb831/SCONE/Tallies/TallyClerks/tallyClerk_inter.f90" "/home/lb831/SCONE/Build/CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerk_inter.f90.o"
+  "/home/lb831/SCONE/Tallies/TallyClerks/totalTrackClerk_class.f90" "/home/lb831/SCONE/Build/CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o"
   "/home/lb831/SCONE/Tallies/TallyClerks/trackClerk_class.f90" "/home/lb831/SCONE/Build/CMakeFiles/scone.dir/Tallies/TallyClerks/trackClerk_class.f90.o"
   "/home/lb831/SCONE/Tallies/TallyFilters/energyFilter_class.f90" "/home/lb831/SCONE/Build/CMakeFiles/scone.dir/Tallies/TallyFilters/energyFilter_class.f90.o"
   "/home/lb831/SCONE/Tallies/TallyFilters/tallyFilterFactory_func.f90" "/home/lb831/SCONE/Build/CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilterFactory_func.f90.o"

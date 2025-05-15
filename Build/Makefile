@@ -5239,6 +5239,33 @@ Tallies/TallyClerks/tallyClerk_inter.f90.s:
 	$(MAKE) -f CMakeFiles/scone.dir/build.make CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerk_inter.f90.s
 .PHONY : Tallies/TallyClerks/tallyClerk_inter.f90.s
 
+Tallies/TallyClerks/totalTrackClerk_class.o: Tallies/TallyClerks/totalTrackClerk_class.f90.o
+
+.PHONY : Tallies/TallyClerks/totalTrackClerk_class.o
+
+# target to build an object file
+Tallies/TallyClerks/totalTrackClerk_class.f90.o:
+	$(MAKE) -f CMakeFiles/scone.dir/build.make CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o
+.PHONY : Tallies/TallyClerks/totalTrackClerk_class.f90.o
+
+Tallies/TallyClerks/totalTrackClerk_class.i: Tallies/TallyClerks/totalTrackClerk_class.f90.i
+
+.PHONY : Tallies/TallyClerks/totalTrackClerk_class.i
+
+# target to preprocess a source file
+Tallies/TallyClerks/totalTrackClerk_class.f90.i:
+	$(MAKE) -f CMakeFiles/scone.dir/build.make CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.i
+.PHONY : Tallies/TallyClerks/totalTrackClerk_class.f90.i
+
+Tallies/TallyClerks/totalTrackClerk_class.s: Tallies/TallyClerks/totalTrackClerk_class.f90.s
+
+.PHONY : Tallies/TallyClerks/totalTrackClerk_class.s
+
+# target to generate assembly for a file
+Tallies/TallyClerks/totalTrackClerk_class.f90.s:
+	$(MAKE) -f CMakeFiles/scone.dir/build.make CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.s
+.PHONY : Tallies/TallyClerks/totalTrackClerk_class.f90.s
+
 Tallies/TallyClerks/trackClerk_class.o: Tallies/TallyClerks/trackClerk_class.f90.o
 
 .PHONY : Tallies/TallyClerks/trackClerk_class.o
@@ -7193,6 +7220,9 @@ help:
 	@echo "... Tallies/TallyClerks/tallyClerk_inter.o"
 	@echo "... Tallies/TallyClerks/tallyClerk_inter.i"
 	@echo "... Tallies/TallyClerks/tallyClerk_inter.s"
+	@echo "... Tallies/TallyClerks/totalTrackClerk_class.o"
+	@echo "... Tallies/TallyClerks/totalTrackClerk_class.i"
+	@echo "... Tallies/TallyClerks/totalTrackClerk_class.s"
 	@echo "... Tallies/TallyClerks/trackClerk_class.o"
 	@echo "... Tallies/TallyClerks/trackClerk_class.i"
 	@echo "... Tallies/TallyClerks/trackClerk_class.s"

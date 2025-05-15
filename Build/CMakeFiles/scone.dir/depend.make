@@ -2638,6 +2638,7 @@ CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerkFactory_func.f90.o: CMakeFile
 CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerkFactory_func.f90.o: CMakeFiles/scone.dir/shannonentropyclerk_class.mod.stamp
 CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerkFactory_func.f90.o: CMakeFiles/scone.dir/simplefmclerk_class.mod.stamp
 CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerkFactory_func.f90.o: CMakeFiles/scone.dir/tallyclerk_inter.mod.stamp
+CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerkFactory_func.f90.o: CMakeFiles/scone.dir/totaltrackclerk_class.mod.stamp
 CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerkFactory_func.f90.o: CMakeFiles/scone.dir/trackclerk_class.mod.stamp
 CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerkFactory_func.f90.o.provides.build: CMakeFiles/scone.dir/tallyclerkfactory_func.mod.stamp
 CMakeFiles/scone.dir/tallyclerkfactory_func.mod.stamp: CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerkFactory_func.f90.o
@@ -2680,6 +2681,27 @@ CMakeFiles/scone.dir/tallyclerk_inter.mod.stamp: CMakeFiles/scone.dir/Tallies/Ta
 CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerk_inter.f90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerk_inter.f90.o.provides.build
 CMakeFiles/scone.dir/build: CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerk_inter.f90.o.provides.build
+
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: CMakeFiles/scone.dir/dictionary_class.mod.stamp
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: CMakeFiles/scone.dir/genericprocedures.mod.stamp
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: CMakeFiles/scone.dir/nucleardatabase_inter.mod.stamp
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: CMakeFiles/scone.dir/numprecision.mod.stamp
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: CMakeFiles/scone.dir/outputfile_class.mod.stamp
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: CMakeFiles/scone.dir/particle_class.mod.stamp
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: CMakeFiles/scone.dir/scorememory_class.mod.stamp
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: CMakeFiles/scone.dir/tallyclerk_inter.mod.stamp
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: CMakeFiles/scone.dir/tallycodes.mod.stamp
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: CMakeFiles/scone.dir/tallyfilter_inter.mod.stamp
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: CMakeFiles/scone.dir/tallyfilterfactory_func.mod.stamp
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: CMakeFiles/scone.dir/tallymap_inter.mod.stamp
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: CMakeFiles/scone.dir/tallymapfactory_func.mod.stamp
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: CMakeFiles/scone.dir/tallyresponseslot_class.mod.stamp
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o.provides.build: CMakeFiles/scone.dir/totaltrackclerk_class.mod.stamp
+CMakeFiles/scone.dir/totaltrackclerk_class.mod.stamp: CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod modFiles/totaltrackclerk_class.mod CMakeFiles/scone.dir/totaltrackclerk_class.mod.stamp GNU
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o.provides.build:
+	$(CMAKE_COMMAND) -E touch CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o.provides.build
+CMakeFiles/scone.dir/build: CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o.provides.build
 
 CMakeFiles/scone.dir/Tallies/TallyClerks/trackClerk_class.f90.o: CMakeFiles/scone.dir/dictionary_class.mod.stamp
 CMakeFiles/scone.dir/Tallies/TallyClerks/trackClerk_class.f90.o: CMakeFiles/scone.dir/genericprocedures.mod.stamp

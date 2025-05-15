@@ -216,6 +216,7 @@ provides
  thermalscatterinelastic_class.mod
  thermalscatteringdata_class.mod
  timer_mod.mod
+ totaltrackclerk_class.mod
  trackclerk_class.mod
  transportoperator_inter.mod
  transportoperatordt_class.mod

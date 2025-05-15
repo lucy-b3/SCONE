@@ -2176,9 +2176,22 @@ CMakeFiles/scone.dir/Tallies/TallyClerks/trackClerk_class.f90.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling Fortran source to assembly CMakeFiles/scone.dir/Tallies/TallyClerks/trackClerk_class.f90.s"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -S /home/lb831/SCONE/Tallies/TallyClerks/trackClerk_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyClerks/trackClerk_class.f90.s
 
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: CMakeFiles/scone.dir/flags.make
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o: ../Tallies/TallyClerks/totalTrackClerk_class.f90
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_164) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o"
+	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyClerks/totalTrackClerk_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o
+
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing Fortran source to CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.i"
+	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -E /home/lb831/SCONE/Tallies/TallyClerks/totalTrackClerk_class.f90 > CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.i
+
+CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling Fortran source to assembly CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.s"
+	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -S /home/lb831/SCONE/Tallies/TallyClerks/totalTrackClerk_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.s
+
 CMakeFiles/scone.dir/Tallies/TallyClerks/keffAnalogClerk_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyClerks/keffAnalogClerk_class.f90.o: ../Tallies/TallyClerks/keffAnalogClerk_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_164) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyClerks/keffAnalogClerk_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_165) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyClerks/keffAnalogClerk_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyClerks/keffAnalogClerk_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyClerks/keffAnalogClerk_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyClerks/keffAnalogClerk_class.f90.i: cmake_force
@@ -2191,7 +2204,7 @@ CMakeFiles/scone.dir/Tallies/TallyClerks/keffAnalogClerk_class.f90.s: cmake_forc
 
 CMakeFiles/scone.dir/Tallies/TallyClerks/keffImplicitClerk_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyClerks/keffImplicitClerk_class.f90.o: ../Tallies/TallyClerks/keffImplicitClerk_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_165) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyClerks/keffImplicitClerk_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_166) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyClerks/keffImplicitClerk_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyClerks/keffImplicitClerk_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyClerks/keffImplicitClerk_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyClerks/keffImplicitClerk_class.f90.i: cmake_force
@@ -2204,7 +2217,7 @@ CMakeFiles/scone.dir/Tallies/TallyClerks/keffImplicitClerk_class.f90.s: cmake_fo
 
 CMakeFiles/scone.dir/Tallies/TallyClerks/simpleFMClerk_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyClerks/simpleFMClerk_class.f90.o: ../Tallies/TallyClerks/simpleFMClerk_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_166) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyClerks/simpleFMClerk_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_167) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyClerks/simpleFMClerk_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyClerks/simpleFMClerk_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyClerks/simpleFMClerk_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyClerks/simpleFMClerk_class.f90.i: cmake_force
@@ -2217,7 +2230,7 @@ CMakeFiles/scone.dir/Tallies/TallyClerks/simpleFMClerk_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/TallyClerks/dancoffBellClerk_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyClerks/dancoffBellClerk_class.f90.o: ../Tallies/TallyClerks/dancoffBellClerk_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_167) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyClerks/dancoffBellClerk_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_168) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyClerks/dancoffBellClerk_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyClerks/dancoffBellClerk_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyClerks/dancoffBellClerk_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyClerks/dancoffBellClerk_class.f90.i: cmake_force
@@ -2230,7 +2243,7 @@ CMakeFiles/scone.dir/Tallies/TallyClerks/dancoffBellClerk_class.f90.s: cmake_for
 
 CMakeFiles/scone.dir/Tallies/TallyClerks/shannonEntropyClerk_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyClerks/shannonEntropyClerk_class.f90.o: ../Tallies/TallyClerks/shannonEntropyClerk_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_168) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyClerks/shannonEntropyClerk_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_169) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyClerks/shannonEntropyClerk_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyClerks/shannonEntropyClerk_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyClerks/shannonEntropyClerk_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyClerks/shannonEntropyClerk_class.f90.i: cmake_force
@@ -2243,7 +2256,7 @@ CMakeFiles/scone.dir/Tallies/TallyClerks/shannonEntropyClerk_class.f90.s: cmake_
 
 CMakeFiles/scone.dir/Tallies/TallyClerks/centreOfMassClerk_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyClerks/centreOfMassClerk_class.f90.o: ../Tallies/TallyClerks/centreOfMassClerk_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_169) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyClerks/centreOfMassClerk_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_170) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyClerks/centreOfMassClerk_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyClerks/centreOfMassClerk_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyClerks/centreOfMassClerk_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyClerks/centreOfMassClerk_class.f90.i: cmake_force
@@ -2256,7 +2269,7 @@ CMakeFiles/scone.dir/Tallies/TallyClerks/centreOfMassClerk_class.f90.s: cmake_fo
 
 CMakeFiles/scone.dir/Tallies/TallyClerks/mgXsClerk_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyClerks/mgXsClerk_class.f90.o: ../Tallies/TallyClerks/mgXsClerk_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_170) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyClerks/mgXsClerk_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_171) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyClerks/mgXsClerk_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyClerks/mgXsClerk_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyClerks/mgXsClerk_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyClerks/mgXsClerk_class.f90.i: cmake_force
@@ -2269,7 +2282,7 @@ CMakeFiles/scone.dir/Tallies/TallyClerks/mgXsClerk_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilter_inter.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilter_inter.f90.o: ../Tallies/TallyFilters/tallyFilter_inter.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_171) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilter_inter.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_172) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilter_inter.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyFilters/tallyFilter_inter.f90 -o CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilter_inter.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilter_inter.f90.i: cmake_force
@@ -2282,7 +2295,7 @@ CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilter_inter.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilterSlot_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilterSlot_class.f90.o: ../Tallies/TallyFilters/tallyFilterSlot_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_172) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilterSlot_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_173) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilterSlot_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyFilters/tallyFilterSlot_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilterSlot_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilterSlot_class.f90.i: cmake_force
@@ -2295,7 +2308,7 @@ CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilterSlot_class.f90.s: cmake_for
 
 CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilterFactory_func.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilterFactory_func.f90.o: ../Tallies/TallyFilters/tallyFilterFactory_func.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_173) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilterFactory_func.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_174) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilterFactory_func.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyFilters/tallyFilterFactory_func.f90 -o CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilterFactory_func.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilterFactory_func.f90.i: cmake_force
@@ -2308,7 +2321,7 @@ CMakeFiles/scone.dir/Tallies/TallyFilters/tallyFilterFactory_func.f90.s: cmake_f
 
 CMakeFiles/scone.dir/Tallies/TallyFilters/testFilter_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyFilters/testFilter_class.f90.o: ../Tallies/TallyFilters/testFilter_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_174) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyFilters/testFilter_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_175) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyFilters/testFilter_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyFilters/testFilter_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyFilters/testFilter_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyFilters/testFilter_class.f90.i: cmake_force
@@ -2321,7 +2334,7 @@ CMakeFiles/scone.dir/Tallies/TallyFilters/testFilter_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/TallyFilters/energyFilter_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyFilters/energyFilter_class.f90.o: ../Tallies/TallyFilters/energyFilter_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_175) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyFilters/energyFilter_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_176) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyFilters/energyFilter_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyFilters/energyFilter_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyFilters/energyFilter_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyFilters/energyFilter_class.f90.i: cmake_force
@@ -2334,7 +2347,7 @@ CMakeFiles/scone.dir/Tallies/TallyFilters/energyFilter_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/tallyMap_inter.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/tallyMap_inter.f90.o: ../Tallies/TallyMaps/tallyMap_inter.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_176) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/tallyMap_inter.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_177) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/tallyMap_inter.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/tallyMap_inter.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/tallyMap_inter.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/tallyMap_inter.f90.i: cmake_force
@@ -2347,7 +2360,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/tallyMap_inter.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/tallyMapFactory_func.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/tallyMapFactory_func.f90.o: ../Tallies/TallyMaps/tallyMapFactory_func.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_177) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/tallyMapFactory_func.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_178) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/tallyMapFactory_func.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/tallyMapFactory_func.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/tallyMapFactory_func.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/tallyMapFactory_func.f90.i: cmake_force
@@ -2360,7 +2373,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/tallyMapFactory_func.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/multiMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/multiMap_class.f90.o: ../Tallies/TallyMaps/multiMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_178) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/multiMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_179) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/multiMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/multiMap_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/multiMap_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/multiMap_class.f90.i: cmake_force
@@ -2373,7 +2386,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/multiMap_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/cylindricalMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/cylindricalMap_class.f90.o: ../Tallies/TallyMaps/cylindricalMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_179) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/cylindricalMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_180) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/cylindricalMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/cylindricalMap_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/cylindricalMap_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/cylindricalMap_class.f90.i: cmake_force
@@ -2386,7 +2399,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/cylindricalMap_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/tallyMap1D_inter.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/tallyMap1D_inter.f90.o: ../Tallies/TallyMaps/Maps1D/tallyMap1D_inter.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_180) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/tallyMap1D_inter.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_181) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/tallyMap1D_inter.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/Maps1D/tallyMap1D_inter.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/tallyMap1D_inter.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/tallyMap1D_inter.f90.i: cmake_force
@@ -2399,7 +2412,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/tallyMap1D_inter.f90.s: cmake_forc
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/tallyMap1DFactory_func.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/tallyMap1DFactory_func.f90.o: ../Tallies/TallyMaps/Maps1D/tallyMap1DFactory_func.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_181) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/tallyMap1DFactory_func.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_182) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/tallyMap1DFactory_func.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/Maps1D/tallyMap1DFactory_func.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/tallyMap1DFactory_func.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/tallyMap1DFactory_func.f90.i: cmake_force
@@ -2412,7 +2425,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/tallyMap1DFactory_func.f90.s: cmak
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/testMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/testMap_class.f90.o: ../Tallies/TallyMaps/Maps1D/testMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_182) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/testMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_183) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/testMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/Maps1D/testMap_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/testMap_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/testMap_class.f90.i: cmake_force
@@ -2425,7 +2438,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/testMap_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/energyMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/energyMap_class.f90.o: ../Tallies/TallyMaps/Maps1D/energyMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_183) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/energyMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_184) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/energyMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/Maps1D/energyMap_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/energyMap_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/energyMap_class.f90.i: cmake_force
@@ -2438,7 +2451,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/energyMap_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/spaceMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/spaceMap_class.f90.o: ../Tallies/TallyMaps/Maps1D/spaceMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_184) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/spaceMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_185) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/spaceMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/Maps1D/spaceMap_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/spaceMap_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/spaceMap_class.f90.i: cmake_force
@@ -2451,7 +2464,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/spaceMap_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/materialMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/materialMap_class.f90.o: ../Tallies/TallyMaps/Maps1D/materialMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_185) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/materialMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_186) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/materialMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/Maps1D/materialMap_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/materialMap_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/materialMap_class.f90.i: cmake_force
@@ -2464,7 +2477,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/materialMap_class.f90.s: cmake_for
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/homogMatMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/homogMatMap_class.f90.o: ../Tallies/TallyMaps/Maps1D/homogMatMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_186) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/homogMatMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_187) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/homogMatMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/Maps1D/homogMatMap_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/homogMatMap_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/homogMatMap_class.f90.i: cmake_force
@@ -2477,7 +2490,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/homogMatMap_class.f90.s: cmake_for
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/weightMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/weightMap_class.f90.o: ../Tallies/TallyMaps/Maps1D/weightMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_187) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/weightMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_188) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/weightMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/Maps1D/weightMap_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/weightMap_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/weightMap_class.f90.i: cmake_force
@@ -2490,7 +2503,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/weightMap_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/cellMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/cellMap_class.f90.o: ../Tallies/TallyMaps/Maps1D/cellMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_188) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/cellMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_189) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/cellMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/Maps1D/cellMap_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/cellMap_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/cellMap_class.f90.i: cmake_force
@@ -2503,7 +2516,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/cellMap_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/radialMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/radialMap_class.f90.o: ../Tallies/TallyMaps/Maps1D/radialMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_189) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/radialMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_190) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/radialMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/Maps1D/radialMap_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/radialMap_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/radialMap_class.f90.i: cmake_force
@@ -2516,7 +2529,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/radialMap_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/collNumMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/collNumMap_class.f90.o: ../Tallies/TallyMaps/Maps1D/collNumMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_190) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/collNumMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_191) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/collNumMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/Maps1D/collNumMap_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/collNumMap_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/collNumMap_class.f90.i: cmake_force
@@ -2529,7 +2542,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/collNumMap_class.f90.s: cmake_forc
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/directionMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/directionMap_class.f90.o: ../Tallies/TallyMaps/Maps1D/directionMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_191) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/directionMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_192) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/directionMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyMaps/Maps1D/directionMap_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/directionMap_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/directionMap_class.f90.i: cmake_force
@@ -2542,7 +2555,7 @@ CMakeFiles/scone.dir/Tallies/TallyMaps/Maps1D/directionMap_class.f90.s: cmake_fo
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponse_inter.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponse_inter.f90.o: ../Tallies/TallyResponses/tallyResponse_inter.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_192) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponse_inter.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_193) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponse_inter.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyResponses/tallyResponse_inter.f90 -o CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponse_inter.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponse_inter.f90.i: cmake_force
@@ -2555,7 +2568,7 @@ CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponse_inter.f90.s: cmake_for
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponseFactory_func.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponseFactory_func.f90.o: ../Tallies/TallyResponses/tallyResponseFactory_func.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_193) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponseFactory_func.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_194) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponseFactory_func.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyResponses/tallyResponseFactory_func.f90 -o CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponseFactory_func.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponseFactory_func.f90.i: cmake_force
@@ -2568,7 +2581,7 @@ CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponseFactory_func.f90.s: cma
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponseSlot_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponseSlot_class.f90.o: ../Tallies/TallyResponses/tallyResponseSlot_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_194) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponseSlot_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_195) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponseSlot_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyResponses/tallyResponseSlot_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponseSlot_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponseSlot_class.f90.i: cmake_force
@@ -2581,7 +2594,7 @@ CMakeFiles/scone.dir/Tallies/TallyResponses/tallyResponseSlot_class.f90.s: cmake
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/fluxResponse_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyResponses/fluxResponse_class.f90.o: ../Tallies/TallyResponses/fluxResponse_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_195) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/fluxResponse_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_196) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/fluxResponse_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyResponses/fluxResponse_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyResponses/fluxResponse_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/fluxResponse_class.f90.i: cmake_force
@@ -2594,7 +2607,7 @@ CMakeFiles/scone.dir/Tallies/TallyResponses/fluxResponse_class.f90.s: cmake_forc
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/macroResponse_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyResponses/macroResponse_class.f90.o: ../Tallies/TallyResponses/macroResponse_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_196) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/macroResponse_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_197) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/macroResponse_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyResponses/macroResponse_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyResponses/macroResponse_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/macroResponse_class.f90.i: cmake_force
@@ -2607,7 +2620,7 @@ CMakeFiles/scone.dir/Tallies/TallyResponses/macroResponse_class.f90.s: cmake_for
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/microResponse_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyResponses/microResponse_class.f90.o: ../Tallies/TallyResponses/microResponse_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_197) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/microResponse_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_198) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/microResponse_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyResponses/microResponse_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyResponses/microResponse_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/microResponse_class.f90.i: cmake_force
@@ -2620,7 +2633,7 @@ CMakeFiles/scone.dir/Tallies/TallyResponses/microResponse_class.f90.s: cmake_for
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/weightResponse_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyResponses/weightResponse_class.f90.o: ../Tallies/TallyResponses/weightResponse_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_198) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/weightResponse_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_199) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/weightResponse_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyResponses/weightResponse_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyResponses/weightResponse_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/weightResponse_class.f90.i: cmake_force
@@ -2633,7 +2646,7 @@ CMakeFiles/scone.dir/Tallies/TallyResponses/weightResponse_class.f90.s: cmake_fo
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/densityResponse_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyResponses/densityResponse_class.f90.o: ../Tallies/TallyResponses/densityResponse_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_199) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/densityResponse_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_200) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/densityResponse_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyResponses/densityResponse_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyResponses/densityResponse_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/densityResponse_class.f90.i: cmake_force
@@ -2646,7 +2659,7 @@ CMakeFiles/scone.dir/Tallies/TallyResponses/densityResponse_class.f90.s: cmake_f
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/testResponse_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/TallyResponses/testResponse_class.f90.o: ../Tallies/TallyResponses/testResponse_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_200) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/testResponse_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_201) "Building Fortran object CMakeFiles/scone.dir/Tallies/TallyResponses/testResponse_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/TallyResponses/testResponse_class.f90 -o CMakeFiles/scone.dir/Tallies/TallyResponses/testResponse_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/TallyResponses/testResponse_class.f90.i: cmake_force
@@ -2659,7 +2672,7 @@ CMakeFiles/scone.dir/Tallies/TallyResponses/testResponse_class.f90.s: cmake_forc
 
 CMakeFiles/scone.dir/Tallies/tallyCodes.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/tallyCodes.f90.o: ../Tallies/tallyCodes.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_201) "Building Fortran object CMakeFiles/scone.dir/Tallies/tallyCodes.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_202) "Building Fortran object CMakeFiles/scone.dir/Tallies/tallyCodes.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/tallyCodes.f90 -o CMakeFiles/scone.dir/Tallies/tallyCodes.f90.o
 
 CMakeFiles/scone.dir/Tallies/tallyCodes.f90.i: cmake_force
@@ -2672,7 +2685,7 @@ CMakeFiles/scone.dir/Tallies/tallyCodes.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/tallyResult_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/tallyResult_class.f90.o: ../Tallies/tallyResult_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_202) "Building Fortran object CMakeFiles/scone.dir/Tallies/tallyResult_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_203) "Building Fortran object CMakeFiles/scone.dir/Tallies/tallyResult_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/tallyResult_class.f90 -o CMakeFiles/scone.dir/Tallies/tallyResult_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/tallyResult_class.f90.i: cmake_force
@@ -2685,7 +2698,7 @@ CMakeFiles/scone.dir/Tallies/tallyResult_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/tallyAdmin_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/tallyAdmin_class.f90.o: ../Tallies/tallyAdmin_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_203) "Building Fortran object CMakeFiles/scone.dir/Tallies/tallyAdmin_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_204) "Building Fortran object CMakeFiles/scone.dir/Tallies/tallyAdmin_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/tallyAdmin_class.f90 -o CMakeFiles/scone.dir/Tallies/tallyAdmin_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/tallyAdmin_class.f90.i: cmake_force
@@ -2698,7 +2711,7 @@ CMakeFiles/scone.dir/Tallies/tallyAdmin_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/Tallies/scoreMemory_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/Tallies/scoreMemory_class.f90.o: ../Tallies/scoreMemory_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_204) "Building Fortran object CMakeFiles/scone.dir/Tallies/scoreMemory_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_205) "Building Fortran object CMakeFiles/scone.dir/Tallies/scoreMemory_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/Tallies/scoreMemory_class.f90 -o CMakeFiles/scone.dir/Tallies/scoreMemory_class.f90.o
 
 CMakeFiles/scone.dir/Tallies/scoreMemory_class.f90.i: cmake_force
@@ -2711,7 +2724,7 @@ CMakeFiles/scone.dir/Tallies/scoreMemory_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/collisionProcessor_inter.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/collisionProcessor_inter.f90.o: ../CollisionOperator/CollisionProcessors/collisionProcessor_inter.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_205) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/collisionProcessor_inter.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_206) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/collisionProcessor_inter.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/CollisionOperator/CollisionProcessors/collisionProcessor_inter.f90 -o CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/collisionProcessor_inter.f90.o
 
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/collisionProcessor_inter.f90.i: cmake_force
@@ -2724,7 +2737,7 @@ CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/collisionProcessor_in
 
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/collisionProcessorFactory_func.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/collisionProcessorFactory_func.f90.o: ../CollisionOperator/CollisionProcessors/collisionProcessorFactory_func.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_206) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/collisionProcessorFactory_func.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_207) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/collisionProcessorFactory_func.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/CollisionOperator/CollisionProcessors/collisionProcessorFactory_func.f90 -o CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/collisionProcessorFactory_func.f90.o
 
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/collisionProcessorFactory_func.f90.i: cmake_force
@@ -2737,7 +2750,7 @@ CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/collisionProcessorFac
 
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronCEstd_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronCEstd_class.f90.o: ../CollisionOperator/CollisionProcessors/neutronCEstd_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_207) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronCEstd_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_208) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronCEstd_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/CollisionOperator/CollisionProcessors/neutronCEstd_class.f90 -o CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronCEstd_class.f90.o
 
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronCEstd_class.f90.i: cmake_force
@@ -2750,7 +2763,7 @@ CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronCEstd_class.f9
 
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronCEimp_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronCEimp_class.f90.o: ../CollisionOperator/CollisionProcessors/neutronCEimp_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_208) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronCEimp_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_209) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronCEimp_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/CollisionOperator/CollisionProcessors/neutronCEimp_class.f90 -o CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronCEimp_class.f90.o
 
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronCEimp_class.f90.i: cmake_force
@@ -2763,7 +2776,7 @@ CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronCEimp_class.f9
 
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronMGstd_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronMGstd_class.f90.o: ../CollisionOperator/CollisionProcessors/neutronMGstd_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_209) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronMGstd_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_210) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronMGstd_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/CollisionOperator/CollisionProcessors/neutronMGstd_class.f90 -o CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronMGstd_class.f90.o
 
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronMGstd_class.f90.i: cmake_force
@@ -2776,7 +2789,7 @@ CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronMGstd_class.f9
 
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronMGimp_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronMGimp_class.f90.o: ../CollisionOperator/CollisionProcessors/neutronMGimp_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_210) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronMGimp_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_211) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronMGimp_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/CollisionOperator/CollisionProcessors/neutronMGimp_class.f90 -o CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronMGimp_class.f90.o
 
 CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronMGimp_class.f90.i: cmake_force
@@ -2789,7 +2802,7 @@ CMakeFiles/scone.dir/CollisionOperator/CollisionProcessors/neutronMGimp_class.f9
 
 CMakeFiles/scone.dir/CollisionOperator/collisionOperator_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/CollisionOperator/collisionOperator_class.f90.o: ../CollisionOperator/collisionOperator_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_211) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/collisionOperator_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_212) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/collisionOperator_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/CollisionOperator/collisionOperator_class.f90 -o CMakeFiles/scone.dir/CollisionOperator/collisionOperator_class.f90.o
 
 CMakeFiles/scone.dir/CollisionOperator/collisionOperator_class.f90.i: cmake_force
@@ -2802,7 +2815,7 @@ CMakeFiles/scone.dir/CollisionOperator/collisionOperator_class.f90.s: cmake_forc
 
 CMakeFiles/scone.dir/CollisionOperator/scatteringKernels_func.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/CollisionOperator/scatteringKernels_func.f90.o: ../CollisionOperator/scatteringKernels_func.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_212) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/scatteringKernels_func.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_213) "Building Fortran object CMakeFiles/scone.dir/CollisionOperator/scatteringKernels_func.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/CollisionOperator/scatteringKernels_func.f90 -o CMakeFiles/scone.dir/CollisionOperator/scatteringKernels_func.f90.o
 
 CMakeFiles/scone.dir/CollisionOperator/scatteringKernels_func.f90.i: cmake_force
@@ -2815,7 +2828,7 @@ CMakeFiles/scone.dir/CollisionOperator/scatteringKernels_func.f90.s: cmake_force
 
 CMakeFiles/scone.dir/TransportOperator/transportOperator_inter.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/TransportOperator/transportOperator_inter.f90.o: ../TransportOperator/transportOperator_inter.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_213) "Building Fortran object CMakeFiles/scone.dir/TransportOperator/transportOperator_inter.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_214) "Building Fortran object CMakeFiles/scone.dir/TransportOperator/transportOperator_inter.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/TransportOperator/transportOperator_inter.f90 -o CMakeFiles/scone.dir/TransportOperator/transportOperator_inter.f90.o
 
 CMakeFiles/scone.dir/TransportOperator/transportOperator_inter.f90.i: cmake_force
@@ -2828,7 +2841,7 @@ CMakeFiles/scone.dir/TransportOperator/transportOperator_inter.f90.s: cmake_forc
 
 CMakeFiles/scone.dir/TransportOperator/transportOperatorFactory_func.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/TransportOperator/transportOperatorFactory_func.f90.o: ../TransportOperator/transportOperatorFactory_func.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_214) "Building Fortran object CMakeFiles/scone.dir/TransportOperator/transportOperatorFactory_func.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_215) "Building Fortran object CMakeFiles/scone.dir/TransportOperator/transportOperatorFactory_func.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/TransportOperator/transportOperatorFactory_func.f90 -o CMakeFiles/scone.dir/TransportOperator/transportOperatorFactory_func.f90.o
 
 CMakeFiles/scone.dir/TransportOperator/transportOperatorFactory_func.f90.i: cmake_force
@@ -2841,7 +2854,7 @@ CMakeFiles/scone.dir/TransportOperator/transportOperatorFactory_func.f90.s: cmak
 
 CMakeFiles/scone.dir/TransportOperator/transportOperatorDT_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/TransportOperator/transportOperatorDT_class.f90.o: ../TransportOperator/transportOperatorDT_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_215) "Building Fortran object CMakeFiles/scone.dir/TransportOperator/transportOperatorDT_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_216) "Building Fortran object CMakeFiles/scone.dir/TransportOperator/transportOperatorDT_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/TransportOperator/transportOperatorDT_class.f90 -o CMakeFiles/scone.dir/TransportOperator/transportOperatorDT_class.f90.o
 
 CMakeFiles/scone.dir/TransportOperator/transportOperatorDT_class.f90.i: cmake_force
@@ -2854,7 +2867,7 @@ CMakeFiles/scone.dir/TransportOperator/transportOperatorDT_class.f90.s: cmake_fo
 
 CMakeFiles/scone.dir/TransportOperator/transportOperatorST_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/TransportOperator/transportOperatorST_class.f90.o: ../TransportOperator/transportOperatorST_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_216) "Building Fortran object CMakeFiles/scone.dir/TransportOperator/transportOperatorST_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_217) "Building Fortran object CMakeFiles/scone.dir/TransportOperator/transportOperatorST_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/TransportOperator/transportOperatorST_class.f90 -o CMakeFiles/scone.dir/TransportOperator/transportOperatorST_class.f90.o
 
 CMakeFiles/scone.dir/TransportOperator/transportOperatorST_class.f90.i: cmake_force
@@ -2867,7 +2880,7 @@ CMakeFiles/scone.dir/TransportOperator/transportOperatorST_class.f90.s: cmake_fo
 
 CMakeFiles/scone.dir/TransportOperator/transportOperatorHT_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/TransportOperator/transportOperatorHT_class.f90.o: ../TransportOperator/transportOperatorHT_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_217) "Building Fortran object CMakeFiles/scone.dir/TransportOperator/transportOperatorHT_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_218) "Building Fortran object CMakeFiles/scone.dir/TransportOperator/transportOperatorHT_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/TransportOperator/transportOperatorHT_class.f90 -o CMakeFiles/scone.dir/TransportOperator/transportOperatorHT_class.f90.o
 
 CMakeFiles/scone.dir/TransportOperator/transportOperatorHT_class.f90.i: cmake_force
@@ -2880,7 +2893,7 @@ CMakeFiles/scone.dir/TransportOperator/transportOperatorHT_class.f90.s: cmake_fo
 
 CMakeFiles/scone.dir/UserInterface/fileOutput/outputFile_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/UserInterface/fileOutput/outputFile_class.f90.o: ../UserInterface/fileOutput/outputFile_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_218) "Building Fortran object CMakeFiles/scone.dir/UserInterface/fileOutput/outputFile_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_219) "Building Fortran object CMakeFiles/scone.dir/UserInterface/fileOutput/outputFile_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/UserInterface/fileOutput/outputFile_class.f90 -o CMakeFiles/scone.dir/UserInterface/fileOutput/outputFile_class.f90.o
 
 CMakeFiles/scone.dir/UserInterface/fileOutput/outputFile_class.f90.i: cmake_force
@@ -2893,7 +2906,7 @@ CMakeFiles/scone.dir/UserInterface/fileOutput/outputFile_class.f90.s: cmake_forc
 
 CMakeFiles/scone.dir/UserInterface/fileOutput/asciiOutput_inter.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/UserInterface/fileOutput/asciiOutput_inter.f90.o: ../UserInterface/fileOutput/asciiOutput_inter.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_219) "Building Fortran object CMakeFiles/scone.dir/UserInterface/fileOutput/asciiOutput_inter.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_220) "Building Fortran object CMakeFiles/scone.dir/UserInterface/fileOutput/asciiOutput_inter.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/UserInterface/fileOutput/asciiOutput_inter.f90 -o CMakeFiles/scone.dir/UserInterface/fileOutput/asciiOutput_inter.f90.o
 
 CMakeFiles/scone.dir/UserInterface/fileOutput/asciiOutput_inter.f90.i: cmake_force
@@ -2906,7 +2919,7 @@ CMakeFiles/scone.dir/UserInterface/fileOutput/asciiOutput_inter.f90.s: cmake_for
 
 CMakeFiles/scone.dir/UserInterface/fileOutput/asciiOutputFactory_func.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/UserInterface/fileOutput/asciiOutputFactory_func.f90.o: ../UserInterface/fileOutput/asciiOutputFactory_func.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_220) "Building Fortran object CMakeFiles/scone.dir/UserInterface/fileOutput/asciiOutputFactory_func.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_221) "Building Fortran object CMakeFiles/scone.dir/UserInterface/fileOutput/asciiOutputFactory_func.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/UserInterface/fileOutput/asciiOutputFactory_func.f90 -o CMakeFiles/scone.dir/UserInterface/fileOutput/asciiOutputFactory_func.f90.o
 
 CMakeFiles/scone.dir/UserInterface/fileOutput/asciiOutputFactory_func.f90.i: cmake_force
@@ -2919,7 +2932,7 @@ CMakeFiles/scone.dir/UserInterface/fileOutput/asciiOutputFactory_func.f90.s: cma
 
 CMakeFiles/scone.dir/UserInterface/fileOutput/asciiMATLAB_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/UserInterface/fileOutput/asciiMATLAB_class.f90.o: ../UserInterface/fileOutput/asciiMATLAB_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_221) "Building Fortran object CMakeFiles/scone.dir/UserInterface/fileOutput/asciiMATLAB_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_222) "Building Fortran object CMakeFiles/scone.dir/UserInterface/fileOutput/asciiMATLAB_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/UserInterface/fileOutput/asciiMATLAB_class.f90 -o CMakeFiles/scone.dir/UserInterface/fileOutput/asciiMATLAB_class.f90.o
 
 CMakeFiles/scone.dir/UserInterface/fileOutput/asciiMATLAB_class.f90.i: cmake_force
@@ -2932,7 +2945,7 @@ CMakeFiles/scone.dir/UserInterface/fileOutput/asciiMATLAB_class.f90.s: cmake_for
 
 CMakeFiles/scone.dir/UserInterface/fileOutput/asciiJSON_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/UserInterface/fileOutput/asciiJSON_class.f90.o: ../UserInterface/fileOutput/asciiJSON_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_222) "Building Fortran object CMakeFiles/scone.dir/UserInterface/fileOutput/asciiJSON_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_223) "Building Fortran object CMakeFiles/scone.dir/UserInterface/fileOutput/asciiJSON_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/UserInterface/fileOutput/asciiJSON_class.f90 -o CMakeFiles/scone.dir/UserInterface/fileOutput/asciiJSON_class.f90.o
 
 CMakeFiles/scone.dir/UserInterface/fileOutput/asciiJSON_class.f90.i: cmake_force
@@ -2945,7 +2958,7 @@ CMakeFiles/scone.dir/UserInterface/fileOutput/asciiJSON_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/UserInterface/fileOutput/dummyPrinter_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/UserInterface/fileOutput/dummyPrinter_class.f90.o: ../UserInterface/fileOutput/dummyPrinter_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_223) "Building Fortran object CMakeFiles/scone.dir/UserInterface/fileOutput/dummyPrinter_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_224) "Building Fortran object CMakeFiles/scone.dir/UserInterface/fileOutput/dummyPrinter_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/UserInterface/fileOutput/dummyPrinter_class.f90 -o CMakeFiles/scone.dir/UserInterface/fileOutput/dummyPrinter_class.f90.o
 
 CMakeFiles/scone.dir/UserInterface/fileOutput/dummyPrinter_class.f90.i: cmake_force
@@ -2958,7 +2971,7 @@ CMakeFiles/scone.dir/UserInterface/fileOutput/dummyPrinter_class.f90.s: cmake_fo
 
 CMakeFiles/scone.dir/UserInterface/fileOutput/delayedStream_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/UserInterface/fileOutput/delayedStream_class.f90.o: ../UserInterface/fileOutput/delayedStream_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_224) "Building Fortran object CMakeFiles/scone.dir/UserInterface/fileOutput/delayedStream_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_225) "Building Fortran object CMakeFiles/scone.dir/UserInterface/fileOutput/delayedStream_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/UserInterface/fileOutput/delayedStream_class.f90 -o CMakeFiles/scone.dir/UserInterface/fileOutput/delayedStream_class.f90.o
 
 CMakeFiles/scone.dir/UserInterface/fileOutput/delayedStream_class.f90.i: cmake_force
@@ -2971,7 +2984,7 @@ CMakeFiles/scone.dir/UserInterface/fileOutput/delayedStream_class.f90.s: cmake_f
 
 CMakeFiles/scone.dir/UserInterface/Graphics/imgBmp_func.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/UserInterface/Graphics/imgBmp_func.f90.o: ../UserInterface/Graphics/imgBmp_func.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_225) "Building Fortran object CMakeFiles/scone.dir/UserInterface/Graphics/imgBmp_func.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_226) "Building Fortran object CMakeFiles/scone.dir/UserInterface/Graphics/imgBmp_func.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/UserInterface/Graphics/imgBmp_func.f90 -o CMakeFiles/scone.dir/UserInterface/Graphics/imgBmp_func.f90.o
 
 CMakeFiles/scone.dir/UserInterface/Graphics/imgBmp_func.f90.i: cmake_force
@@ -2984,7 +2997,7 @@ CMakeFiles/scone.dir/UserInterface/Graphics/imgBmp_func.f90.s: cmake_force
 
 CMakeFiles/scone.dir/UserInterface/commandLineUI.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/UserInterface/commandLineUI.f90.o: ../UserInterface/commandLineUI.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_226) "Building Fortran object CMakeFiles/scone.dir/UserInterface/commandLineUI.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_227) "Building Fortran object CMakeFiles/scone.dir/UserInterface/commandLineUI.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/UserInterface/commandLineUI.f90 -o CMakeFiles/scone.dir/UserInterface/commandLineUI.f90.o
 
 CMakeFiles/scone.dir/UserInterface/commandLineUI.f90.i: cmake_force
@@ -2997,7 +3010,7 @@ CMakeFiles/scone.dir/UserInterface/commandLineUI.f90.s: cmake_force
 
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackage_inter.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackage_inter.f90.o: ../PhysicsPackages/physicsPackage_inter.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_227) "Building Fortran object CMakeFiles/scone.dir/PhysicsPackages/physicsPackage_inter.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_228) "Building Fortran object CMakeFiles/scone.dir/PhysicsPackages/physicsPackage_inter.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/PhysicsPackages/physicsPackage_inter.f90 -o CMakeFiles/scone.dir/PhysicsPackages/physicsPackage_inter.f90.o
 
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackage_inter.f90.i: cmake_force
@@ -3010,7 +3023,7 @@ CMakeFiles/scone.dir/PhysicsPackages/physicsPackage_inter.f90.s: cmake_force
 
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: ../PhysicsPackages/physicsPackageFactory_func.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_228) "Building Fortran object CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_229) "Building Fortran object CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/PhysicsPackages/physicsPackageFactory_func.f90 -o CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o
 
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.i: cmake_force
@@ -3023,7 +3036,7 @@ CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.s: cmake_for
 
 CMakeFiles/scone.dir/PhysicsPackages/eigenPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/PhysicsPackages/eigenPhysicsPackage_class.f90.o: ../PhysicsPackages/eigenPhysicsPackage_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_229) "Building Fortran object CMakeFiles/scone.dir/PhysicsPackages/eigenPhysicsPackage_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_230) "Building Fortran object CMakeFiles/scone.dir/PhysicsPackages/eigenPhysicsPackage_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/PhysicsPackages/eigenPhysicsPackage_class.f90 -o CMakeFiles/scone.dir/PhysicsPackages/eigenPhysicsPackage_class.f90.o
 
 CMakeFiles/scone.dir/PhysicsPackages/eigenPhysicsPackage_class.f90.i: cmake_force
@@ -3036,7 +3049,7 @@ CMakeFiles/scone.dir/PhysicsPackages/eigenPhysicsPackage_class.f90.s: cmake_forc
 
 CMakeFiles/scone.dir/PhysicsPackages/fixedSourcePhysicsPackage_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/PhysicsPackages/fixedSourcePhysicsPackage_class.f90.o: ../PhysicsPackages/fixedSourcePhysicsPackage_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_230) "Building Fortran object CMakeFiles/scone.dir/PhysicsPackages/fixedSourcePhysicsPackage_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_231) "Building Fortran object CMakeFiles/scone.dir/PhysicsPackages/fixedSourcePhysicsPackage_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/PhysicsPackages/fixedSourcePhysicsPackage_class.f90 -o CMakeFiles/scone.dir/PhysicsPackages/fixedSourcePhysicsPackage_class.f90.o
 
 CMakeFiles/scone.dir/PhysicsPackages/fixedSourcePhysicsPackage_class.f90.i: cmake_force
@@ -3049,7 +3062,7 @@ CMakeFiles/scone.dir/PhysicsPackages/fixedSourcePhysicsPackage_class.f90.s: cmak
 
 CMakeFiles/scone.dir/PhysicsPackages/vizPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/PhysicsPackages/vizPhysicsPackage_class.f90.o: ../PhysicsPackages/vizPhysicsPackage_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_231) "Building Fortran object CMakeFiles/scone.dir/PhysicsPackages/vizPhysicsPackage_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_232) "Building Fortran object CMakeFiles/scone.dir/PhysicsPackages/vizPhysicsPackage_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/PhysicsPackages/vizPhysicsPackage_class.f90 -o CMakeFiles/scone.dir/PhysicsPackages/vizPhysicsPackage_class.f90.o
 
 CMakeFiles/scone.dir/PhysicsPackages/vizPhysicsPackage_class.f90.i: cmake_force
@@ -3062,7 +3075,7 @@ CMakeFiles/scone.dir/PhysicsPackages/vizPhysicsPackage_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/PhysicsPackages/rayVolPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/PhysicsPackages/rayVolPhysicsPackage_class.f90.o: ../PhysicsPackages/rayVolPhysicsPackage_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_232) "Building Fortran object CMakeFiles/scone.dir/PhysicsPackages/rayVolPhysicsPackage_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_233) "Building Fortran object CMakeFiles/scone.dir/PhysicsPackages/rayVolPhysicsPackage_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/PhysicsPackages/rayVolPhysicsPackage_class.f90 -o CMakeFiles/scone.dir/PhysicsPackages/rayVolPhysicsPackage_class.f90.o
 
 CMakeFiles/scone.dir/PhysicsPackages/rayVolPhysicsPackage_class.f90.i: cmake_force
@@ -3075,7 +3088,7 @@ CMakeFiles/scone.dir/PhysicsPackages/rayVolPhysicsPackage_class.f90.s: cmake_for
 
 CMakeFiles/scone.dir/PhysicsPackages/randomRayPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/PhysicsPackages/randomRayPhysicsPackage_class.f90.o: ../PhysicsPackages/randomRayPhysicsPackage_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_233) "Building Fortran object CMakeFiles/scone.dir/PhysicsPackages/randomRayPhysicsPackage_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_234) "Building Fortran object CMakeFiles/scone.dir/PhysicsPackages/randomRayPhysicsPackage_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/PhysicsPackages/randomRayPhysicsPackage_class.f90 -o CMakeFiles/scone.dir/PhysicsPackages/randomRayPhysicsPackage_class.f90.o
 
 CMakeFiles/scone.dir/PhysicsPackages/randomRayPhysicsPackage_class.f90.i: cmake_force
@@ -3088,7 +3101,7 @@ CMakeFiles/scone.dir/PhysicsPackages/randomRayPhysicsPackage_class.f90.s: cmake_
 
 CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.o: ../DataStructures/dictionary_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_234) "Building Fortran object CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_235) "Building Fortran object CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/DataStructures/dictionary_class.f90 -o CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.o
 
 CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.i: cmake_force
@@ -3101,7 +3114,7 @@ CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/DataStructures/intMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/DataStructures/intMap_class.f90.o: ../DataStructures/intMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_235) "Building Fortran object CMakeFiles/scone.dir/DataStructures/intMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_236) "Building Fortran object CMakeFiles/scone.dir/DataStructures/intMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/DataStructures/intMap_class.f90 -o CMakeFiles/scone.dir/DataStructures/intMap_class.f90.o
 
 CMakeFiles/scone.dir/DataStructures/intMap_class.f90.i: cmake_force
@@ -3114,7 +3127,7 @@ CMakeFiles/scone.dir/DataStructures/intMap_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/DataStructures/charMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/DataStructures/charMap_class.f90.o: ../DataStructures/charMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_236) "Building Fortran object CMakeFiles/scone.dir/DataStructures/charMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_237) "Building Fortran object CMakeFiles/scone.dir/DataStructures/charMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/DataStructures/charMap_class.f90 -o CMakeFiles/scone.dir/DataStructures/charMap_class.f90.o
 
 CMakeFiles/scone.dir/DataStructures/charMap_class.f90.i: cmake_force
@@ -3127,7 +3140,7 @@ CMakeFiles/scone.dir/DataStructures/charMap_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/DataStructures/stack_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/DataStructures/stack_class.f90.o: ../DataStructures/stack_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_237) "Building Fortran object CMakeFiles/scone.dir/DataStructures/stack_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_238) "Building Fortran object CMakeFiles/scone.dir/DataStructures/stack_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/DataStructures/stack_class.f90 -o CMakeFiles/scone.dir/DataStructures/stack_class.f90.o
 
 CMakeFiles/scone.dir/DataStructures/stack_class.f90.i: cmake_force
@@ -3140,7 +3153,7 @@ CMakeFiles/scone.dir/DataStructures/stack_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.o: ../DataStructures/dynArray_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_238) "Building Fortran object CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_239) "Building Fortran object CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/DataStructures/dynArray_class.f90 -o CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.o
 
 CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.i: cmake_force
@@ -3153,7 +3166,7 @@ CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/DataStructures/dictParser_func.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/DataStructures/dictParser_func.f90.o: ../DataStructures/dictParser_func.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_239) "Building Fortran object CMakeFiles/scone.dir/DataStructures/dictParser_func.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_240) "Building Fortran object CMakeFiles/scone.dir/DataStructures/dictParser_func.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/DataStructures/dictParser_func.f90 -o CMakeFiles/scone.dir/DataStructures/dictParser_func.f90.o
 
 CMakeFiles/scone.dir/DataStructures/dictParser_func.f90.i: cmake_force
@@ -3329,6 +3342,7 @@ scone_OBJECTS = \
 "CMakeFiles/scone.dir/Tallies/TallyClerks/collisionClerk_class.f90.o" \
 "CMakeFiles/scone.dir/Tallies/TallyClerks/collisionProbabilityClerk_class.f90.o" \
 "CMakeFiles/scone.dir/Tallies/TallyClerks/trackClerk_class.f90.o" \
+"CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o" \
 "CMakeFiles/scone.dir/Tallies/TallyClerks/keffAnalogClerk_class.f90.o" \
 "CMakeFiles/scone.dir/Tallies/TallyClerks/keffImplicitClerk_class.f90.o" \
 "CMakeFiles/scone.dir/Tallies/TallyClerks/simpleFMClerk_class.f90.o" \
@@ -3572,6 +3586,7 @@ libscone.a: CMakeFiles/scone.dir/Tallies/TallyClerks/tallyClerkSlot_class.f90.o
 libscone.a: CMakeFiles/scone.dir/Tallies/TallyClerks/collisionClerk_class.f90.o
 libscone.a: CMakeFiles/scone.dir/Tallies/TallyClerks/collisionProbabilityClerk_class.f90.o
 libscone.a: CMakeFiles/scone.dir/Tallies/TallyClerks/trackClerk_class.f90.o
+libscone.a: CMakeFiles/scone.dir/Tallies/TallyClerks/totalTrackClerk_class.f90.o
 libscone.a: CMakeFiles/scone.dir/Tallies/TallyClerks/keffAnalogClerk_class.f90.o
 libscone.a: CMakeFiles/scone.dir/Tallies/TallyClerks/keffImplicitClerk_class.f90.o
 libscone.a: CMakeFiles/scone.dir/Tallies/TallyClerks/simpleFMClerk_class.f90.o
@@ -3650,7 +3665,7 @@ libscone.a: CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.o
 libscone.a: CMakeFiles/scone.dir/DataStructures/dictParser_func.f90.o
 libscone.a: CMakeFiles/scone.dir/build.make
 libscone.a: CMakeFiles/scone.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_240) "Linking Fortran static library libscone.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_241) "Linking Fortran static library libscone.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/scone.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/scone.dir/link.txt --verbose=$(VERBOSE)
 

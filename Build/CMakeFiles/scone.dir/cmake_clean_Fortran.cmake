@@ -864,6 +864,10 @@ FILE(REMOVE
   "modFiles/TIMER_MOD.mod"
   "CMakeFiles/scone.dir/timer_mod.mod.stamp"
 
+  "modFiles/totaltrackclerk_class.mod"
+  "modFiles/TOTALTRACKCLERK_CLASS.mod"
+  "CMakeFiles/scone.dir/totaltrackclerk_class.mod.stamp"
+
   "modFiles/trackclerk_class.mod"
   "modFiles/TRACKCLERK_CLASS.mod"
   "CMakeFiles/scone.dir/trackclerk_class.mod.stamp"

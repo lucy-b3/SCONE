@@ -681,9 +681,6 @@ contains
 
     !$omp end parallel do
 
-    print *, maxval(self % scalarflux(:))
-    print *, minval(self % scalarflux(:))
-
   end subroutine normaliseFluxAndVolumeFlatIso
   
   !!
