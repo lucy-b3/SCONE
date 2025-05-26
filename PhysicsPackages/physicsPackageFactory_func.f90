@@ -17,6 +17,7 @@ module physicsPackageFactory_func
   use rayVolPhysicsPackage_class,          only : rayVolPhysicsPackage
   use randomRayPhysicsPackage_class,       only : randomRayPhysicsPackage
   use fixedSourceTRRMPhysicsPackage_class, only : fixedSourceTRRMPhysicsPackage
+  use FSSpecTRRMPhysicsPackage_class,      only : FSSpecTRRMPhysicsPackage
 !  use dynamPhysicsPackage_class, only : dynamPhysicsPackage
 
   implicit none
@@ -32,7 +33,8 @@ module physicsPackageFactory_func
                                                                              'vizPhysicsPackage            ',&
                                                                              'randomRayPhysicsPackage      ',&
                                                                              'rayVolPhysicsPackage         ',&
-                                                                             'fixedSourceTRRMPhysicsPackage']
+                                                                             'fixedSourceTRRMPhysicsPackage',&
+                                                                             'FSSpecTRRMPhysicsPackage     ']
 
   !!
   !! Public interface
@@ -74,6 +76,7 @@ contains
           type is (fixedSourcePhysicsPackage)
             call new % init(dict)
         end select
+
 !
 !      case('dynamPhysicsPackage')
 !        ! Allocate and initialise
@@ -100,6 +103,11 @@ contains
       case('fixedSourceTRRMPhysicsPackage')
         ! Allocate and initialise
         allocate( fixedSourceTRRMPhysicsPackage :: new)
+        call new % init(dict)
+
+      case('FSSpecTRRMPhysicsPackage')
+        ! Allocate and initialise
+        allocate( FSSpecTRRMPhysicsPackage :: new)
         call new % init(dict)
 
       case('rayVolPhysicsPackage')

@@ -291,6 +291,8 @@ CMakeFiles/scone.dir/ParticleObjects/particleDungeon_class.f90.o
  /home/lb831/SCONE/ParticleObjects/particleDungeon_class.f90
 CMakeFiles/scone.dir/ParticleObjects/particle_class.f90.o
  /home/lb831/SCONE/ParticleObjects/particle_class.f90
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o
+ /home/lb831/SCONE/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90
 CMakeFiles/scone.dir/PhysicsPackages/eigenPhysicsPackage_class.f90.o
  /home/lb831/SCONE/PhysicsPackages/eigenPhysicsPackage_class.f90
 CMakeFiles/scone.dir/PhysicsPackages/fixedSourcePhysicsPackage_class.f90.o

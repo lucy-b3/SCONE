@@ -1,0 +1,118 @@
+type randomRayPhysicsPackage;
+
+pop      100;
+active   5000;
+inactive  1000;
+dead       113.6871;
+termination 11368.7071;
+!termination 22737.4142;
+plot 0;
+cache 1;
+XSdata   mg;
+dataType mg;
+outputFile benchmark1DSlab100 ;
+printFlux 1 ;
+printTemperatures 1 ;
+printCells 1 ;
+
+!slab properties
+kappa 100000000;
+l_0  100;
+t_0  293;
+p  10000000000000000000000;
+k_0  12500000000000000000;
+phi_0 250000000000000;
+
+
+fissionMap {type multiMap;
+            maps (xax);
+            xax { type spaceMap; axis x; grid lin; min -55.0; max 55.0; N 100;}
+}
+fluxMap {type multiMap;
+            maps (xax);
+            xax { type spaceMap; axis x; grid lin; min -55.0; max 55.0; N 100;}
+}
+
+geometry {
+    type geometryStd;
+    boundary (1 1 1 1 1 1);
+    graph {type extended;}
+
+    surfaces
+    {
+      squareBound { id 1; type box; origin ( 0.0  0.0  0.0); halfwidth (50.0 0.5 0.5); }
+    }
+
+
+    cells
+    {
+    }
+
+    universes
+    {
+      
+      pin { id 2; type pinUniverse; radii (0.0); fills (fuel);}
+
+
+      root
+      {
+          id 1;
+          type rootUniverse;
+          border 1; 
+          fill u<3>;
+      }
+
+    fuellattice{
+      id 3;
+      type latUniverse;
+      pitch (1.00 1.0 1.0);
+      shape (100 1 1);
+      padMat void;
+      map (
+
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+
+        );
+    }
+    }
+}
+
+
+viz {
+  myVTK {
+    type vtk;
+    what uniqueID;
+    corner (-32.13 -32.13 -1.0);
+    width (64.26 64.26 2.0);
+    vox (2000 2000 1);
+  }
+  bmp1 {
+    type bmp;
+    output myGeometry;
+    what uniqueID; ! Could also be material
+    centre (0.0 0.0 0.0);
+    !width (25.0 25.0); ! This is optional - SCONE should do the whole geometry by default, but you can zoom in by using this
+    axis z; ! This is the perpendicular axis, so you'll get an xy plot
+    res (1500 1500); !Resolution in x and y. Can be tuned to taste.
+  }
+}
+
+
+
+nuclearData {
+  handles { 
+    mg { type baseMgNeutronDatabase; PN P0;} 
+  } 
+
+
+materials {
+
+    fuel {
+      temp       293;
+      composition { }
+      xsFile ./slab_XS_new;
+    }
+
+}
+
+}

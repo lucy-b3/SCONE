@@ -1,0 +1,95 @@
+type FSSpecTRRMPhysicsPackage; 
+
+// Currently no recommended settings for fixed source problems
+// but hopefully this will be updated in future!
+pop      1000;
+active   10;  !500; 1000  
+inactive 100; 
+dead     50; !120; 
+termination 550; !1220; 
+plot 1;
+cache 1;
+XSdata   mg; 
+dataType mg;
+outputFile slab_1D;
+printVolume 0;
+printFlux 0;
+!volume 360000;
+
+source { fuel ( 1.0 ); }
+integrate (fuel );
+
+geometry {
+    type geometryStd;
+    boundary (1 1 1 1 1 1);
+    graph {type extended;}
+
+    surfaces
+    {
+      squareBound { id 1; type box; origin ( 0.0  0.0  0.0); halfwidth (10.0 0.5 0.5); }
+    }
+
+
+    cells
+    {
+    }
+
+    universes
+    {
+
+      pin { id 2; type pinUniverse; radii (0.0); fills (fuel);}
+
+
+      root
+      {
+          id 1;
+          type rootUniverse;
+          border 1;
+          fill u<3>;
+      }
+
+    fuellattice{
+      id 3;
+      type latUniverse;
+      pitch (0.2 1.0 1.0);
+      shape (100 1 1);
+      padMat void;
+      map (
+
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+
+        );
+    }
+    }
+}
+
+
+viz {
+  myVTK {
+    type vtk;
+    what uniqueID; 
+    corner ( 0.0 0.0 0.0 );
+    width ( 60.0 100.0 60.0 );
+    vox ( 60 100 60 );
+//    vox ( 6 10 6 );
+  }
+//    corner ( 0.5 0.5 0.5 );
+} 
+
+
+nuclearData {
+  handles { 
+    mg { type baseMgNeutronDatabase; PN P0;} 
+  } 
+  materials { 
+
+    fuel { 
+       temp 300; 
+       xsFile ./slab_XS;
+       composition {  }
+   }
+	  
+}
+}
+
+

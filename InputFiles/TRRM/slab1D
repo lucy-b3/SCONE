@@ -1,0 +1,83 @@
+type randomRayPhysicsPackage; 
+
+pop      1750; 
+active   2600;  
+inactive 1000; 
+dead     20;  
+termination 220;  
+plot 0;
+cache 1;
+XSdata   mg; 
+dataType mg;
+outputFile C5G7_TRRM ;
+
+geometry { 
+  type geometryStd; 
+  // ( -x, +x, -y, +y, -z, +z)
+  boundary ( 1 1 1 1 1 1); 
+  graph {type extended;}
+
+  surfaces { 
+             squareBound  { id 1; type box; origin (0.0 0.0 0.0); halfwidth (100.0 0.5 0.5);}  	
+  }
+  
+  cells {  }
+  
+  universes { 
+
+    pin { id 2; type pinUniverse; radii (0.0); fills (fuel);}   
+
+    root
+      {
+          id 1;
+          type rootUniverse;
+          border 1;
+          fill u<3>;
+      } 
+
+    fuelLattice
+    {
+      id 3;
+      type latUniverse; 
+      origin (0.0 0.0 0.0); 
+      pitch (10.0 1.0 1.0);
+      shape (20 1 1); 
+      padMat void; 
+      map ( 
+
+       2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+
+          ); 
+    }
+		
+}
+} 
+
+
+viz {
+  myVTK {
+    type vtk;
+    what uniqueID; 
+    corner (-32.13 -32.13 -1.0);
+    width (64.26 64.26 2.0);
+    vox (2000 2000 1);
+  }
+} 
+
+
+nuclearData {
+  handles { 
+    mg { type baseMgNeutronDatabase; PN P0;} 
+  } 
+  materials { 
+    numberOfGroups 1;
+      
+    fuel { 
+      temp 300;
+      xsFile ./slab_XS_new;
+      composition { } 
+   }
+
+}
+}
+

@@ -20,7 +20,8 @@ module randomRayPhysicsPackage_class
   use geometryStd_class,              only : geometryStd
   use geometryReg_mod,                only : gr_geomPtr  => geomPtr, gr_addGeom => addGeom, &
                                              gr_geomIdx  => geomIdx, gr_kill    => kill
-
+  !use geometryFactory_func,           only : new_geometry
+  
   ! Nuclear Data
   use materialMenu_mod,               only : mm_nMat            => nMat, mm_matName => matName
   use nuclearDataReg_mod,             only : ndReg_init         => init, &
@@ -189,8 +190,11 @@ module randomRayPhysicsPackage_class
     ! Results space
     real(defFlt)                                :: keff
     real(defFlt), dimension(2)                  :: keffScore
+    real(defReal), dimension(:), allocatable    :: SR
+    real(defReal), dimension(:), allocatable    :: shannonEntropy
     real(defFlt), dimension(:), allocatable     :: scalarFlux
     real(defFlt), dimension(:), allocatable     :: prevFlux
+    real(defFlt), dimension(:), allocatable     :: prevPrevFlux
     real(defFlt), dimension(:,:), allocatable   :: fluxScores
     real(defFlt), dimension(:), allocatable     :: source
     real(defFlt), dimension(:), allocatable     :: volume
@@ -233,6 +237,8 @@ module randomRayPhysicsPackage_class
     procedure, private :: calculateKeff
     procedure, private :: normaliseFluxAndVolume
     procedure, private :: normaliseFluxAndVolumeDD
+    procedure, private :: calculateShannonEntropy
+    procedure, private :: calculateSpectralRadius
     procedure, private :: resetFluxes
     procedure, private :: accumulateFluxAndKeffScores
     procedure, private :: finaliseFluxAndKeffScores
@@ -424,8 +430,11 @@ contains
     self % nCells = self % geom % numberOfCells()
 
     ! Allocate results space
+    allocate(self % SR(self % inactive + self % active))
+    allocate(self % shannonEntropy(self % inactive + self % active))
     allocate(self % scalarFlux(self % nCells * self % nG))
     allocate(self % prevFlux(self % nCells * self % nG))
+    allocate(self % prevPrevFlux(self % nCells * self % nG))
     allocate(self % fluxScores(self % nCells * self % nG, 2))
     allocate(self % source(self % nCells * self % nG))
     allocate(self % volume(self % nCells))
@@ -522,7 +531,9 @@ contains
     ! Initialise fluxes 
     self % keff       = 1.0_defFlt
     self % scalarFlux = 0.0_defFlt
+    !self % scalarFlux(: (self % nCells/2)) = 5.0
     self % prevFlux   = 1.0_defFlt
+    self % prevPrevFlux   = 1.0_defFlt
     self % fluxScores = 0.0_defFlt
     self % keffScore  = 0.0_defFlt
     self % source     = 0.0_defFlt
@@ -608,6 +619,15 @@ contains
 
       ! Accumulate flux scores
       if (isActive) call self % accumulateFluxAndKeffScores()
+
+      call self % calculateShannonEntropy(it)
+
+      ! Calculate the spectral radius
+      if (it > 1) then
+        call self % calculateSpectralRadius(it)
+      else
+        self % SR(it) = 0
+      endif
 
       ! Calculate proportion of cells that were hit
       hitRate = real(sum(self % cellHit),defFlt) / self % nCells
@@ -1169,6 +1189,86 @@ contains
   end subroutine calculateKeff
   
   !!
+  !! Calculates the Shannon entropy at a given iteration
+  !!
+  subroutine calculateShannonEntropy(self,it)
+    class(randomRayPhysicsPackage), target, intent(inout) :: self
+    integer(shortInt), intent(in)                          :: it
+    real(defReal)                                 :: sumFlux, entropy
+    real(defReal), save                           :: fluxLocal, vol, pF
+    integer(shortInt), save                       :: g, idx
+    integer(shortInt)                             :: cIdx, i
+    !$omp threadprivate(fluxLocal, g, idx, vol)
+
+    ! Calculate full flux
+    sumFlux = ZERO
+    !$omp parallel do schedule(static) reduction(+:sumFlux)
+    do cIdx = 1, self % nCells
+
+      vol = self % volume(cIdx)
+      if (vol <= volume_tolerance) cycle
+
+      fluxLocal = ZERO
+
+      do g = 1, self % nG
+
+        ! Flux index
+        idx = self % nG * (cIdx - 1) + g
+       fluxLocal = fluxLocal + self % scalarFlux(idx)
+
+      end do
+
+      sumFlux = sumFlux + fluxLocal * vol
+
+    end do
+    !$omp end parallel do
+
+    ! Calculate the entropy
+    entropy  = ZERO
+
+    !$omp parallel do schedule(static) reduction(+:entropy)
+    do cIdx = 1, self % nCells
+
+      vol = self % volume(cIdx)
+      if (vol <= volume_tolerance) cycle
+
+      fluxLocal = ZERO
+      do g = 1, self % nG
+
+        ! Flux index
+        idx = self % nG * (cIdx - 1) + g
+        fluxLocal       = fluxLocal     + self % scalarFlux(idx)
+
+      end do
+
+      pF = fluxLocal * vol / sumFlux
+      if (pF > 0) entropy  = entropy  - pF * log(pF)
+
+    end do
+    !$omp end parallel do
+
+    self % shannonEntropy(it) = entropy
+
+  end subroutine calculateShannonEntropy
+
+  !! Calculates the spectral radius
+  subroutine calculateSpectralRadius(self,it)
+    class(randomRayPhysicsPackage), intent(inout) :: self
+    integer(shortInt), intent(in)                  :: it
+    real(defFlt), dimension(self % nCells)         :: delta1, delta2
+    real(defFlt)                                   :: norm1, norm2
+
+    delta1 = self % scalarFlux(:) - self % prevFlux(:)
+    delta2 = self % prevFlux(:) - self % prevPrevFlux(:)
+
+    norm1 = sqrt(sum(delta1**2))
+    norm2 = sqrt(sum(delta2**2))
+
+    self % SR(it) = norm1/norm2
+
+  end subroutine calculateSpectralRadius
+  
+  !!
   !! Sets prevFlux to scalarFlux and zero's scalarFlux
   !!
   subroutine resetFluxes(self)
@@ -1340,6 +1440,29 @@ contains
     call out % startBlock(name)
     call out % printResult(real(self % keffScore(1),defReal), real(self % keffScore(2),defReal), name)
     call out % endBlock()
+
+    name = 'Spectral_Radius'
+    call out % startBlock(name)
+    resArrayShape = [size(self % SR)]
+    call out % startArray(name, resArrayShape)
+    do cIdx = 1, size(self % SR)
+      call out % addResult(self % SR(cIdx),ZERO)
+    end do
+    call out % endArray()
+    call out % endBlock()
+
+    name = 'Shannon_Entropy'
+    call out % startBlock(name)
+    resArrayShape = [size(self % shannonEntropy)]
+    call out % startArray(name, resArrayShape)
+    do cIdx = 1, size(self % shannonEntropy)
+      call out % addResult(self % shannonEntropy(cIdx),ZERO)
+    end do
+    call out % endArray()
+    call out % endBlock()
+
+    print *, self % SR(3)
+    print *, sum(self % SR(40:60))/size(self % SR(40:60))
 
     ! Print cell volumes
     if (self % printVolume) then
@@ -1634,6 +1757,9 @@ contains
     self % keffScore   = ZERO
     if(allocated(self % scalarFlux)) deallocate(self % scalarFlux)
     if(allocated(self % prevFlux)) deallocate(self % prevFlux)
+    if(allocated(self % prevPrevFlux)) deallocate(self % prevPrevFlux)
+    if(allocated(self % SR)) deallocate(self % SR)
+    if(allocated(self % shannonEntropy)) deallocate(self % shannonEntropy)
     if(allocated(self % fluxScores)) deallocate(self % fluxScores)
     if(allocated(self % source)) deallocate(self % source)
     if(allocated(self % volume)) deallocate(self % volume)

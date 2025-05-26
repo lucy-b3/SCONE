@@ -316,6 +316,10 @@ FILE(REMOVE
   "modFiles/FLUXRESPONSE_CLASS.mod"
   "CMakeFiles/scone.dir/fluxresponse_class.mod.stamp"
 
+  "modFiles/fsspectrrmphysicspackage_class.mod"
+  "modFiles/FSSPECTRRMPHYSICSPACKAGE_CLASS.mod"
+  "CMakeFiles/scone.dir/fsspectrrmphysicspackage_class.mod.stamp"
+
   "modFiles/genericprocedures.mod"
   "modFiles/GENERICPROCEDURES.mod"
   "CMakeFiles/scone.dir/genericprocedures.mod.stamp"

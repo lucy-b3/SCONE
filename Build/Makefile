@@ -4078,6 +4078,33 @@ ParticleObjects/particle_class.f90.s:
 	$(MAKE) -f CMakeFiles/scone.dir/build.make CMakeFiles/scone.dir/ParticleObjects/particle_class.f90.s
 .PHONY : ParticleObjects/particle_class.f90.s
 
+PhysicsPackages/FSSpecTRRMPhysicsPackage_class.o: PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o
+
+.PHONY : PhysicsPackages/FSSpecTRRMPhysicsPackage_class.o
+
+# target to build an object file
+PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o:
+	$(MAKE) -f CMakeFiles/scone.dir/build.make CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o
+.PHONY : PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o
+
+PhysicsPackages/FSSpecTRRMPhysicsPackage_class.i: PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.i
+
+.PHONY : PhysicsPackages/FSSpecTRRMPhysicsPackage_class.i
+
+# target to preprocess a source file
+PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.i:
+	$(MAKE) -f CMakeFiles/scone.dir/build.make CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.i
+.PHONY : PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.i
+
+PhysicsPackages/FSSpecTRRMPhysicsPackage_class.s: PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.s
+
+.PHONY : PhysicsPackages/FSSpecTRRMPhysicsPackage_class.s
+
+# target to generate assembly for a file
+PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.s:
+	$(MAKE) -f CMakeFiles/scone.dir/build.make CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.s
+.PHONY : PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.s
+
 PhysicsPackages/eigenPhysicsPackage_class.o: PhysicsPackages/eigenPhysicsPackage_class.f90.o
 
 .PHONY : PhysicsPackages/eigenPhysicsPackage_class.o
@@ -6713,6 +6740,9 @@ help:
 	@echo "... ParticleObjects/particle_class.o"
 	@echo "... ParticleObjects/particle_class.i"
 	@echo "... ParticleObjects/particle_class.s"
+	@echo "... PhysicsPackages/FSSpecTRRMPhysicsPackage_class.o"
+	@echo "... PhysicsPackages/FSSpecTRRMPhysicsPackage_class.i"
+	@echo "... PhysicsPackages/FSSpecTRRMPhysicsPackage_class.s"
 	@echo "... PhysicsPackages/eigenPhysicsPackage_class.o"
 	@echo "... PhysicsPackages/eigenPhysicsPackage_class.i"
 	@echo "... PhysicsPackages/eigenPhysicsPackage_class.s"

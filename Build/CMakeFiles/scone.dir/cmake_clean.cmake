@@ -144,6 +144,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/scone.dir/ParticleObjects/Source/source_inter.f90.o"
   "CMakeFiles/scone.dir/ParticleObjects/particleDungeon_class.f90.o"
   "CMakeFiles/scone.dir/ParticleObjects/particle_class.f90.o"
+  "CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o"
   "CMakeFiles/scone.dir/PhysicsPackages/eigenPhysicsPackage_class.f90.o"
   "CMakeFiles/scone.dir/PhysicsPackages/fixedSourcePhysicsPackage_class.f90.o"
   "CMakeFiles/scone.dir/PhysicsPackages/fixedSourceTRRMPhysicsPackage_class.f90.o"

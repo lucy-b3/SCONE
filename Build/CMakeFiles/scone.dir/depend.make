@@ -1987,6 +1987,38 @@ CMakeFiles/scone.dir/ParticleObjects/particle_class.f90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch CMakeFiles/scone.dir/ParticleObjects/particle_class.f90.o.provides.build
 CMakeFiles/scone.dir/build: CMakeFiles/scone.dir/ParticleObjects/particle_class.f90.o.provides.build
 
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/basemgneutrondatabase_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/basemgneutronmaterial_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/charmap_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/coord_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/dictionary_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/exponentialra_func.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/genericprocedures.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/geometry_inter.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/geometryreg_mod.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/geometrystd_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/hashfunctions_func.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/materialhandle_inter.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/materialmenu_mod.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/mgneutrondatabase_inter.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/nucleardatareg_mod.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/numprecision.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/outputfile_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/particle_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/physicspackage_inter.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/rng_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/tallymap_inter.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/tallymapfactory_func.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/timer_mod.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/universalvariables.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/visualiser_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o.provides.build: CMakeFiles/scone.dir/fsspectrrmphysicspackage_class.mod.stamp
+CMakeFiles/scone.dir/fsspectrrmphysicspackage_class.mod.stamp: CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod modFiles/fsspectrrmphysicspackage_class.mod CMakeFiles/scone.dir/fsspectrrmphysicspackage_class.mod.stamp GNU
+CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o.provides.build:
+	$(CMAKE_COMMAND) -E touch CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o.provides.build
+CMakeFiles/scone.dir/build: CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o.provides.build
+
 CMakeFiles/scone.dir/PhysicsPackages/eigenPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/collisionoperator_class.mod.stamp
 CMakeFiles/scone.dir/PhysicsPackages/eigenPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/dictionary_class.mod.stamp
 CMakeFiles/scone.dir/PhysicsPackages/eigenPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/endfconstants.mod.stamp
@@ -2094,6 +2126,7 @@ CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: CMakeFile
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: CMakeFiles/scone.dir/eigenphysicspackage_class.mod.stamp
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: CMakeFiles/scone.dir/fixedsourcephysicspackage_class.mod.stamp
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: CMakeFiles/scone.dir/fixedsourcetrrmphysicspackage_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: CMakeFiles/scone.dir/fsspectrrmphysicspackage_class.mod.stamp
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: CMakeFiles/scone.dir/genericprocedures.mod.stamp
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: CMakeFiles/scone.dir/numprecision.mod.stamp
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: CMakeFiles/scone.dir/physicspackage_inter.mod.stamp

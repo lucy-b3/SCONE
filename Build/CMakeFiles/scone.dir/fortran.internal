@@ -79,6 +79,7 @@ provides
  fixedsourcephysicspackage_class.mod
  fixedsourcetrrmphysicspackage_class.mod
  fluxresponse_class.mod
+ fsspectrrmphysicspackage_class.mod
  genericprocedures.mod
  geometry_inter.mod
  geometryreg_mod.mod
