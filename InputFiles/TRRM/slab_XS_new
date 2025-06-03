@@ -4,7 +4,10 @@
 
 numberOfGroups 1;
 
-capture (0.05);
+capture (0.049);
+fission (0.001);
+nu      (2.5);
+chi     (1.0);
 
 scatteringMultiplicity ( 1.0  );
 

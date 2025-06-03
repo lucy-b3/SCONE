@@ -1,18 +1,17 @@
 type randomRayPhysicsPackage;
 
 pop      100;
-active   5000;
-inactive  1000;
-dead       113.6871;
-termination 11368.7071;
-!termination 22737.4142;
+active   50;
+inactive  100;
+dead       100;
+termination  1000;
 plot 0;
 cache 1;
 XSdata   mg;
 dataType mg;
 outputFile benchmark1DSlab100 ;
 printFlux 0 ;
-printCells 1 ;
+printCells 0 ;
 
 fissionMap {type multiMap;
             maps (xax);
@@ -66,27 +65,6 @@ geometry {
     }
     }
 }
-
-
-viz {
-  myVTK {
-    type vtk;
-    what uniqueID;
-    corner (-32.13 -32.13 -1.0);
-    width (64.26 64.26 2.0);
-    vox (2000 2000 1);
-  }
-  bmp1 {
-    type bmp;
-    output myGeometry;
-    what uniqueID; ! Could also be material
-    centre (0.0 0.0 0.0);
-    !width (25.0 25.0); ! This is optional - SCONE should do the whole geometry by default, but you can zoom in by using this
-    axis z; ! This is the perpendicular axis, so you'll get an xy plot
-    res (1500 1500); !Resolution in x and y. Can be tuned to taste.
-  }
-}
-
 
 
 nuclearData {

@@ -5,8 +5,8 @@ type FSSpecTRRMPhysicsPackage;
 pop      1000;
 active   10;  !500; 1000  
 inactive 100; 
-dead     50; !120; 
-termination 550; !1220; 
+dead     20; !120; 
+termination 220; !1220; 
 plot 1;
 cache 1;
 XSdata   mg; 

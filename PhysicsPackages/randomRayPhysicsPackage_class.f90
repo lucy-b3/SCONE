@@ -20,7 +20,6 @@ module randomRayPhysicsPackage_class
   use geometryStd_class,              only : geometryStd
   use geometryReg_mod,                only : gr_geomPtr  => geomPtr, gr_addGeom => addGeom, &
                                              gr_geomIdx  => geomIdx, gr_kill    => kill
-  !use geometryFactory_func,           only : new_geometry
   
   ! Nuclear Data
   use materialMenu_mod,               only : mm_nMat            => nMat, mm_matName => matName
@@ -481,6 +480,11 @@ contains
       end do
     end do
 
+    !print *, self % sigmaT
+    !print *, self % nuSigmaF
+    !print *, self % sigmaS
+    !print *, self % chi
+
   end subroutine init
 
   !!
@@ -531,7 +535,7 @@ contains
     ! Initialise fluxes 
     self % keff       = 1.0_defFlt
     self % scalarFlux = 0.0_defFlt
-    !self % scalarFlux(: (self % nCells/2)) = 5.0
+    self % scalarFlux(: (self % nCells/2)) = 2.0
     self % prevFlux   = 1.0_defFlt
     self % prevPrevFlux   = 1.0_defFlt
     self % fluxScores = 0.0_defFlt
@@ -642,7 +646,7 @@ contains
 
       ! Set previous iteration flux to scalar flux
       ! and zero scalar flux
-      call self % resetFluxes()
+      call self % resetFluxes(it)
 
       ! Calculate times
       call timerStop(self % timerMain)
@@ -1111,6 +1115,7 @@ contains
     fission = 0.0_defFlt
     !$omp simd reduction(+:fission)
     do gIn = 1, self % nG
+      print *, nuFission(gIn)
       fission = fission + fluxVec(gIn) * nuFission(gIn)
     end do
 
@@ -1271,16 +1276,29 @@ contains
   !!
   !! Sets prevFlux to scalarFlux and zero's scalarFlux
   !!
-  subroutine resetFluxes(self)
+  subroutine resetFluxes(self,it)
     class(randomRayPhysicsPackage), intent(inout) :: self
+    integer(shortInt), intent(in)                 :: it
     integer(shortInt)                             :: idx
 
-    !$omp parallel do schedule(static)
-    do idx = 1, size(self % scalarFlux)
-      self % prevFlux(idx) = self % scalarFlux(idx)
-      self % scalarFlux(idx) = ZERO
-    end do
-    !$omp end parallel do
+    if (it > 1) then
+      !$omp parallel do schedule(static)
+      do idx = 1, size(self % scalarFlux)
+        self % prevPrevFlux(idx) = self % prevFlux(idx)
+        self % prevFlux(idx) = self % scalarFlux(idx)
+        self % scalarFlux(idx) = 0.0_defFlt
+      end do
+      !$omp end parallel do
+
+    else
+      !$omp parallel do schedule(static)
+      do idx = 1, size(self % scalarFlux)
+        self % prevFlux(idx) = self % scalarFlux(idx)
+        self % scalarFlux(idx) = 0.0_defFlt
+      end do
+      !$omp end parallel do
+
+    endif
 
   end subroutine resetFluxes
 

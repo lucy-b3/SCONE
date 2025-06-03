@@ -269,6 +269,7 @@ module FSSpecTRRMPhysicsPackage_class
     integer(shortInt), dimension(:), allocatable :: cellHit
     logical(defBool), dimension(:), allocatable  :: cellFound
     real(defReal), dimension(:,:), allocatable   :: cellPos
+    real(defReal), dimension(:), allocatable     :: cellHitRatio
     
     ! OMP locks
     integer(kind=omp_lock_kind), dimension(:), allocatable :: locks
@@ -586,6 +587,7 @@ contains
     allocate(self % cellHit(self % nCells))
     allocate(self % cellFound(self % nCells))
     allocate(self % cellPos(self % nCells, 3))
+    allocate(self % cellHitRatio(self % inactive + self % active))
     
     self % scalarFlux = 0.0_defFlt
     self % scalarFlux(: (self % nCells/2)) = 25.0
@@ -1148,6 +1150,8 @@ contains
       ! Predict time to end
       end_T = real(self % active + self % inactive, defReal) * elapsed_T / it
       T_toEnd = max(ZERO, end_T - elapsed_T)
+
+      self % cellHitRatio(it) = hitRate
 
       ! Display progress
       call printFishLineR(it)
@@ -2145,7 +2149,9 @@ contains
     call out % endBlock()    
 
     print *, self % SR(3)
-    print *, sum(self % SR(40:60))/size(self % SR(40:60))
+    !print *, sum(self % SR(40:60))/size(self % SR(40:60))
+    print *, sum(self % SR(5:25))/size(self % SR(5:25))
+    print *, sum(self % cellHitRatio)/size(self % cellHitRatio)
 
     ! Print cell volumes
     if (self % printVolume) then
@@ -2484,6 +2490,7 @@ contains
     if(allocated(self % cellPos)) deallocate(self % cellPos)
     if(allocated(self % cellToID)) deallocate(self % cellToID)
     if(allocated(self % IDToCell)) deallocate(self % IDToCell)
+    if(allocated(self % cellHitRatio)) deallocate(self % cellHitRatio)
     if(allocated(self % sampleNames)) deallocate(self % sampleNames)
     if(allocated(self % samplePoints)) deallocate(self % samplePoints)
     if(allocated(self % sourceIdx)) deallocate(self % sourceIdx)

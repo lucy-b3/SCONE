@@ -2,21 +2,21 @@ type FSSpecTRRMPhysicsPackage;
 
 // Currently no recommended settings for fixed source problems
 // but hopefully this will be updated in future!
-pop      1000;
+pop      100;
 active   10;  !500; 1000  
 inactive 100; 
 dead     120; 
-termination 1220; 
+termination 12200; 
 plot 1;
 cache 1;
 XSdata   mg; 
 dataType mg;
-outputFile slab_1D_new;
+outputFile slab_NS;
 printVolume 0;
 printFlux 1;
 !volume 360000;
 
-source { fuel ( 1.0 ); }
+source { fuel ( 0.0 ); }
 integrate (fuel );
 
 geometry {
