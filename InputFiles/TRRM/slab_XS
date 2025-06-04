@@ -1,0 +1,18 @@
+// XS for a simple 1D slab
+// Use for numerical results for Fourier analysis
+
+
+numberOfGroups 1;
+
+capture (0.15);
+fission (0.05);
+nu ( 2.7);
+chi ( 1.0);
+
+scatteringMultiplicity ( 1.0  );
+
+P0 (
+ 0.8
+);
+
+

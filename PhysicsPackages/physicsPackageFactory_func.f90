@@ -16,6 +16,7 @@ module physicsPackageFactory_func
   use vizPhysicsPackage_class,             only : vizPhysicsPackage
   use rayVolPhysicsPackage_class,          only : rayVolPhysicsPackage
   use randomRayPhysicsPackage_class,       only : randomRayPhysicsPackage
+  use SRrandomRayPhysicsPackage_class,     only : SRrandomRayPhysicsPackage
 !  use dynamPhysicsPackage_class, only : dynamPhysicsPackage
 
   implicit none
@@ -30,7 +31,8 @@ module physicsPackageFactory_func
                                                                              'fixedSourcePhysicsPackage    ',&
                                                                              'vizPhysicsPackage            ',&
                                                                              'randomRayPhysicsPackage      ',&
-                                                                             'rayVolPhysicsPackage         ']
+                                                                             'rayVolPhysicsPackage         ',&
+                                                                             'SRrandomRayPhysicsPackage    ']
 
   !!
   !! Public interface
@@ -93,6 +95,11 @@ contains
       case('randomRayPhysicsPackage')
         ! Allocate and initialise
         allocate( randomRayPhysicsPackage :: new)
+        call new % init(dict)
+
+      case('SRrandomRayPhysicsPackage')
+        ! Allocate and initialise
+        allocate( SRrandomRayPhysicsPackage :: new)
         call new % init(dict)
 
       case('rayVolPhysicsPackage')

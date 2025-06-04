@@ -628,7 +628,6 @@ contains
       print *, 'Time to end:  ', trim(secToChar(T_toEnd))
       print *, 'Time per integration (ns): ', &
               trim(numToChar(transport_T*10**9/(self % nG * intersections)))
-
     end do
 
     ! Finalise flux scores
