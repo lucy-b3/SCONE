@@ -2150,8 +2150,8 @@ contains
 
     print *, self % SR(3)
     !print *, sum(self % SR(40:60))/size(self % SR(40:60))
-    print *, sum(self % SR(5:25))/size(self % SR(5:25))
-    print *, sum(self % cellHitRatio)/size(self % cellHitRatio)
+    print *, sum(self % SR(5:20))/size(self % SR(5:20))
+    !print *, sum(self % cellHitRatio)/size(self % cellHitRatio)
 
     ! Print cell volumes
     if (self % printVolume) then
