@@ -1207,7 +1207,7 @@ contains
     call out % printResult(real(self % keffScore(1),defReal), real(self % keffScore(2),defReal), name)
     call out % endBlock()
 
-    print *, self % SR(3)
+    print *, self % SR(5)
     !print *, sum(self % SR(40:60))/size(self % SR(40:60))
     print *, sum(self % SR(5:15))/size(self % SR(5:15))
     !print *, sum(self % cellHitRatio)/size(self % cellHitRatio)

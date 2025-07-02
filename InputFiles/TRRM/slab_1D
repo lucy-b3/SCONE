@@ -2,11 +2,11 @@ type SRrandomRayPhysicsPackage;
 
 // Currently no recommended settings for fixed source problems
 // but hopefully this will be updated in future!
-pop      1000;
+pop      500;
 active   10;  !500; 1000  
-inactive 100; 
-dead     20; !120; 
-termination 220; !1220; 
+inactive 30;  !100; 
+dead     50; !120; 
+termination 60; !1220; 
 plot 1;
 cache 1;
 XSdata   mg; 
