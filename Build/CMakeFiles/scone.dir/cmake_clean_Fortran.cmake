@@ -692,6 +692,10 @@ FILE(REMOVE
   "modFiles/SURFACESHELF_CLASS.mod"
   "CMakeFiles/scone.dir/surfaceshelf_class.mod.stamp"
 
+  "modFiles/symrandomrayphysicspackage_class.mod"
+  "modFiles/SYMRANDOMRAYPHYSICSPACKAGE_CLASS.mod"
+  "CMakeFiles/scone.dir/symrandomrayphysicspackage_class.mod.stamp"
+
   "modFiles/tabularangle_class.mod"
   "modFiles/TABULARANGLE_CLASS.mod"
   "CMakeFiles/scone.dir/tabularangle_class.mod.stamp"

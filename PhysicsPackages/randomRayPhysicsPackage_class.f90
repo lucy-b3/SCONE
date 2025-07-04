@@ -1044,6 +1044,8 @@ contains
     end do
     !$omp end parallel do
 
+    !print *, self % fluxScores
+
     self % keffScore(1) = self % keffScore(1) * N1
     self % keffScore(2) = self % keffScore(2) * N1
     self % keffScore(2) = sqrt(Nm1*(self % keffScore(2) - &

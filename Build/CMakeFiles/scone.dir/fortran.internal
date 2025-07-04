@@ -173,6 +173,7 @@ provides
  surface_inter.mod
  surfacefactory_func.mod
  surfaceshelf_class.mod
+ symrandomrayphysicspackage_class.mod
  tabularangle_class.mod
  tabularenergy_class.mod
  tabularmu_class.mod

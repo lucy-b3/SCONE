@@ -127,7 +127,7 @@ latCore
   pitch (21.42 21.42 0.0);
   shape (3 3 0); 
   padMat water; 
-  map ( 
+  map (
 10 20 30
 20 10 30
 30 30 30
