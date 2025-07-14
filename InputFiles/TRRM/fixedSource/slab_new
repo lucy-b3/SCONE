@@ -2,11 +2,11 @@ type FSSpecTRRMPhysicsPackage;
 
 // Currently no recommended settings for fixed source problems
 // but hopefully this will be updated in future!
-pop      1000;
-active   10;  !500; 1000  
-inactive 50; 
-dead     5000; 
-termination 20000; 
+pop      250;
+active   1;  !500; 1000  
+inactive 10; 
+dead     10000; 
+termination 40000; 
 plot 1;
 cache 1;
 XSdata   mg; 

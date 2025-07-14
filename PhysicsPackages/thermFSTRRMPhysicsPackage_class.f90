@@ -251,6 +251,13 @@ module FSSpecTRRMPhysicsPackage_class
     real(defFlt), dimension(:), allocatable     :: sigmaS
     real(defFlt), dimension(:), allocatable     :: chi
 
+    ! Thermal feedback data (to be added to input file!)
+    real(defFlt)                :: sigmaTGrad = -1.089E-5
+    real(defFlt)                :: sigmaAGrad = 3.606E-5
+    real(defFlt)                :: sigmaSGrad = -1.262E-5
+    !real(defFlt)                :: sigmaFGrad = -7.337E-5
+    real(defFlt)                :: phi_0 = 8.075e13
+
     ! Results space
     real(defFlt), dimension(:), allocatable     :: scalarFlux
     real(defFlt), dimension(:), allocatable     :: prevFlux
