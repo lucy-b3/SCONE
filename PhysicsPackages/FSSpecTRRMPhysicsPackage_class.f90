@@ -596,13 +596,16 @@ contains
     self % fluxScores = ZERO
     self % source = 0.0_defFlt
     self % fixedSource = 0.0_defFlt
-    self % volume = 1 / (self % nCells - 1)
+    self % volume(:) = 1 / (real(self % nCells -1))
     self % volume(1) = 0.0_defFlt
     self % volumeTracks = ZERO
     self % cellHit = 0
     self % cellFound = .false.
     self % cellPos = -INFINITY
     
+    ! Check whether to precompute volumes
+    call dict % getOrDefault(self % nVolRays,'volRays',0)
+    if (self % nVolRays > 0) call dict % get(self % volLength, 'volLength')
     
     ! Perform uncollided flux treatment?
     if (dict % isPresent('uncollided')) then
@@ -897,18 +900,11 @@ contains
  
     !$omp parallel do schedule(static)
     do i = 1, self % nCells
-      if (cIdx == 1) then
-        self % volume(cIdx) = 0.0_defFlt
-      else
-        self % volume(cIdx) = 1 / (self % nCells - 1)
-      end if
+      self % volume(i) = self % volumeTracks(i) /(self % nVolRays * self % volLength)
     end do
     !$omp end parallel do
     call timerStop(self % timerTransport)
 
-    self % volume = 1 / (self % nCells - 1)
-    self % volume(1) = 0.0_defFlt
-    
     hitRate = real(sum(self % cellHit),defReal) / self % nCells
     self % cellHit = 0
     self % time_volume = timerTime(self % timerTransport)
@@ -1051,8 +1047,8 @@ contains
 
     ! Reinitialise volumes
     ! Perhaps it is worth doing something more clever if volumes have been precomputed...
-    self % volume = 1 / (self % nCells - 1)
-    self % volume(1) = 0.0_defFlt
+    self % volumeTracks = ZERO
+    self % volume = ZERO
 
     ! Update the cell number after several iterations
     ! Allows for better diagnostics on ray coverage
@@ -1718,6 +1714,9 @@ contains
     norm = real(ONE / lengthPerIt, defFlt)
     normVol = ONE / ( lengthPerIt * it)
 
+    self % itVol = .false.
+    self % volCorr = .false.
+
     !$omp parallel do schedule(static)
     do cIdx = 1, self % nCells
       matIdx =  self % geom % geom % graph % getMatFromUID(self % CellToID(cIdx)) 
@@ -1752,7 +1751,7 @@ contains
         if (cIdx == 1) then
           self % volume(cIdx) = 0.0_defFlt
         else
-          self % volume(cIdx) = 1 / (self % nCells - 1)
+          self % volume(cIdx) = 1 / (real(self % nCells - 1))
         end if
       end if
 

@@ -596,9 +596,8 @@ contains
     self % fluxScores = ZERO
     self % source = 0.0_defFlt
     self % fixedSource = 0.0_defFlt
-    self % volume = ZERO
-    self % volume = 1 / (self % nCells-1)
-    self % volume(1) = 0.0
+    self % volume(:) = 1 / (real(self % nCells -1))
+    self % volume(1) = 0.0_defFlt
     self % volumeTracks = ZERO
     self % cellHit = 0
     self % cellFound = .false.
@@ -1715,6 +1714,9 @@ contains
     norm = real(ONE / lengthPerIt, defFlt)
     normVol = ONE / ( lengthPerIt * it)
 
+    self % itVol = .false.
+    self % volCorr = .false.
+
     !$omp parallel do schedule(static)
     do cIdx = 1, self % nCells
       matIdx =  self % geom % geom % graph % getMatFromUID(self % CellToID(cIdx)) 
@@ -1728,9 +1730,6 @@ contains
         cycle
       end if 
       
-      self % itVol = .false.
-      self % volCorr = .false.
-
       ! Update volume due to additional rays unless volume was precomputed
       !if (self % nVolRays <= 0) then 
       ! Forget the above - use precomputed volumes only for first collided
@@ -1750,9 +1749,9 @@ contains
       else
         ! Standard volume approach
         if (cIdx == 1) then
-          self % volume(cIdx) = 0.0
+          self % volume(cIdx) = 0.0_defFlt
         else
-          self % volume(cIdx) = 1 / (self % nCells - 1)
+          self % volume(cIdx) = 1 / (real(self % nCells - 1))
         end if
       end if
 
@@ -1785,7 +1784,7 @@ contains
 
         self % scalarFlux(idx) =  real((self % scalarflux(idx) + self % source(idx) &
                 / total + D * self % prevFlux(idx) ) / (1 + D), defFlt)
-       
+        
         ! Apply volume correction only to negative flux cells
         if (self % volCorr .and. self % passive) then
           if (self % scalarFlux(idx) < 0) self % scalarFlux(idx) = real(self % scalarFlux(idx) + &

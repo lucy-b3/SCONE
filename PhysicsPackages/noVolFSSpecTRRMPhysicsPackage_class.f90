@@ -596,9 +596,8 @@ contains
     self % fluxScores = ZERO
     self % source = 0.0_defFlt
     self % fixedSource = 0.0_defFlt
-    self % volume = ZERO
-    self % volume = 1 / (self % nCells-1)
-    self % volume(
+    self % volume(:) = 1 / (real(self % nCells-1))
+    self % volume(1) = 0.0
     self % volumeTracks = ZERO
     self % cellHit = 0
     self % cellFound = .false.
