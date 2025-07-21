@@ -525,8 +525,7 @@ contains
 
     ! Initialise other results
     self % cellHit      = 0
-    self % volume(:) =  (1.0 / real(self % nCells - 1))
-    self % volume(1)    = 0.0_defFlt
+    self % volume       = ZERO
     self % volumeTracks = ZERO
     self % intersectionsTotal  = 0
 
@@ -843,12 +842,7 @@ contains
       matIdx =  self % geom % geom % graph % getMatFromUID(cIdx) 
       
       ! Update volume due to additional rays
-      !self % volume(cIdx) = self % volumeTracks(cIdx) * normVol
-      if (cIdx == 1) then
-        self % volume(cIdx) = 0.0
-      else
-        self % volume(cIdx) =  (1.0 / real(self % nCells - 1))
-      end if
+      self % volume(cIdx) = self % volumeTracks(cIdx) * normVol
       vol = real(self % volume(cIdx),defFlt)
 
       do g = 1, self % nG
