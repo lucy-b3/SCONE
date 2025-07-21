@@ -596,15 +596,13 @@ contains
     self % fluxScores = ZERO
     self % source = 0.0_defFlt
     self % fixedSource = 0.0_defFlt
-    self % volume = ZERO
+    self % volume = 1 / (self % nCells - 1)
+    self % volume(1) = 0.0_defFlt
     self % volumeTracks = ZERO
     self % cellHit = 0
     self % cellFound = .false.
     self % cellPos = -INFINITY
     
-    ! Check whether to precompute volumes
-    call dict % getOrDefault(self % nVolRays,'volRays',0)
-    if (self % nVolRays > 0) call dict % get(self % volLength, 'volLength')
     
     ! Perform uncollided flux treatment?
     if (dict % isPresent('uncollided')) then
@@ -782,7 +780,7 @@ contains
     class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
 
     call self % printSettings()
-    if (self % nVolRays > 0) call self % volumeCalculation()
+    !if (self % nVolRays > 0) call self % volumeCalculation()
     if (self % uncollidedType > NO_UC) call self % uncollidedCalculation()
     call self % cycles()
     call self % printResults()
@@ -899,11 +897,18 @@ contains
  
     !$omp parallel do schedule(static)
     do i = 1, self % nCells
-      self % volume(i) = self % volumeTracks(i) /(self % nVolRays * self % volLength)
+      if (cIdx == 1) then
+        self % volume(cIdx) = 0.0_defFlt
+      else
+        self % volume(cIdx) = 1 / (self % nCells - 1)
+      end if
     end do
     !$omp end parallel do
     call timerStop(self % timerTransport)
 
+    self % volume = 1 / (self % nCells - 1)
+    self % volume(1) = 0.0_defFlt
+    
     hitRate = real(sum(self % cellHit),defReal) / self % nCells
     self % cellHit = 0
     self % time_volume = timerTime(self % timerTransport)
@@ -1046,8 +1051,8 @@ contains
 
     ! Reinitialise volumes
     ! Perhaps it is worth doing something more clever if volumes have been precomputed...
-    self % volumeTracks = ZERO
-    self % volume = ZERO
+    self % volume = 1 / (self % nCells - 1)
+    self % volume(1) = 0.0_defFlt
 
     ! Update the cell number after several iterations
     ! Allows for better diagnostics on ray coverage
@@ -1744,7 +1749,11 @@ contains
         if (corr /= corr) corr = ONE
       else
         ! Standard volume approach
-        self % volume(cIdx) = self % volumeTracks(cIdx) * normVol
+        if (cIdx == 1) then
+          self % volume(cIdx) = 0.0_defFlt
+        else
+          self % volume(cIdx) = 1 / (self % nCells - 1)
+        end if
       end if
 
       vol = self % volume(cIdx)
@@ -2155,7 +2164,7 @@ contains
     call out % endArray()
     call out % endBlock()    
 
-    print *, self % SR(3)
+    print *, self % SR(6)
     !print *, sum(self % SR(40:60))/size(self % SR(40:60))
     !print *, sum(self % SR(5:20))/size(self % SR(5:20))
     !print *, sum(self % cellHitRatio)/size(self % cellHitRatio)

@@ -816,6 +816,10 @@ FILE(REMOVE
   "modFiles/THERMALSCATTERINGDATA_CLASS.mod"
   "CMakeFiles/scone.dir/thermalscatteringdata_class.mod.stamp"
 
+  "modFiles/thermfstrrmphysicspackage_class.mod"
+  "modFiles/THERMFSTRRMPHYSICSPACKAGE_CLASS.mod"
+  "CMakeFiles/scone.dir/thermfstrrmphysicspackage_class.mod.stamp"
+
   "modFiles/timer_mod.mod"
   "modFiles/TIMER_MOD.mod"
   "CMakeFiles/scone.dir/timer_mod.mod.stamp"

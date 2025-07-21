@@ -1,4 +1,4 @@
-module FSSpecTRRMPhysicsPackage_class
+module thermFSTRRMPhysicsPackage_class
 
   use numPrecision
   use universalVariables
@@ -186,7 +186,7 @@ module FSSpecTRRMPhysicsPackage_class
   !! Interface:
   !!   physicsPackage interface
   !!
-  type, public, extends(physicsPackage) :: FSSpecTRRMPhysicsPackage
+  type, public, extends(physicsPackage) :: thermFSTRRMPhysicsPackage
     private
     ! Components
     class(geometryStd), pointer           :: geom
@@ -321,7 +321,7 @@ module FSSpecTRRMPhysicsPackage_class
     procedure, private :: uncollidedSweep
     procedure, private :: uncollidedCalculation
 
-  end type FSSpecTRRMPhysicsPackage
+  end type thermFSTRRMPhysicsPackage
 
 contains
 
@@ -331,7 +331,7 @@ contains
   !! See physicsPackage_inter for details
   !!
   subroutine init(self,dict)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     class(dictionary), intent(inout)                    :: dict
     integer(shortInt)                                   :: seed_temp, n, nPoints, i, m, g, g1
     integer(longInt)                                    :: seed
@@ -349,7 +349,7 @@ contains
     class(baseMgNeutronMaterial), pointer               :: mat
     class(materialHandle), pointer                      :: matPtr
     logical(defBool)                                    :: cellCheck
-    character(100), parameter :: Here = 'init (FSSpecTRRMPhysicsPackage_class.f90)'
+    character(100), parameter :: Here = 'init (thermFSTRRMPhysicsPackage_class.f90)'
 
     call cpu_time(self % CPU_time_start)
     
@@ -716,7 +716,7 @@ contains
   !! Also sets options for uncollided flux calculations
   !!
   subroutine initialiseSource(self, dict)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     class(dictionary), intent(inout)                    :: dict
     character(nameLen),dimension(:), allocatable        :: names
     real(defReal), dimension(:), allocatable            :: sourceStrength
@@ -725,7 +725,7 @@ contains
     logical(defBool)                                    :: found
     character(nameLen)                                  :: sourceName 
     character(nameLen), save                            :: localName
-    character(100), parameter :: Here = 'initialiseSource (FSSpecTRRMPhysicsPackage_class.f90)'
+    character(100), parameter :: Here = 'initialiseSource (thermFSTRRMPhysicsPackage_class.f90)'
     !$omp threadprivate(matIdx, localName, idx, g, id)
 
     call dict % keys(names)
@@ -786,7 +786,7 @@ contains
   !! See physicsPackage_inter for details
   !!
   subroutine run(self)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
 
     call self % printSettings()
     if (self % nVolRays > 0) call self % volumeCalculation()
@@ -803,7 +803,7 @@ contains
   !! Rays are tracked until they reach some specified termination length.
   !!
   subroutine cellMapCalculation(self)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     type(ray), save                                     :: r
     type(RNG), target, save                             :: pRNG
     real(defReal)                                       :: hitRate
@@ -877,7 +877,7 @@ contains
   !! scoring to volume estimates.
   !!
   subroutine volumeCalculation(self)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     type(ray), save                                     :: r
     type(RNG), target, save                             :: pRNG
     real(defReal)                                       :: hitRate
@@ -935,7 +935,7 @@ contains
   !! During tracking, fluxes are attenuated (and adjusted according to BCs).
   !!
   subroutine uncollidedCalculation(self)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     type(ray), save                                     :: r
     type(RNG), target, save                             :: pRNG
     real(defReal)                                       :: hitRate
@@ -1039,7 +1039,7 @@ contains
   !! given criteria or when a fixed number of iterations has been passed.
   !!
   subroutine cycles(self)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     type(ray), save                                     :: r
     type(RNG), target, save                             :: pRNG
     real(defReal)                                       :: hitRate
@@ -1204,12 +1204,12 @@ contains
   !! and performs the build operation
   !!
   subroutine initialiseRay(self, r)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     type(ray), intent(inout)                            :: r
     real(defReal)                                       :: mu, phi, rayPos, rayDir
     real(defReal), dimension(3)                         :: u, rand3, x
     integer(shortInt)                                   :: i, matIdx, id, cIdx
-    character(100), parameter :: Here = 'initialiseRay (FSSpecTRRMPhysicsPackage_class.f90)'
+    character(100), parameter :: Here = 'initialiseRay (thermFSTRRMPhysicsPackage_class.f90)'
 
     i = 0
     mu = TWO * r % pRNG % get() - ONE
@@ -1267,7 +1267,7 @@ contains
   !! Also used for constructing the cell map
   !!
   subroutine volumeSweep(self, r, maxLength, doVolume)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     type(ray), intent(inout)                            :: r
     real(defReal), intent(in)                           :: maxLength
     logical(defBool), intent(in)                        :: doVolume
@@ -1348,18 +1348,18 @@ contains
   !!
   !!
   subroutine uncollidedSweep(self, r, ints)
-    class(FSSpecTRRMPhysicsPackage), target, intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), target, intent(inout) :: self
     type(ray), intent(inout)                              :: r
     integer(longInt), intent(out)                         :: ints
     integer(shortInt)                                     :: matIdx, g, event, matIdx0, i, cIdx, baseIdx
     real(defReal)                                         :: totalLength, length, mu, phi
-    real(defFlt)                                          :: lenFlt
+    real(defFlt)                                          :: lenFlt, totXS
     logical(defBool)                                      :: hitVacuum
     type(distCache)                                       :: cache
     real(defFlt), dimension(self % nG)                    :: attenuate, delta, fluxVec
     real(defFlt), pointer, dimension(:)                   :: scalarVec, totVec
     real(defReal), dimension(3)                           :: r0, mu0, u, x0, rand3
-    character(100), parameter :: Here = 'uncollidedSweep (FSSpecTRRMPhysicsPackage_class.f90)'
+    character(100), parameter :: Here = 'uncollidedSweep (thermFSTRRMPhysicsPackage_class.f90)'
     
     ! If point source, position and direction sample is straightforward
     ! Flux is determined by source
@@ -1482,7 +1482,8 @@ contains
 
       !$omp simd
       do g = 1, self % nG
-        attenuate(g) = exponential(totVec(g) * lenFlt)
+        totXS = totVec(g) + (self % sigmaTGrad * (scalarVec(g) - self % phi_0))
+        attenuate(g) = exponential(totXS * lenFlt)
         delta(g) = fluxVec(g) * attenuate(g)
         fluxVec(g) = fluxVec(g) - delta(g)
       end do
@@ -1515,7 +1516,7 @@ contains
   !! Records the number of integrations/ray movements.
   !!
   subroutine transportSweep(self, r, ints)
-    class(FSSpecTRRMPhysicsPackage), target, intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), target, intent(inout) :: self
     type(ray), intent(inout)                              :: r
     integer(longInt), intent(out)                         :: ints
     integer(shortInt)                                     :: matIdx, g, event, matIdx0, cIdx, idx, baseIdx
@@ -1524,7 +1525,7 @@ contains
     type(distCache)                                       :: cache
     real(defFlt), dimension(self % nG)                    :: attenuate, delta, fluxVec, tau
     real(defFlt), pointer, dimension(:)                   :: scalarVec, sourceVec, totVec
-    real(defFlt)                                          :: lenFlt
+    real(defFlt)                                          :: lenFlt, totXS
     real(defReal), dimension(3)                           :: r0, mu0
     
     matIdx  = r % coords % matIdx
@@ -1534,9 +1535,10 @@ contains
     cIdx = self % IDToCell(r % coords % uniqueID)
     if (cIdx > 0) then
       do g = 1, self % nG
+        totXS = totVec(g) + (self % sigmaTGrad * (self % scalarFlux(cIdx) - self % phi_0))
         idx = (cIdx - 1) * self % nG + g
         if (totVec(g) > 0.0_defFlt) then
-          fluxVec(g) = self % source(idx) / totVec(g)
+          fluxVec(g) = self % source(idx) / totXS
         else
           fluxVec(g) = self % source(idx)
         end if
@@ -1615,7 +1617,8 @@ contains
       
         !$omp simd
         do g = 1, self % nG
-          tau(g) = lenFlt * totVec(g)
+          totXS = totVec(g) + (self % sigmaTGrad * (self % scalarFlux(cIdx) - self % phi_0))
+          tau(g) = lenFlt * totXS
           attenuate(g) = f1(tau(g))
           delta(g) = (tau(g) * fluxVec(g) - lenFlt * sourceVec(g)) * attenuate(g)
           fluxVec(g) = fluxVec(g) - delta(g)
@@ -1662,7 +1665,7 @@ contains
   !! Normalise flux from uncollided calculation
   !!
   subroutine normaliseFluxUncollided(self, norm)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     real(defReal), intent(in)                           :: norm
     real(defFlt)                                        :: normFlt
     real(defFlt), save                                  :: total
@@ -1689,7 +1692,8 @@ contains
         end if 
       
         do g = 1, self % nG
-          total = self % sigmaT((matIdx - 1) * self % nG + g)
+          total = self % sigmaT((matIdx - 1) * self % nG + g) + (self % sigmaTGrad * (self % scalarFlux(cIdx) &
+                                                                - self % phi_0)) 
           idx   = self % nG * (cIdx - 1) + g
           self % scalarFlux(idx) = self % scalarFlux(idx) * normFlt / (total * real(self % volume(cIdx),defFlt))
         end do
@@ -1706,7 +1710,7 @@ contains
   !! the flux by the neutron source
   !!
   subroutine normaliseFluxAndVolume(self, lengthPerIt, it)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     real(defReal), intent(in)                           :: lengthPerIt
     integer(shortInt), intent(in)                       :: it
     real(defReal)                                       :: normVol
@@ -1759,8 +1763,10 @@ contains
       do g = 1, self % nG
 
         idx   = self % nG * (cIdx - 1) + g
-        total = self % sigmaT((matIdx - 1) * self % nG + g)
-        
+       
+        total = self % sigmaT((matIdx - 1) * self % nG + g) + (self % sigmaTGrad * (self % scalarFlux(cIdx) &
+                                                                - self % phi_0))
+
         if (vol > volume_tolerance) then
           self % scalarFlux(idx) = self % scalarFlux(idx) * norm/ (total * real(vol,defFlt))
         else
@@ -1813,7 +1819,7 @@ contains
   !! Calculates the Shannon entropy at a given iteration
   !!
   subroutine calculateShannonEntropy(self,it)
-    class(FSSpecTRRMPhysicsPackage), target, intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), target, intent(inout) :: self
     integer(shortInt), intent(in)                          :: it
     real(defReal)                                 :: sumFlux, entropy
     real(defReal), save                           :: fluxLocal, vol, pF
@@ -1876,9 +1882,9 @@ contains
   !! Kernel to update sources given a cell index
   !!
   subroutine sourceUpdateKernel(self, cIdx)
-    class(FSSpecTRRMPhysicsPackage), target, intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), target, intent(inout) :: self
     integer(shortInt), intent(in)                         :: cIdx
-    real(defFlt)                                          :: scatter, fission
+    real(defFlt)                                          :: scatter, fission, scatXS
     real(defFlt), dimension(:), pointer                   :: nuFission, total, chi, scatterXS 
     integer(shortInt)                                     :: matIdx, g, gIn, id, baseIdx, idx
     real(defFlt), pointer, dimension(:)                   :: fluxVec, scatterVec
@@ -1917,7 +1923,8 @@ contains
       ! Sum contributions from all energies
       !$omp simd reduction(+:scatter)
       do gIn = 1, self % nG
-        scatter = scatter + fluxVec(gIn) * scatterVec(gIn)
+        scatXS = scatterVec(gIn) + (self % sigmaSGrad * (fluxVec(gIn) - self % phi_0))
+        scatter = scatter + fluxVec(gIn) * scatXS
       end do
 
       ! Output index
@@ -1933,9 +1940,9 @@ contains
   !! Overwrites any existing fixed source
   !!
   subroutine firstCollidedSourceKernel(self, cIdx)
-    class(FSSpecTRRMPhysicsPackage), target, intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), target, intent(inout) :: self
     integer(shortInt), intent(in)                         :: cIdx
-    real(defFlt)                                          :: scatter, fission
+    real(defFlt)                                          :: scatter, fission, scatXS
     real(defFlt), dimension(:), pointer                   :: nuFission, chi, scatterXS 
     integer(shortInt)                                     :: matIdx, g, gIn, baseIdx, idx
     real(defFlt), pointer, dimension(:)                   :: scatterVec
@@ -1973,7 +1980,8 @@ contains
       ! Sum contributions from all energies
       !$omp simd reduction(+:scatter)
       do gIn = 1, self % nG
-        scatter = scatter + real(fluxVec(gIn),defFlt) * scatterVec(gIn)
+        scatXS = scatterVec(gIn) + (self % sigmaSGrad * (fluxVec(gIn) - self % phi_0))
+        scatter = scatter + real(fluxVec(gIn),defFlt) * scatXS
       end do
 
       ! Output index
@@ -1988,7 +1996,7 @@ contains
 
   !! Calculates the spectral radius
   subroutine calculateSpectralRadius(self,it)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     integer(shortInt), intent(in)                  :: it
     real(defFlt), dimension(self % nCells)         :: delta1, delta2
     real(defFlt)                                   :: norm1, norm2
@@ -2007,7 +2015,7 @@ contains
   !! Sets prevFlux to scalarFlux and zero's scalarFlux
   !!
   subroutine resetFluxes(self,it)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     integer(shortInt), intent(in)                  :: it   
     integer(shortInt)                              :: idx
 
@@ -2036,7 +2044,7 @@ contains
   !! Accumulate flux scores for stats
   !!
   subroutine accumulateFluxScores(self)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     real(defReal), save                                 :: flux
     integer(shortInt)                                   :: idx
     !$omp threadprivate(flux)
@@ -2055,7 +2063,7 @@ contains
   !! Finalise flux scores for stats
   !!
   subroutine finaliseFluxScores(self,it)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     integer(shortInt), intent(in)                       :: it
     integer(shortInt)                                   :: idx
     real(defReal)                                       :: N1, Nm1
@@ -2093,7 +2101,7 @@ contains
   !!   None
   !!
   subroutine printResults(self)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     type(outputFile)                                    :: out
     character(nameLen)                                  :: name
     integer(shortInt)                                   :: g1, cIdx
@@ -2397,7 +2405,7 @@ contains
   !!   None
   !!
   subroutine printSettings(self)
-    class(FSSpecTRRMPhysicsPackage), intent(in) :: self
+    class(thermFSTRRMPhysicsPackage), intent(in) :: self
 
     print *, repeat("<>", MAX_COL/2)
     print *, "/\/\ RANDOM RAY FIXED SOURCE CALCULATION /\/\"
@@ -2424,7 +2432,7 @@ contains
   !! Return to uninitialised state
   !!
   subroutine kill(self)
-    class(FSSpecTRRMPhysicsPackage), intent(inout) :: self
+    class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     integer(shortInt) :: i
 
     ! Clean Nuclear Data, Geometry and visualisation
@@ -2519,4 +2527,4 @@ contains
 
   end subroutine kill
 
-end module FSSpecTRRMPhysicsPackage_class
+end module thermFSTRRMPhysicsPackage_class

@@ -2132,6 +2132,7 @@ CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: CMakeFile
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: CMakeFiles/scone.dir/physicspackage_inter.mod.stamp
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: CMakeFiles/scone.dir/randomrayphysicspackage_class.mod.stamp
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: CMakeFiles/scone.dir/rayvolphysicspackage_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: CMakeFiles/scone.dir/thermfstrrmphysicspackage_class.mod.stamp
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o: CMakeFiles/scone.dir/vizphysicspackage_class.mod.stamp
 CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o.provides.build: CMakeFiles/scone.dir/physicspackagefactory_func.mod.stamp
 CMakeFiles/scone.dir/physicspackagefactory_func.mod.stamp: CMakeFiles/scone.dir/PhysicsPackages/physicsPackageFactory_func.f90.o
@@ -2199,6 +2200,38 @@ CMakeFiles/scone.dir/rayvolphysicspackage_class.mod.stamp: CMakeFiles/scone.dir/
 CMakeFiles/scone.dir/PhysicsPackages/rayVolPhysicsPackage_class.f90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch CMakeFiles/scone.dir/PhysicsPackages/rayVolPhysicsPackage_class.f90.o.provides.build
 CMakeFiles/scone.dir/build: CMakeFiles/scone.dir/PhysicsPackages/rayVolPhysicsPackage_class.f90.o.provides.build
+
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/basemgneutrondatabase_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/basemgneutronmaterial_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/charmap_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/coord_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/dictionary_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/exponentialra_func.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/genericprocedures.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/geometry_inter.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/geometryreg_mod.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/geometrystd_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/hashfunctions_func.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/materialhandle_inter.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/materialmenu_mod.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/mgneutrondatabase_inter.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/nucleardatareg_mod.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/numprecision.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/outputfile_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/particle_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/physicspackage_inter.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/rng_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/tallymap_inter.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/tallymapfactory_func.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/timer_mod.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/universalvariables.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/visualiser_class.mod.stamp
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o.provides.build: CMakeFiles/scone.dir/thermfstrrmphysicspackage_class.mod.stamp
+CMakeFiles/scone.dir/thermfstrrmphysicspackage_class.mod.stamp: CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod modFiles/thermfstrrmphysicspackage_class.mod CMakeFiles/scone.dir/thermfstrrmphysicspackage_class.mod.stamp GNU
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o.provides.build:
+	$(CMAKE_COMMAND) -E touch CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o.provides.build
+CMakeFiles/scone.dir/build: CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o.provides.build
 
 CMakeFiles/scone.dir/PhysicsPackages/vizPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/dictionary_class.mod.stamp
 CMakeFiles/scone.dir/PhysicsPackages/vizPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/genericprocedures.mod.stamp

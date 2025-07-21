@@ -2930,9 +2930,22 @@ CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.s: cmake
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling Fortran source to assembly CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.s"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -S /home/lb831/SCONE/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90 -o CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.s
 
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: CMakeFiles/scone.dir/flags.make
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o: ../PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_222) "Building Fortran object CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o"
+	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90 -o CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o
+
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing Fortran source to CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.i"
+	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -E /home/lb831/SCONE/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90 > CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.i
+
+CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling Fortran source to assembly CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.s"
+	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -S /home/lb831/SCONE/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90 -o CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.s
+
 CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.o: ../DataStructures/dictionary_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_222) "Building Fortran object CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_223) "Building Fortran object CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/DataStructures/dictionary_class.f90 -o CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.o
 
 CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.i: cmake_force
@@ -2945,7 +2958,7 @@ CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/DataStructures/intMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/DataStructures/intMap_class.f90.o: ../DataStructures/intMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_223) "Building Fortran object CMakeFiles/scone.dir/DataStructures/intMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_224) "Building Fortran object CMakeFiles/scone.dir/DataStructures/intMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/DataStructures/intMap_class.f90 -o CMakeFiles/scone.dir/DataStructures/intMap_class.f90.o
 
 CMakeFiles/scone.dir/DataStructures/intMap_class.f90.i: cmake_force
@@ -2958,7 +2971,7 @@ CMakeFiles/scone.dir/DataStructures/intMap_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/DataStructures/charMap_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/DataStructures/charMap_class.f90.o: ../DataStructures/charMap_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_224) "Building Fortran object CMakeFiles/scone.dir/DataStructures/charMap_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_225) "Building Fortran object CMakeFiles/scone.dir/DataStructures/charMap_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/DataStructures/charMap_class.f90 -o CMakeFiles/scone.dir/DataStructures/charMap_class.f90.o
 
 CMakeFiles/scone.dir/DataStructures/charMap_class.f90.i: cmake_force
@@ -2971,7 +2984,7 @@ CMakeFiles/scone.dir/DataStructures/charMap_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/DataStructures/stack_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/DataStructures/stack_class.f90.o: ../DataStructures/stack_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_225) "Building Fortran object CMakeFiles/scone.dir/DataStructures/stack_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_226) "Building Fortran object CMakeFiles/scone.dir/DataStructures/stack_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/DataStructures/stack_class.f90 -o CMakeFiles/scone.dir/DataStructures/stack_class.f90.o
 
 CMakeFiles/scone.dir/DataStructures/stack_class.f90.i: cmake_force
@@ -2984,7 +2997,7 @@ CMakeFiles/scone.dir/DataStructures/stack_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.o: ../DataStructures/dynArray_class.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_226) "Building Fortran object CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_227) "Building Fortran object CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/DataStructures/dynArray_class.f90 -o CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.o
 
 CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.i: cmake_force
@@ -2997,7 +3010,7 @@ CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.s: cmake_force
 
 CMakeFiles/scone.dir/DataStructures/dictParser_func.f90.o: CMakeFiles/scone.dir/flags.make
 CMakeFiles/scone.dir/DataStructures/dictParser_func.f90.o: ../DataStructures/dictParser_func.f90
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_227) "Building Fortran object CMakeFiles/scone.dir/DataStructures/dictParser_func.f90.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_228) "Building Fortran object CMakeFiles/scone.dir/DataStructures/dictParser_func.f90.o"
 	/usr/bin/gfortran $(Fortran_DEFINES) $(Fortran_INCLUDES) $(Fortran_FLAGS) -c /home/lb831/SCONE/DataStructures/dictParser_func.f90 -o CMakeFiles/scone.dir/DataStructures/dictParser_func.f90.o
 
 CMakeFiles/scone.dir/DataStructures/dictParser_func.f90.i: cmake_force
@@ -3231,6 +3244,7 @@ scone_OBJECTS = \
 "CMakeFiles/scone.dir/PhysicsPackages/randomRayPhysicsPackage_class.f90.o" \
 "CMakeFiles/scone.dir/PhysicsPackages/fixedSourceTRRMPhysicsPackage_class.f90.o" \
 "CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o" \
+"CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o" \
 "CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.o" \
 "CMakeFiles/scone.dir/DataStructures/intMap_class.f90.o" \
 "CMakeFiles/scone.dir/DataStructures/charMap_class.f90.o" \
@@ -3462,6 +3476,7 @@ libscone.a: CMakeFiles/scone.dir/PhysicsPackages/rayVolPhysicsPackage_class.f90.
 libscone.a: CMakeFiles/scone.dir/PhysicsPackages/randomRayPhysicsPackage_class.f90.o
 libscone.a: CMakeFiles/scone.dir/PhysicsPackages/fixedSourceTRRMPhysicsPackage_class.f90.o
 libscone.a: CMakeFiles/scone.dir/PhysicsPackages/FSSpecTRRMPhysicsPackage_class.f90.o
+libscone.a: CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o
 libscone.a: CMakeFiles/scone.dir/DataStructures/dictionary_class.f90.o
 libscone.a: CMakeFiles/scone.dir/DataStructures/intMap_class.f90.o
 libscone.a: CMakeFiles/scone.dir/DataStructures/charMap_class.f90.o
@@ -3470,7 +3485,7 @@ libscone.a: CMakeFiles/scone.dir/DataStructures/dynArray_class.f90.o
 libscone.a: CMakeFiles/scone.dir/DataStructures/dictParser_func.f90.o
 libscone.a: CMakeFiles/scone.dir/build.make
 libscone.a: CMakeFiles/scone.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_228) "Linking Fortran static library libscone.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/lb831/SCONE/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_229) "Linking Fortran static library libscone.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/scone.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/scone.dir/link.txt --verbose=$(VERBOSE)
 

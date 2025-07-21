@@ -18,6 +18,7 @@ module physicsPackageFactory_func
   use randomRayPhysicsPackage_class,       only : randomRayPhysicsPackage
   use fixedSourceTRRMPhysicsPackage_class, only : fixedSourceTRRMPhysicsPackage
   use FSSpecTRRMPhysicsPackage_class,      only : FSSpecTRRMPhysicsPackage
+  use thermFSTRRMPhysicsPackage_class,     only : thermFSTRRMPhysicsPackage
 !  use dynamPhysicsPackage_class, only : dynamPhysicsPackage
 
   implicit none
@@ -34,7 +35,8 @@ module physicsPackageFactory_func
                                                                              'randomRayPhysicsPackage      ',&
                                                                              'rayVolPhysicsPackage         ',&
                                                                              'fixedSourceTRRMPhysicsPackage',&
-                                                                             'FSSpecTRRMPhysicsPackage     ']
+                                                                             'FSSpecTRRMPhysicsPackage     ',&
+                                                                             'thermFSTRRMPhysicsPackage    ']
 
   !!
   !! Public interface
@@ -108,6 +110,11 @@ contains
       case('FSSpecTRRMPhysicsPackage')
         ! Allocate and initialise
         allocate( FSSpecTRRMPhysicsPackage :: new)
+        call new % init(dict)
+        
+      case('thermFSTRRMPhysicsPackage')
+        ! Allocate and initialise
+        allocate( thermFSTRRMPhysicsPackage :: new)
         call new % init(dict)
 
       case('rayVolPhysicsPackage')

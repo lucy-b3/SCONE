@@ -152,6 +152,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/scone.dir/PhysicsPackages/physicsPackage_inter.f90.o"
   "CMakeFiles/scone.dir/PhysicsPackages/randomRayPhysicsPackage_class.f90.o"
   "CMakeFiles/scone.dir/PhysicsPackages/rayVolPhysicsPackage_class.f90.o"
+  "CMakeFiles/scone.dir/PhysicsPackages/thermFSTRRMPhysicsPackage_class.f90.o"
   "CMakeFiles/scone.dir/PhysicsPackages/vizPhysicsPackage_class.f90.o"
   "CMakeFiles/scone.dir/RandomNumbers/RNG_class.f90.o"
   "CMakeFiles/scone.dir/SharedModules/charLib_func.f90.o"
