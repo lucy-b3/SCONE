@@ -1,0 +1,94 @@
+type thermFSTRRMPhysicsPackage; 
+
+// Currently no recommended settings for fixed source problems
+// but hopefully this will be updated in future!
+pop      10;
+active   1;  !500; 1000  
+inactive 10; 
+dead     10000; 
+termination 40000; 
+plot 1;
+cache 1;
+XSdata   mg; 
+dataType mg;
+outputFile slab_1D_new;
+printVolume 0;
+printFlux 1;
+!volume 360000;
+
+source { fuel ( 1.0 ); }
+integrate (fuel );
+
+geometry {
+    type geometryStd;
+    boundary (1 1 1 1 1 1);
+    graph {type extended;}
+
+    surfaces
+    {
+      squareBound { id 1; type box; origin ( 0.0  0.0  0.0); halfwidth (5000.0 0.5 0.5); }
+    }
+
+
+    cells
+    {
+    }
+
+    universes
+    {
+
+      pin { id 2; type pinUniverse; radii (0.0); fills (fuel);}
+
+      root
+      {
+          id 1;
+          type rootUniverse;
+          border 1;
+          fill u<3>;
+      }
+
+    fuellattice{
+      id 3;
+      type latUniverse;
+      pitch (50 1.0 1.0);
+      shape (200 1 1);
+      padMat void;
+      map (
+
+         2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+
+        );
+    }
+    }
+}
+
+
+viz {
+  myVTK {
+    type vtk;
+    what uniqueID; 
+    corner ( 0.0 0.0 0.0 );
+    width ( 60.0 100.0 60.0 );
+    vox ( 60 100 60 );
+//    vox ( 6 10 6 );
+  }
+//    corner ( 0.5 0.5 0.5 );
+} 
+
+
+nuclearData {
+  handles { 
+    mg { type baseMgNeutronDatabase; PN P0;} 
+  } 
+  materials { 
+
+    fuel { 
+       temp 300; 
+       xsFile ./slab_XS_new;
+       composition {  }
+   }
+
+}
+}
+
+

@@ -252,9 +252,9 @@ module thermFSTRRMPhysicsPackage_class
     real(defFlt), dimension(:), allocatable     :: chi
 
     ! Thermal feedback data (to be added to input file!)
-    real(defFlt)                :: sigmaTGrad = -1.089E-5
-    real(defFlt)                :: sigmaAGrad = 3.606E-5
-    real(defFlt)                :: sigmaSGrad = -1.262E-5
+    real(defFlt)                :: sigmaTGrad = -1.089E-12
+    real(defFlt)                :: sigmaAGrad = 3.606E-12
+    real(defFlt)                :: sigmaSGrad = -1.262E-12
     !real(defFlt)                :: sigmaFGrad = -7.337E-5
     real(defFlt)                :: phi_0 = 8.075e13
 
@@ -333,7 +333,7 @@ contains
   subroutine init(self,dict)
     class(thermFSTRRMPhysicsPackage), intent(inout) :: self
     class(dictionary), intent(inout)                    :: dict
-    integer(shortInt)                                   :: seed_temp, n, nPoints, i, m, g, g1
+    integer(shortInt)                                   :: seed_temp, n, nPoints, i, m, g, g1, cIdx
     integer(longInt)                                    :: seed
     character(10)                                       :: time
     character(8)                                        :: date
@@ -349,6 +349,7 @@ contains
     class(baseMgNeutronMaterial), pointer               :: mat
     class(materialHandle), pointer                      :: matPtr
     logical(defBool)                                    :: cellCheck
+    real(defFlt)                                        :: fluxSum, factor
     character(100), parameter :: Here = 'init (thermFSTRRMPhysicsPackage_class.f90)'
 
     call cpu_time(self % CPU_time_start)
@@ -596,8 +597,9 @@ contains
     allocate(self % cellPos(self % nCells, 3))
     allocate(self % cellHitRatio(self % inactive + self % active))
     
-    self % scalarFlux = 0.0_defFlt
+    self % scalarFlux = 1.0_defFlt
     self % scalarFlux(: (self % nCells/2)) = 25.0
+    self % scalarFlux(1) = 0.0_defFlt
     self % prevFlux = 0.0_defFlt
     self % prevPrevFlux = 0.0_defFlt
     self % fluxScores = ZERO
@@ -608,7 +610,33 @@ contains
     self % cellHit = 0
     self % cellFound = .false.
     self % cellPos = -INFINITY
+
+    self % volume = 1 / real((self % nCells - 1))
+    self % volume(1) = 0.0
+
+
+    fluxSum = 0.0
+
+    !$omp parallel do reduction(+:fluxSum) schedule(static)
+    do cIdx = 1, self % nCells
+
+      fluxSum = fluxSum + (self % scalarFlux(cIdx) * self % volume(cIdx))
     
+    end do
+    !$omp end parallel do
+
+    factor = self % phi_0 / fluxSum
+    !print *, self % phi_0
+    !print *, fluxSum
+    !print *, factor
+    self % scalarFlux = real(factor,defFlt) * self % scalarFlux
+    !self % scalarFlux(1) = self % phi_0
+    !print *, self % scalarFlux
+
+    !print *, (sum(self % scalarFlux * self % volume)/self % phi_0)
+    
+    self % volume = ZERO
+
     ! Check whether to precompute volumes
     call dict % getOrDefault(self % nVolRays,'volRays',0)
     if (self % nVolRays > 0) call dict % get(self % volLength, 'volLength')
@@ -1096,6 +1124,8 @@ contains
       call timerStart(self % timerTransport)
       intersections = 0
       
+      !print *, self % scalarFlux
+      
       !$omp parallel do schedule(dynamic) reduction(+: intersections)
       do p = 1, self % pop
 
@@ -1108,11 +1138,15 @@ contains
         call self % initialiseRay(r)
         
         ! Transport ray until termination criterion met
-        call self % transportSweep(r,ints)
+        call self % transportSweep(r,ints,it)
         intersections = intersections + ints
-      
+
+        !print *, self % scalarFlux
+         
       end do
       !$omp end parallel do
+
+      print *, self % scalarFlux
       
       call timerStop(self % timerTransport)
 
@@ -1482,7 +1516,11 @@ contains
 
       !$omp simd
       do g = 1, self % nG
-        totXS = totVec(g) + (self % sigmaTGrad * (scalarVec(g) - self % phi_0))
+        if ((scalarVec(g) /= 0.0) .and. (scalarVec(g) == scalarVec(g))) then
+          totXS = totVec(g) + (self % sigmaTGrad * (scalarVec(g) - self % phi_0))
+        else
+          totXS = totVec(g)
+        end if
         attenuate(g) = exponential(totXS * lenFlt)
         delta(g) = fluxVec(g) * attenuate(g)
         fluxVec(g) = fluxVec(g) - delta(g)
@@ -1515,10 +1553,11 @@ contains
   !! scoring scalar flux and volume.
   !! Records the number of integrations/ray movements.
   !!
-  subroutine transportSweep(self, r, ints)
+  subroutine transportSweep(self, r, ints, it)
     class(thermFSTRRMPhysicsPackage), target, intent(inout) :: self
     type(ray), intent(inout)                              :: r
     integer(longInt), intent(out)                         :: ints
+    integer(shortInt), intent(in)                         :: it
     integer(shortInt)                                     :: matIdx, g, event, matIdx0, cIdx, idx, baseIdx
     real(defReal)                                         :: totalLength, length
     logical(defBool)                                      :: activeRay, hitVacuum
@@ -1530,12 +1569,22 @@ contains
     
     matIdx  = r % coords % matIdx
     totVec => self % sigmaT(((matIdx - 1) * self % nG + 1):((matIdx - 1) * self % nG + self % nG))
-    
+   
     ! Set initial angular flux to angle average of cell source
     cIdx = self % IDToCell(r % coords % uniqueID)
     if (cIdx > 0) then
       do g = 1, self % nG
-        totXS = totVec(g) + (self % sigmaTGrad * (self % scalarFlux(cIdx) - self % phi_0))
+        if ((((self % scalarFlux(cIdx)) /= 0.0) .and. (self % scalarFlux(cIdx) == self % scalarFlux(cIdx))) &
+                .or. (it /= 1)) then
+          totXS = totVec(g) + (self % sigmaTGrad * (self % scalarFlux(cIdx) - self % phi_0))
+          print *, self % scalarFlux(cIdx)
+          print *, (self % scalarFlux(cIdx) - self % phi_0)
+          if ((totXS < 0) .or. (totXS /= totXS)) then
+            totXS = totVec(g)
+          end if
+        else
+          totXs = totvec(g)
+        end if
         idx = (cIdx - 1) * self % nG + g
         if (totVec(g) > 0.0_defFlt) then
           fluxVec(g) = self % source(idx) / totXS
@@ -1547,6 +1596,8 @@ contains
       fluxVec = 0.0_defFlt
     end if
 
+    !print *, self % source
+    
     ints = 0
     matIdx0 = matIdx
     totalLength = ZERO
@@ -1617,7 +1668,11 @@ contains
       
         !$omp simd
         do g = 1, self % nG
-          totXS = totVec(g) + (self % sigmaTGrad * (self % scalarFlux(cIdx) - self % phi_0))
+          if ((self % scalarFlux(cIdx) /= 0.0) .and. (self % scalarFlux(cIdx) == self % scalarFlux(cIdx))) then
+            totXS = totVec(g) + (self % sigmaTGrad * (self % scalarFlux(cIdx) - self % phi_0))
+          else
+            totXS = totVec(g)
+          end if
           tau(g) = lenFlt * totXS
           attenuate(g) = f1(tau(g))
           delta(g) = (tau(g) * fluxVec(g) - lenFlt * sourceVec(g)) * attenuate(g)
@@ -1628,6 +1683,7 @@ contains
         if (activeRay) then
       
           scalarVec => self % scalarFlux((baseIdx + 1):(baseIdx + self % nG))
+          !print *, scalarVec
         
           call OMP_set_lock(self % locks(cIdx))
           !$omp simd
@@ -1692,8 +1748,12 @@ contains
         end if 
       
         do g = 1, self % nG
-          total = self % sigmaT((matIdx - 1) * self % nG + g) + (self % sigmaTGrad * (self % scalarFlux(cIdx) &
+          if ((self % scalarFlux(cIdx) /= 0.0) .and. (self % scalarFlux(cIdx) == self % scalarFlux(cIdx))) then
+            total = self % sigmaT((matIdx - 1) * self % nG + g) + (self % sigmaTGrad * (self % scalarFlux(cIdx) &
                                                                 - self % phi_0)) 
+          else
+            total = self % sigmaT((matIdx - 1) * self % nG + g)
+          end if
           idx   = self % nG * (cIdx - 1) + g
           self % scalarFlux(idx) = self % scalarFlux(idx) * normFlt / (total * real(self % volume(cIdx),defFlt))
         end do
@@ -1714,7 +1774,7 @@ contains
     real(defReal), intent(in)                           :: lengthPerIt
     integer(shortInt), intent(in)                       :: it
     real(defReal)                                       :: normVol
-    real(defFlt)                                        :: norm
+    real(defFlt)                                        :: norm, fluxSum, factor
     real(defFlt), save                                  :: total, sigGG, D
     real(defReal), save                                 :: vol, corr
     integer(shortInt), save                             :: g, matIdx, idx
@@ -1736,7 +1796,7 @@ contains
         end do
         cycle
       end if 
-      
+
       ! Update volume due to additional rays unless volume was precomputed
       !if (self % nVolRays <= 0) then 
       ! Forget the above - use precomputed volumes only for first collided
@@ -1764,11 +1824,28 @@ contains
 
         idx   = self % nG * (cIdx - 1) + g
        
-        total = self % sigmaT((matIdx - 1) * self % nG + g) + (self % sigmaTGrad * (self % scalarFlux(cIdx) &
+        if ((self % scalarFlux(cIdx) /= 0.0) .and. (self % scalarFlux(cIdx) == self % scalarFlux(cIdx))) then
+          total = self % sigmaT((matIdx - 1) * self % nG + g) + (self % sigmaTGrad * (self % scalarFlux(cIdx) &
                                                                 - self % phi_0))
+          if (total < 0.0) then
+            total = self % sigmaT((matIdx - 1) * self % nG + g)
+          end if
+        else
+          total = self % sigmaT((matIdx - 1) * self % nG + g)
+        end if
+
+        !print *, total
+        !print *, self % sigmaT
+        !print *, self % sigmaTGrad
+        !print *, self % scalarFlux(cIdx)
+        !print *, self % phi_0
+        !print *, vol
+        !print *, 'c'
 
         if (vol > volume_tolerance) then
-          self % scalarFlux(idx) = self % scalarFlux(idx) * norm/ (total * real(vol,defFlt))
+          if (self % scalarFlux(idx) == self % scalarFlux(idx)) then
+            self % scalarFlux(idx) = self % scalarFlux(idx) * norm/ (total * real(vol,defFlt))
+          end if
         else
           corr = ONE
         end if
@@ -1794,10 +1871,12 @@ contains
         if (self % volCorr .and. self % passive) then
           if (self % scalarFlux(idx) < 0) self % scalarFlux(idx) = real(self % scalarFlux(idx) + &
                   (corr - 1.0_defFlt) * self % source(idx) / total, defFlt)
+       
         ! Apply volume correction to all cells
         elseif (self % volCorr) then
           self % scalarFlux(idx) = real(self % scalarFlux(idx) + (corr - 1.0_defFlt) * self % source(idx) / total, defFlt)
         end if
+
 
         ! This will probably affect things like neutron conservation...
         if ((self % scalarFlux(idx) < 0) .and. self % zeroNeg) self % scalarFlux(idx) = 0.0_defFlt
@@ -1812,6 +1891,19 @@ contains
 
     end do
     !$omp end parallel do
+        
+    fluxSum = 0.0
+        
+    !$omp parallel do reduction(+:fluxSum) schedule(static)
+    do cIdx = 1, self % nCells
+
+    fluxSum = fluxSum + (self % scalarFlux(cIdx) * self % volume(cIdx))
+
+    end do
+    !$omp end parallel do
+
+    factor = self % phi_0 / fluxSum
+    self % scalarFlux = real(factor,defFlt) * self % scalarFlux
 
   end subroutine normaliseFluxAndVolume
 
@@ -1923,7 +2015,14 @@ contains
       ! Sum contributions from all energies
       !$omp simd reduction(+:scatter)
       do gIn = 1, self % nG
-        scatXS = scatterVec(gIn) + (self % sigmaSGrad * (fluxVec(gIn) - self % phi_0))
+        if ((fluxVec(gIn) /= 0.0) .and. (fluxVec(gIn) == fluxVec(gIn))) then
+          scatXS = scatterVec(gIn) + (self % sigmaSGrad * (fluxVec(gIn) - self % phi_0))
+          if ((scatXS < 0) .or. (scatXS /= scatXS)) then
+            scatXS = scatterVec(gIn)
+          end if 
+        else 
+          scatXS = scatterVec(gIn)
+        end if
         scatter = scatter + fluxVec(gIn) * scatXS
       end do
 
@@ -1980,7 +2079,11 @@ contains
       ! Sum contributions from all energies
       !$omp simd reduction(+:scatter)
       do gIn = 1, self % nG
-        scatXS = scatterVec(gIn) + (self % sigmaSGrad * (fluxVec(gIn) - self % phi_0))
+        if ((fluxVec(gIn) /= 0.0) .and. (fluxVec(gIn) == fluxVec(gIn))) then
+          scatXS = scatterVec(gIn) + (self % sigmaSGrad * (fluxVec(gIn) - self % phi_0))
+        else
+          scatXS = scatterVec(gIn)
+        end if
         scatter = scatter + real(fluxVec(gIn),defFlt) * scatXS
       end do
 

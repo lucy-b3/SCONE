@@ -591,6 +591,7 @@ contains
     
     self % scalarFlux = 0.0_defFlt
     self % scalarFlux(: (self % nCells/2)) = 25.0
+    self % scalarFlux(1) = 0.0_defFlt
     self % prevFlux = 0.0_defFlt
     self % prevPrevFlux = 0.0_defFlt
     self % fluxScores = ZERO
