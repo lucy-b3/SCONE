@@ -1,0 +1,90 @@
+type SRrandomRayPhysicsPackage; 
+
+// Currently no recommended settings for fixed source problems
+// but hopefully this will be updated in future!
+pop      1000;
+active   1;
+inactive 101;
+dead     2; 
+termination 202;
+plot 1;
+cache 1;
+XSdata   mg; 
+dataType mg;
+outputFile slab_50;
+printVolume 1;
+printFlux 1;
+
+
+geometry {
+    type geometryStd;
+    boundary (2 2 1 1 1 1);
+    graph {type extended;}
+
+    surfaces
+    {
+      squareBound { id 1; type box; origin ( 0.0  0.0  0.0); halfwidth (10.0 0.5 0.5); }
+    }
+
+
+    cells
+    {
+    }
+
+    universes
+    {
+
+      pin { id 2; type pinUniverse; radii (0.0); fills (fuel);}
+
+
+      root
+      {
+          id 1;
+          type rootUniverse;
+          border 1;
+          fill u<3>;
+      }
+
+    fuellattice{
+      id 3;
+      type latUniverse;
+      pitch (0.4 1.0 1.0);
+      shape (50 1 1);
+      padMat void;
+      map (
+
+          2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+
+        );
+    }
+    }
+}
+
+viz {
+  myVTK {
+    type vtk;
+    what uniqueID;
+    corner (-32.13 -32.13 -1.0);
+    width (64.26 64.26 2.0);
+    vox (2000 2000 1);
+  }
+}
+
+
+nuclearData {
+  handles { 
+    mg { type baseMgNeutronDatabase; PN P0;} 
+  } 
+  materials { 
+
+    fuel { 
+       temp 300; 
+       xsFile ./slab_XS;
+       composition {  }
+   }
+	  
+}
+}
+
+
+

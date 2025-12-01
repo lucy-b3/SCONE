@@ -2,28 +2,28 @@ type SRrandomRayPhysicsPackage;
 
 // Currently no recommended settings for fixed source problems
 // but hopefully this will be updated in future!
-pop      10;
+pop      200;
 active   10;  !500; 1000  
 inactive 100; 
-dead     1000; 
-termination 11000; 
+dead     2000; 
+termination 4000; 
 plot 1;
 cache 1;
 XSdata   mg; 
 dataType mg;
-outputFile slab_new;
+outputFile slab_2;
 printVolume 1;
 printFlux 1;
 
 
 geometry {
     type geometryStd;
-    boundary (1 1 1 1 1 1);
+    boundary (2 2 1 1 1 1);
     graph {type extended;}
 
     surfaces
     {
-      squareBound { id 1; type box; origin ( 0.0  0.0  0.0); halfwidth (10000.0 0.5 0.5); }
+      squareBound { id 1; type box; origin ( 0.0  0.0  0.0); halfwidth (500.0 0.5 0.5); }
     }
 
 
@@ -48,12 +48,12 @@ geometry {
     fuellattice{
       id 3;
       type latUniverse;
-      pitch (100 1.0 1.0);
-      shape (200 1 1);
+      pitch (10 1.0 1.0);
+      shape (100 1 1);
       padMat void;
       map (
 
-	2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+	2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
 
         );
     }
@@ -79,7 +79,7 @@ nuclearData {
 
     fuel { 
        temp 300; 
-       xsFile ./slab_XS_new;
+       xsFile ./slab_XS;
        composition {  }
    }
 	  
