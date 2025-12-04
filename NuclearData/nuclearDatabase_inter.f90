@@ -22,6 +22,7 @@ module nuclearDatabase_inter
   !!
   !! Interface:
   !!   getTrackingXS -> returns XS used to sample track length
+  !!   getTrackMatXS -> returns material tracking xs, which could be different from the total (e.g., with TMS)
   !!   getTotalMatXS -> returns total Material XS given a particle
   !!   getMajorantXS -> returns majorant XS given particle and list of active materials
   !!   matNamesMap   -> returns pointer to map of material names to matIdx
@@ -34,7 +35,9 @@ module nuclearDatabase_inter
   contains
     procedure(init), deferred          :: init
     procedure(activate), deferred      :: activate
+    procedure(initMajorant), deferred  :: initMajorant
     procedure(getTrackingXS), deferred :: getTrackingXS
+    procedure(getTrackMatXS), deferred :: getTrackMatXS
     procedure(getTotalMatXS), deferred :: getTotalMatXS
     procedure(getMajorantXS), deferred :: getMajorantXS
     procedure(matNamesMap), deferred   :: matNamesMap
@@ -84,11 +87,35 @@ module nuclearDatabase_inter
     end subroutine activate
 
     !!
-    !! Return value of Tracking XS for a particle and a given request
+    !! Constructs the majorant cross section.
+    !! Can be called repeatedly to update the majorant subject
+    !! to changes in the geometry.
+    !!
+    !! Optionally can account for the temperature due to super-imposed
+    !! temperature fields. This should receive the maximum temperature in
+    !! the system. This is conservative and can be improved by creating a
+    !! material-wise maximum temperature input.
+    !!
+    !! Optionally can scale the density. scaleDensity should be
+    !! the relative (to input) density of the highest density material.
+    !! This is most naturally used with a super-imposed density field.
+    !! As for temperature, this is conservative and could be improved with
+    !! a material-wise density scaling factor.
+    !!
+    subroutine initMajorant(self, loud, maxTemp, scaleDensity)
+      import :: nuclearDatabase, defBool, defReal
+      class(nuclearDatabase), intent(inout) :: self
+      logical(defBool), intent(in)          :: loud
+      real(defReal), optional, intent(in)   :: maxTemp
+      real(defReal), optional, intent(in)   :: scaleDensity
+    end subroutine initMajorant
+
+    !!
+    !! Return value of tracking XS for a particle and a given request
     !!
     !! Reads all relevant state information from the particle (e.g. E or G)
     !! It is the XS used to sample track length: it might be the same as the
-    !! material total XS, the majorant XS, or a temperature majorant
+    !! material total XS, the majorant XS, or a temperature majorant.
     !!
     !! Args:
     !!   p [in]      -> Particle at a given state
@@ -99,8 +126,9 @@ module nuclearDatabase_inter
     !!   Value of XS used to sample path length [1/cm]
     !!
     !! Errors:
-    !!   Undefined behaviour if the state of the particle is invalid e.g. -ve energy
-    !!   Undefined behavior if matIdx does not correspond to a defined material
+    !!   Undefined behaviour if the state of the particle is invalid e.g. -ve energy.
+    !!   Undefined behavior if matIdx does not correspond to a defined material.
+    !!   Fatal error if incorrect 'what' option is provided.
     !!
     function getTrackingXS(self, p, matIdx, what) result(xs)
       import :: nuclearDatabase, particle, shortInt, defReal
@@ -112,7 +140,33 @@ module nuclearDatabase_inter
     end function getTrackingXS
 
     !!
-    !! Return value of Material Total XS for a particle
+    !! Return value of materials tracking XS for a particle
+    !!
+    !! Reads all relevant state information from the particle (e.g. E or G)
+    !! It is the XS used to sample track length in a material: it might be the same
+    !! as the material total XS, or a material temperature majorant when TMS is used
+    !!
+    !! Args:
+    !!   p [in]      -> Particle at a given state
+    !!   matIdx [in] -> Material index
+    !!
+    !! Result:
+    !!   Value of material tracking XS [1/cm]
+    !!
+    !! Errors:
+    !!   Undefined behaviour if the state of the particle is invalid e.g. -ve energy
+    !!   Undefined behavior if matIdx does not correspond to a defined material
+    !!
+    function getTrackMatXS(self, p, matIdx) result(xs)
+      import :: nuclearDatabase, particle, shortInt, defReal
+      class(nuclearDatabase), intent(inout) :: self
+      class(particle), intent(in)           :: p
+      integer(shortInt), intent(in)         :: matIdx
+      real(defReal)                         :: xs
+    end function getTrackMatXS
+
+    !!
+    !! Return value of material total XS for a particle
     !!
     !! Reads all relevalnt state information from the particle (e.g. E or G)
     !!
@@ -136,7 +190,7 @@ module nuclearDatabase_inter
     end function getTotalMatXS
 
     !!
-    !! Return value of Majorant XS for a particle
+    !! Return value of majorant XS for a particle
     !!
     !! Reads all relevalnt state information from the particle (e.g. E or G)
     !! Majorant XS is the largest of TRANSPORT XSs for ACTIVE materials

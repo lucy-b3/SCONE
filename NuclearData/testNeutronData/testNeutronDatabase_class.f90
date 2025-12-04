@@ -44,7 +44,9 @@ module testNeutronDatabase_class
     ! Superclass Interface
     procedure :: init
     procedure :: activate
+    procedure :: initMajorant
     procedure :: getTrackingXS
+    procedure :: getTrackMatXS
     procedure :: getTotalMatXS
     procedure :: getMajorantXS
     procedure :: matNamesMap
@@ -161,6 +163,19 @@ contains
     ! Do nothing
 
   end subroutine activate
+  
+  !!
+  !!
+  !!
+  subroutine initMajorant(self, loud, maxTemp, scaleDensity)
+    class(testNeutronDatabase), intent(inout) :: self
+    logical(defBool), intent(in)              :: loud
+    real(defReal), intent(in), optional       :: maxTemp
+    real(defReal), intent(in), optional       :: scaleDensity
+
+    ! Do nothing
+
+  end subroutine initMajorant
 
   !!
   !! Return value of Tracking XS for a particle and a given request
@@ -179,7 +194,22 @@ contains
   end function getTrackingXS
 
   !!
-  !! Return value of Material Total XS for a particle
+  !! Return value of material tracking XS for a particle
+  !!
+  !! See nuclearDatabase_inter for details
+  !!
+  function getTrackMatXS(self, p, matIdx) result(xs)
+    class(testNeutronDatabase), intent(inout) :: self
+    class(particle), intent(in)               :: p
+    integer(shortInt), intent(in)             :: matIdx
+    real(defReal)                             :: xs
+
+    xs = self % xsVal
+
+  end function getTrackMatXS
+
+  !!
+  !! Return value of material total XS for a particle
   !!
   !! See nuclearDatabase_inter for details
   !!

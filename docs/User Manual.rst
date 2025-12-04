@@ -406,6 +406,8 @@ A detailed description about the geometry modelling adopted in SCONE can be foun
       surfaces  { <Surfaces definition> }
       cells     { <Cells definition> }
       universes { <Universes definition> }
+      temperature { <PieceConstantField definition> }
+      density { <PieceConstantField definition> }
       }
 
 At the moment, the only **geometry** type available is ``geometryStd``. As for the boundary
@@ -440,6 +442,12 @@ Hence, an example of a geometry input could look like: ::
 
 For more details about the graph-like structure of the nested geometry see the relevant
 :ref:`section <DAG_GEOM>`.
+
+The geometry optionally allows the use of ``temperature`` and ``density`` fields. These
+are super-imposed fields which modify the temperature and densities given in nuclear data.
+The temperature field specifies local temperatures in kelvin while the density field
+specifies the local dimensionless factors by which material density should be scaled.
+Both of these follow the syntax of a ``PieceConstantField``.
 
 Surfaces
 ########
@@ -521,6 +529,26 @@ Example: ::
 
       billy { id 92; type xCylinder; origin (0.0 0.0 9.0); radius 4.8; }
 
+* cone: cone aligned with x, y or z axis, and truncated arbitrarily on both sides. 
+  The input type has to be ``xCone``, ``yCone`` or ``zCone``. The gradient of the
+  cone is determined by the sign of ``hMin`` and ``hMax``. ``hMin`` and ``hMax``
+  must have the same sign, i.e., there can only be a single cone, not a double
+  cone reflected about the vertex.
+
+  - vertex: (x y z) vector with the vertex absolute coordinates. [cm]
+  - angle: cone openining angle, i.e., the angle between the axis and the cone
+    surface. Must be positive and between 0-90. [degrees]
+  - hMin: the relative position of the lower truncated surface of the cone. 
+    The absolute position is given by hMin + the component of the vertex along the cone axis. 
+    Can be positive or negative but must be less than hMax and have the same sign. [cm]
+  - hMax: the relative position of the upper truncated surface of the cone. 
+    The absolute position is given by hMax + the component of the vertex along the cone axis. 
+    Can be positive or negative but must be greater than hMin and have the same sign. [cm]
+
+Example: ::
+
+      connor { id 92; type xCone; vertex (1.1 4.0 2.98); angle 30; hMin 5.0; hMax 15.0; }
+
 * sphere
 
   - origin: (x y z) vector with the origin position. [cm]
@@ -542,12 +570,22 @@ Similarly to the surfaces, the **cells** in the geometry can be defined as: ::
       <nameN> { id <idNumberN>; type <cellType>; surfaces (<surfaces>); filltype <fillType>; *keywords* }
       }
 
-At the moment, in SCONE, the only ``cellType`` available is ``simpleCell``.
-In the surface definition, one should include the indexes of the corresponding
-surfaces with no sign to indicate a positive half-space, or minus sign to indicate
-a negative half-space. The space in between cells corresponds to an intersection.
+SCONE supports two ``cellTypes``: ``simpleCell`` and ``unionCell``.
+These types differ by the form and content of their surfaces.
+For ``simpleCell``, surfaces is a standard list of surfaces.
+This list should  include the indexes of the corresponding surfaces, with no sign 
+to indicate a positive half-space, or minus sign to indicate a negative half-space. 
+The space in between cells corresponds to an intersection.
+For ``unionCell``, surfaces is no longer a list, but a ``tokenArray``, i.e., an array
+delimited by ``[`` and ``]``, with entries separated by whitespace. This is to allow a
+mixture of numbers and symbols. Like ``simpleCell``, ``unionCell`` includes surfaces 
+and signs to indicate their halfspace. However, it is also endowed with additional
+operators to define the cell. As well as an implicit intersection operator, there is
+the union, ``:``, the complement, ``#``, and brackets to enforce an order of operations,
+``<`` and ``>``. This ``cellType`` encompasses ``simpleCell`` and can replace it without
+any problem.
 
-The possible ``fillTypes`` are:
+The possible ``filltypes`` are:
 
 * mat: if the cells is filled with a homogeneous material
 
@@ -563,7 +601,7 @@ Example: ::
 
 Example: ::
 
-      cellX { id 5; type simpleCell; surfaces (2 -3); filltype uni; universe 6; }
+      cellX { id 5; type unionCell; surfaces [2 : -3 # < 4 5 >]; filltype uni; universe 6; }
 
 * outside: if the cell is outside of the geometry
 
@@ -586,13 +624,17 @@ Similarly to the surfaces and cells, the **universes** in the geometry can be de
 Several ``universeTypes`` are possible:
 
 * cellUniverse, composed of the union of different cells. Note that overlaps are
-  forbidden, but there is no check to find overlaps
+  forbidden, but there is no check to find overlaps by default. This can be enabled
+  at the cost of slower particle transport.
 
   - cells: array containing the ``cellIds`` as used in the cell definition
   - origin (*optional*, default = (0.0 0.0 0.0)): (x y z) array with the origin
     of the universe. [cm]
   - rotation (*optional*, default = (0.0 0.0 0.0)): (x y z) array with the
     rotation angles in degrees applied to the universe. [°]
+  - checkOverlap (*optional*, default = 0): enables checking for overlaps between cells, useful
+    for debugging and plotting. However, this slows down particle transport by making exhaustive
+    cell searches mandatory.
 
 .. note::
    When creating a ``cellUniverse`` a user needs to take care to avoid leaving
@@ -602,7 +644,7 @@ Several ``universeTypes`` are possible:
 
 Example: ::
 
-      uni3 { id 3; type cellUniverse; cells (1 2 55); origin (1.0 0.0 0.0); rotation (0.0 90.0 180.0); }
+      uni3 {id 3; type cellUniverse; cells (1 7); origin (1.0 0.0 0.0); rotation (0.0 90.0 180.0); checkOverlap 0;}
 
 * pinUniverse, composed of infinite co-centred cylinders
 
@@ -644,7 +686,7 @@ Example: ::
       1 2 3 // x: 1-3, y: 2, z: 2
       4 5 6 // x: 1-3, y: 1, z: 2
       7 8 9 // x: 1-3, y: 2, z: 1
-      10 11 12 ) } // x: 1-3, y: 1, z: 1
+      10 11 12 ); } // x: 1-3, y: 1, z: 1
 
 .. note::
    The order of the elements in the lattice is different from other MC codes, e.g.,
@@ -658,6 +700,52 @@ Example: ::
 Example: ::
 
       root { id 1000; type rootUniverse; border 10; fill u<1>; }
+
+PieceConstantFields
+###################
+
+These are fields which are piecewise constant and are endowed with a distance calculation to
+compute the distance until the value of the field changes. These can be used for imposing 
+density and temperature distributions across the system in a convenient manner. Can be initialised
+either with an explicit definition or with a path to the field definition.
+
+Currently there is only one available PieceConstantField:
+
+* cartesianField. This is similar to a latUniverse: the value of the field varies over a regular 
+  Cartesian lattice with a given shape and size. The field also allows specifying different values 
+  in different materials, or uniformly across all materials.
+  
+  - shape: (x y z) array of integers, stating the numbers of x, y and z
+    elements of the field. For a 2D field, one of the entries has to be 0
+  - pitch: (x y z) array with the x, y and z field pitches. In a 2D field,
+    the value entered in the third dimension is not used. [cm]
+  - origin (*optional*, default = (0.0 0.0 0.0)): (x y z) array with the
+    origin of the field. [cm]
+  - materials: list of material names, corresponding to materials in nuclearData.
+    Optionally, ``all`` can be used, applying the values of the field to all materials.
+  - names of each material: a map, named after every material present in the materials list. 
+    The entries of the map are the values that the field takes in that material in that
+    element of the field. The order is: increasing x, increasing y and then increasing z.
+  - default: the value taken by the field when a point is either outside of the field or
+    in a material which is not included in the field.
+
+Example: ::
+
+      temperature { type cartesianField; shape (3 2 2); pitch (1.0 1.0 1.5);
+      materials (uo2 water); 
+      uo2 (
+      901 902 903
+      904 905 906
+      907 908 909
+      910 911 912 ); 
+      water (
+      601 602 603
+      604 605 606 
+      607 608 609 
+      610 611 612);
+      default 302; }
+
+      density { type cartesianField; file ./myDensityField; }
 
 Visualiser
 ----------
@@ -703,12 +791,16 @@ bmp
 
 Example: ::
 
-      plotBMP { type bmp; axis z; centre (0.0 0.0 0.0); width (50 10); res (1000 200); output geomZ; what material; }
+      plotBMP { type bmp; axis z; centre (0.0 0.0 0.0); width (50 10);
+                res (1000 200); output geomZ; what material; }
 
 .. note::
    SCONE can be run to visualise geometry without actually doing transport, by
    including ``--plot`` when running the application. In this case the visualiser
    has to be included in the file.
+   Certain special materials use particular colours during plotting. Void regions
+   are plotted in black. Regions outside the geometry are plotted in white.
+   Undefined regions are plotted in light green. Overlap regions are plotted in red.
 
 Nuclear Data
 ------------
@@ -776,7 +868,7 @@ Materials definition
 The *materials* definition is structured as: ::
 
       materials {
-      <materialName1> { temp <temp1>;
+      <materialName1> { tms <0 or 1>; temp <temp1>;
       composition { <Composition definition> }
       *keywords* }
       <materialName2> { temp <temp2>;
@@ -784,15 +876,19 @@ The *materials* definition is structured as: ::
       *keywords* }
       }
 
-In this case, ``materialName`` can be any name chosen by the user; ``temp`` is the
-material temperature in [K].
+In this case, ``materialName`` can be any name chosen by the user; the keyword ``tms``
+(*optional*, default = 0) activates Target Motion Sampling (TMS) if set to 1; TMS uses 
+the material temperature defined under ``temp`` [K]. ``temp`` is *optional* unless TMS
+is used.
 
 .. note::
-  At the moment ``temp`` is not used in any way since SCONE has no way to treat
-  the temperature dependence of cross-sections. It is included for future use.
-  To change the temperature, a user needs to set appropriate suffix to each
-  individual nuclide in the composition definition.
+  When using TMS, the temperature specified by ``temp`` must be higher than the 
+  temperatures of the nuclides in the material composition.
 
+.. note::
+  *IMPORTANT*: When using TMS, all the tallies based on the collision estimator have to
+  allow scoring virtual collisions, otherwise the results will be biased. The tallies
+  based on the track length estimator will be biased too.
 
 The ``composition`` dictionary must always be included, but it can be empty in
 multi-group simulations. In continuous energy simulations, it should include a
@@ -807,8 +903,11 @@ Other options are:
 * moder: dictionary that includes information on thermal scattering data. It has to
   include a list of ZAIDs for which S(a,b) has to be used, and the name of the file
   that contains the data. The file has to be included in the list of files in the *.aceXS*
-  input file. Note that this input is ignored if the nuclide or nuclides listed are not
-  included in the material. Only needed for continuous energy simulations.
+  input file. The file must be in an array, e.g., ``1001.03 (h-h2o49);``. Two files can be
+  included in this array, invoking stochastic interpolation to the provided ``temp``. If
+  the given temperature is not bracketed by the thermal scattering evaluation temperatures
+  an error will be produced. An error will be produced if the nuclide or nuclides listed in
+  the moder dictionary are not included in the material. Only needed for continuous energy simulations.
 
 * xsFile: needed for multi-group simulations. Must contain the path to the file where
   the multi-group cross sections are stored.
@@ -819,18 +918,19 @@ Other options are:
 Example 1: ::
 
       materials {
-      fuel { temp 273;
+      fuel { temp 473;
+      tms 1;
       composition {
       92238.03   0.021;
       92235.03   0.004;
       8016.03    0.018535464; }
       }
-      water { temp 273;
+      water {
       rgb (0 0 200);
       composition {
       1001.03   0.0222222;
       8016.03   0.00535; }
-      moder { 1001.03 h-h2o.42; }
+      moder { 1001.03 (h-h2o.42); }
       }
       }
 
@@ -840,6 +940,12 @@ Example 2: ::
       fuel { temp 573;
       composition { }
       xsFile ./xss/fuel.txt
+      }
+      water { temp 500;
+      composition {
+      1001.03   0.0222222;
+      8016.03   0.00535; }
+      moder { 1001.03 (h-h2o.50 h-h2o.49); }
       }
       }
 
@@ -928,8 +1034,12 @@ The **tally clerks** determine which kind of estimator will be used. The options
     that defines the domains of integration of each tally
   - filter (*optional*): can filter out particles with certain properties,
     preventing them from scoring results
-  - handleVirtual (*optional*, default = 0): if set to 1, delta tracking virtual collisions
-    are tallied with a collisionClerk as well as physical collisions
+  - handleVirtual (*optional*, default = 1): if set to 1, delta tracking virtual collisions
+    and TMS rejected collisions are tallied with a collisionClerk as well as physical collisions
+
+.. note::
+  If TMS is on, the collisionClerk is biased for results in the TMS materials unless virtual 
+  collisions are scored (use <handleVirtual 1;>)
 
 * trackClerk
 
@@ -939,6 +1049,9 @@ The **tally clerks** determine which kind of estimator will be used. The options
     that defines the domains of integration of each tally
   - filter (*optional*): can filter out particles with certain properties,
     preventing them from scoring results
+
+.. note::
+  If TMS is on, the trackClerk is biased for results in the TMS materials
 
 Example: ::
 
@@ -955,14 +1068,18 @@ Example: ::
 
 * keffAnalogClerk, analog k_eff estimator
 * keffImplicitClerk, implicit k_eff estimator
-  - handleVirtual (*optional*, default = 0): if set to 1, delta tracking virtual collisions
-    are tallied with a collisionClerk as well as physical collisions
+  - handleVirtual (*optional*, default = 1): if set to 1, delta tracking virtual collisions
+    and TMS rejected collisions are tallied with a collisionClerk as well as physical collisions
+
+.. note::
+  If TMS is on, the keffImplicitClerk is biased for results in the TMS materials unless virtual 
+  collisions are scored (use <handleVirtual 1;>)
 
 Example: ::
 
       tally {
       k_eff1 { type keffAnalogClerk; }
-      k_eff2 { type keffImplicitClerk; handleVirtual 1; }
+      k_eff2 { type keffImplicitClerk; handleVirtual 0; }
       }
 
 * centreOfMassClerk, geometrical 3D center of mass estimator
@@ -1009,8 +1126,12 @@ Example: ::
     tally map
   - PN (*optional*, default = 0): 1 for true; 0 for false; flag that indicates
     whether to calculate scattering matrices only up to P1 (``PN 0``) or P7 (``PN 1``)
-  - handleVirtual (*optional*, default = 0): if set to 1, delta tracking virtual collisions
-    are tallied with a collisionClerk as well as physical collisions
+  - handleVirtual (*optional*, default = 1): if set to 1, delta tracking virtual collisions
+    and TMS rejected collisions are tallied with a collisionClerk as well as physical collisions
+
+.. note::
+  If TMS is on, the mgXsClerk is biased for results in the TMS materials unless virtual 
+  collisions are scored (use <handleVirtual 1;>)
 
 Example: ::
 
@@ -1039,8 +1160,12 @@ Example: ::
 
   - map: contains a dictionary with the ``tallyMap`` definition, that defines
     the bins of the matrix
-  - handleVirtual (*optional*, default = 0): if set to 1, delta tracking virtual collisions
-    are tallied with a collisionClerk as well as physical collisions
+  - handleVirtual (*optional*, default = 1): if set to 1, delta tracking virtual collisions
+    and TMS rejected collisions are tallied with a collisionClerk as well as physical collisions
+
+.. note::
+  If TMS is on, the simpleFMClerk is biased for results in the TMS materials unless virtual 
+  collisions are scored (use <handleVirtual 1;>)
 
 Example: ::
 
@@ -1062,13 +1187,13 @@ Example: ::
       collision_estimator { type collisionClerk; response (flux); flux { type fluxResponse; } }
       }
 
-* densityResponse: used to calculate the particle desnsity, i.e., the response function is 
-  the inverse of the particle velocity in [cm/s]
+* invSpeedResponse: used to calculate flux-weighted inverse speed or the particle density, i.e., the response function is 
+  the inverse of the particle speed in [cm/s]
 
 Example: ::
 
       tally {
-      collision_estimator { type collisionClerk; response (dens); dens { type densityResponse; } }
+      collision_estimator { type collisionClerk; response (is); is { type invSpeedResponse; } }
       }
 
 * macroResponse: used to score macroscopic reaction rates
@@ -1211,7 +1336,7 @@ Example: ::
 
       map { type materialMap; materials (fuel water cladding reflector fuelGd); undefBin T; }
 
-* radialMap, spherical or cylindrical radial map
+* radialMap (1D map), spherical or cylindrical radial map
 
   - axis (*optional*, default = ``xyz``): ``x``, ``y``, ``z``, is the normal of
     the cylindrical plane, or ``xyz`` to indicate spherical coordinates
@@ -1252,6 +1377,14 @@ Examples: ::
 
       map1 { type spaceMap; axis x; grid lin; min -50.0; max 50.0; N 100; }
       map2 { type spaceMap; axis z; grid unstruct; bins (0.0 0.2 0.3 0.5 0.7 0.8 1.0); }
+
+* fieldMap (1D map), map over superimposed fields. Limited currently to pieceConstantFields.
+
+  - field: field definition, corresponding to those in pieceConstantFields.
+
+Examples: ::
+
+      map1 { type fieldMap; field {file ./myField.txt } }
 
 * weightMap (1D map), divides weight into number of discrete bins
 

@@ -9,8 +9,8 @@ module geometryStd_iTest
   use coord_class,       only : coordList
   use geometry_inter,    only : geometry
   use geometryStd_class, only : geometryStd
-  use visualiser_class,  only : visualiser
-  use pFUnit_mod
+  use materialMenu_mod,  only : mm_init => init
+  use funit
 
   implicit none
 
@@ -35,9 +35,6 @@ contains
     integer(shortInt), dimension(10,10)           :: img
     real(defReal), dimension(6)                   :: aabb
     real(defReal)                                 :: maxDist
-    class(geometry), pointer                      :: geomP
-    type(visualiser)                              :: viz
-    type(dictionary)                              :: vizDict
     real(defReal), parameter :: TOL = 1.0E-7_defReal
     
     ! Load dictionary
@@ -84,14 +81,8 @@ contains
     @assertEqual(u, coords % lvl(2) % dir, TOL)
     @assertEqual(u, coords % lvl(3) % dir, TOL)
 
-    ! Construct visualiser and verify slice plotting
-    geomP => geom
-    call charToDict(vizDict, ' ')
-    name = 'test'
-    call viz % init(geomP, vizDict, name)
-    
     ! Slice plot -> Material
-    call viz % slicePlot(img, [ZERO, ZERO, ZERO], 'z', 'material')
+    call geom % slicePlot(img, [ZERO, ZERO, ZERO], 'z', 'material')
     
     ! Verify some pixels
     name = 'water'
@@ -109,7 +100,7 @@ contains
 
     ! Slice plot -> UniqueID
     r = [-0.63_defReal, -0.63_defReal, 0.0_defReal]
-    call viz % slicePlot(img, r, 'z', 'uniqueID', [1.26_defReal, 1.26_defReal])
+    call geom % slicePlot(img, r, 'z', 'uniqueID', [1.26_defReal, 1.26_defReal])
 
     ! Verify some pixels
     ! Note that this test depends on universe layout order in geomGraph
@@ -316,6 +307,123 @@ contains
     @assertEqual(idxF, img3)
 
   end subroutine test_tilted_cylinder
+
+  !!
+  !! Geometry integration test -> Fuel pin with imposed temperature and density fields
+  !!
+@Test
+  subroutine test_field_geom()
+    type(geometryStd)           :: geom
+    character(*), parameter     :: path = './IntegrationTestFiles/Geometry/test_field'
+    type(charMap)               :: mats
+    integer(shortInt)           :: i, idx, event
+    type(dictionary)            :: dict
+    character(nameLen)          :: name
+    real(defReal), dimension(3) :: r, u, r_ref, u_ref
+    type(dictionary),pointer    :: tempDict
+    type(coordList)             :: coords
+    real(defReal)               :: T, rho, maxDist
+    real(defReal), parameter    :: TOL = 1.0E-7_defReal
+    character(nameLen), dimension(:), allocatable :: keys
+
+    ! Load dictionary
+    call fileToDict(dict, path)
+
+    ! Load materials
+    tempDict => dict % getDictPtr('nuclearData')
+    tempDict => tempDict % getDictPtr('materials')
+    call tempDict % keys(keys, 'dict')
+    do i = 1, size(keys)
+      call mats % add(keys(i), i)
+    end do
+
+    ! Need to create material menu for the fields
+    call mm_init(tempDict)
+
+    ! Build geometry
+    call geom % init(dict, mats, silent=.true.)
+
+    ! Check field values at different points
+    r = [0.0_defReal, 0.0_defReal, 0.1_defReal]
+    u = [ZERO, ZERO, ONE]
+    call coords % init(r, u)
+    call geom % placeCoord(coords)
+
+    ! Should be in the middle of the fuel
+    ! Density scaling should be the default value
+    ! Temperature should be that from the centre
+    T = geom % getTemperature(coords)
+    rho = geom % getDensity(coords)
+    
+    name = 'mox43'
+    idx = mats % get(name)
+
+    @assertEqual(idx, coords % matIdx)
+    @assertEqual(510.0_defReal, T)
+    @assertEqual(-7.0_defReal, rho)
+
+    ! Place elsewhere in the coolant
+    ! Temperature should be the default value
+    r = [0.62_defReal, 0.0_defReal, 190.0_defReal]
+    call coords % init(r, u)
+    call geom % placeCoord(coords)
+    T = geom % getTemperature(coords)
+    rho = geom % getDensity(coords)
+
+    name = 'water'
+    idx = mats % get(name)
+
+    @assertEqual(idx, coords % matIdx)
+    @assertEqual(-10.0_defReal, T)
+    @assertEqual(0.1_defReal, rho)
+
+    ! Place in the clad
+    ! Both values should become their default
+    r = [0.0_defReal, 0.42_defReal, -50.0_defReal]
+    call coords % init(r, u)
+    call geom % placeCoord(coords)
+    T = geom % getTemperature(coords)
+    rho = geom % getDensity(coords)
+
+    name = 'clad'
+    idx = mats % get(name)
+
+    @assertEqual(idx, coords % matIdx)
+    @assertEqual(-10.0_defReal, T)
+    @assertEqual(-7.0_defReal, rho)
+
+    ! Check distances at different points
+
+    ! Pointing straight up, the distance should be to the next field element
+    r = [0.0_defReal, 0.0_defReal, 0.1_defReal]
+    u = [ZERO, ZERO, ONE]
+    call coords % init(r, u)
+    call geom % placeCoord(coords)
+    
+    r_ref = [0.0_defReal, 0.0_defReal, 20.0_defReal]
+    maxDist = 1000.0_defReal
+    call geom % move(coords, maxDist, event)
+
+    @assertEqual(19.9_defReal, maxDist, TOL)
+    @assertEqual(FIELD_EV, event)
+    @assertEqual(r_ref, coords % lvl(1) % r, TOL)
+
+    ! At the boundary, the event should be BOUNDARY_EV, even if the field
+    ! overlaps the boundary
+    r = [0.0_defReal, 0.0_defReal, -195.2_defReal]
+    u = [ZERO, ZERO, -ONE]
+    call coords % init(r, u)
+    call geom % placeCoord(coords)
+
+    r_ref = [0.0_defReal, 0.0_defReal, -200.0_defReal]
+    maxDist = 1000.0_defReal
+    call geom % move(coords, maxDist, event)
+    
+    @assertEqual(4.8_defReal, maxDist, TOL)
+    @assertEqual(BOUNDARY_EV, event)
+    @assertEqual(r_ref, coords % lvl(1) % r, TOL)
+
+  end subroutine test_field_geom
 
 
 end module geometryStd_iTest

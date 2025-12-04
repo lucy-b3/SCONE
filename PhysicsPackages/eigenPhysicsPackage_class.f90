@@ -327,6 +327,9 @@ contains
     call self % initSource % generate(self % thisCycle, self % pop, self % pRNG)
     if (self % loud) print *, "DONE!"
 
+    ! Update RNG after source generation
+    call self % pRNG % stride(self % pop)
+
   end subroutine generateInitialState
 
   !!
@@ -400,6 +403,7 @@ contains
     type(outputFile)                          :: test_out
     type(visualiser)                          :: viz
     class(field), pointer                     :: field
+    real(defReal)                             :: maxDensityScale, maxTemperature
     character(100), parameter :: Here ='init (eigenPhysicsPackage_class.f90)'
 
     call cpu_time(self % CPU_time_start)
@@ -479,6 +483,11 @@ contains
     ! Activate Nuclear Data *** All materials are active
     call ndReg_activate(self % particleType, nucData, self % geom % activeMats(), .not. self % loud)
     self % nucData => ndReg_get(self % particleType)
+
+    ! Update majorant in case of density and temperature fields
+    maxDensityScale = self % geom % getMaxDensityFactor()
+    maxTemperature = self % geom % getMaxTemperature()
+    call self % nucData % initMajorant(.false., maxTemp = maxTemperature, scaleDensity = maxDensityScale)
 
     ! Call visualisation
     if (dict % isPresent('viz')) then

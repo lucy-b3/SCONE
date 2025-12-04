@@ -164,11 +164,15 @@ contains
     call timerReset(self % timerMain)
     call timerStart(self % timerMain)
 
-    do i=1,N_cycles
+    do i = 1,N_cycles
 
       ! Send start of cycle report
       call self % fixedSource % generate(self % thisCycle, nParticles, self % pRNG)
-      if(self % printSource == 1) then
+
+      ! Update RNG after source generation
+      call self % pRNG % stride(self % pop)
+
+      if (self % printSource == 1) then
         call self % thisCycle % printToFile(trim(self % outputFile)//'_source'//numToChar(i))
       end if
 
@@ -315,6 +319,7 @@ contains
     character(nameLen)                              :: nucData, energy, geomName
     type(outputFile)                                :: test_out
     type(visualiser)                                :: viz
+    real(defReal)                                   :: maxTemperature, maxDensityScale
     character(100), parameter :: Here ='init (fixedSourcePhysicsPackage_class.f90)'
 
     call cpu_time(self % CPU_time_start)
@@ -389,6 +394,11 @@ contains
     ! Activate Nuclear Data *** All materials are active
     call ndReg_activate(self % particleType, nucData, self % geom % activeMats(), .not. self % loud)
     self % nucData => ndReg_get(self % particleType)
+    
+    ! Update majorant in case of density and temperature fields
+    maxDensityScale = self % geom % getMaxDensityFactor()
+    maxTemperature = self % geom % getMaxTemperature()
+    call self % nucData % initMajorant(.false., maxTemp = maxTemperature, scaleDensity = maxDensityScale)
 
     ! Call visualisation
     if (dict % isPresent('viz')) then

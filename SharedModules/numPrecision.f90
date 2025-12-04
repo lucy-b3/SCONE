@@ -21,6 +21,7 @@ module numPrecision
                                       ONE = 1.0_defReal, &
                                       TWO = 2.0_defReal, &
                                       TWO_PI = TWO * PI, &
+                                      SQRT_PI = sqrt(PI), &
                                       HALF = 0.5_defReal,&
                                       FOUR_PI = TWO * TWO_PI, &
                                       ONE_FOUR_PI = ONE /(FOUR_PI)
@@ -30,5 +31,5 @@ module numPrecision
 
 
 contains
-    
+
 end module numPrecision

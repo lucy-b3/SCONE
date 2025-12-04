@@ -65,6 +65,7 @@ module baseMgNeutronDatabase_class
     procedure :: getTrackingXS
 
     ! Local interface
+    procedure :: getTrackMatXS
     procedure :: getTotalMatXS
     procedure :: getMajorantXS
     procedure :: matNamesMap
@@ -75,6 +76,8 @@ module baseMgNeutronDatabase_class
     procedure :: init
     procedure :: activate
     procedure :: initMajorant
+
+    ! Local interface
     procedure :: nGroups
 
   end type baseMgNeutronDatabase
@@ -102,7 +105,7 @@ contains
     select case(what)
 
       case (MATERIAL_XS)
-        xs = self % getTotalMatXS(p, matIdx)
+        xs = self % getTrackMatXS(p, matIdx)
 
       case (MAJORANT_XS)
         xs = self % getMajorantXS(p)
@@ -112,6 +115,7 @@ contains
         ! READ ONLY - read from previously updated cache
         if (p % G == trackingCache(1) % G) then
           xs = trackingCache(1) % xs
+          return
         else
           call fatalError(Here, 'Tracking cache failed to update during tracking')
         end if
@@ -128,7 +132,31 @@ contains
   end function getTrackingXS
 
   !!
-  !! Get Total XS given a particle
+  !! Get tracking XS given a particle. In MG, it is always identical to the material
+  !! total XS.
+  !!
+  !! See nuclearDatabase documentation for details
+  !!
+  function getTrackMatXS(self, p, matIdx) result(xs)
+    class(baseMgNeutronDatabase), intent(inout) :: self
+    class(particle), intent(in)                 :: p
+    integer(shortInt), intent(in)               :: matIdx
+    real(defReal)                               :: xs
+    character(100),parameter :: Here = 'getTrackMatXS (baseMgNeutronDatabase_class.f90)'
+
+    ! Check that matIdx exists
+    if (matIdx < 1 .or. matIdx > mm_nMat()) then 
+      print *,'Particle location: ', p % rGlobal()
+      call fatalError(Here, 'Particle is in an undefined material with index: '&
+              //numToChar(matIdx))
+    end if
+    
+    xs = self % getTotalMatXS(p, matIdx)
+
+  end function getTrackMatXS
+
+  !!
+  !! Get total XS given a particle
   !!
   !! See nuclearDatabase documentation for details
   !!
@@ -141,6 +169,14 @@ contains
     class(particle), intent(in)                 :: p
     integer(shortInt), intent(in)               :: matIdx
     real(defReal)                               :: xs
+    character(100),parameter :: Here = 'getTotalMatXS (baseMgNeutronDatabase_class.f90)'
+    
+    ! Check that matIdx exists
+    if (matIdx < 1 .or. matIdx > mm_nMat()) then 
+      print *,'Particle location: ', p % rGlobal()
+      call fatalError(Here, 'Particle is in an undefined material with index: '&
+              //numToChar(matIdx))
+    end if
 
     associate (matCache => materialCache(matIdx))
 
@@ -162,7 +198,7 @@ contains
   end function getTotalMatXS
 
   !!
-  !! Get Majorant XS given a particle
+  !! Get majorant XS given a particle
   !!
   !! See nuclearDatabase documentation for details
   !!
@@ -346,7 +382,7 @@ contains
     self % nG = self % mats(1) % nGroups()
     do i = 2,nMat
       if(self % nG /= self % mats(i) % nGroups()) then
-        call fatalError(Here,'Inconsistant # of groups in materials in matIdx'//numToChar(i))
+        call fatalError(Here,'Inconsistent # of groups in materials in matIdx '//numToChar(i))
       end if
     end do
 
@@ -394,12 +430,28 @@ contains
   !!
   !! See nuclearDatabase documentation for details
   !!
-  subroutine initMajorant(self, loud)
+  subroutine initMajorant(self, loud, maxTemp, scaleDensity)
     class(baseMgNeutronDatabase), intent(inout) :: self
     logical(defBool), intent(in)                :: loud
+    real(defReal), optional, intent(in)         :: maxTemp
+    real(defReal), optional, intent(in)         :: scaleDensity
     integer(shortInt)                           :: g, i, idx
-    real(defReal)                               :: xs
+    real(defReal)                               :: xs, densityFactor
     integer(shortInt), parameter                :: TOTAL_XS = 1
+
+    ! Scale density
+    if (present(scaleDensity)) then
+      if (scaleDensity < ONE) then
+        densityFactor = ONE
+      else
+        densityFactor = scaleDensity
+      end if
+    else
+      densityFactor = ONE
+    end if
+
+    ! Currently ignores maxTemp input
+    ! TODO: Update should there be a temperature model developed for MG XSs
 
     ! Allocate majorant
     allocate (self % majorant(self % nG))
@@ -411,7 +463,7 @@ contains
         idx = self % activeMats(i)
         xs = max(xs, self % mats(idx) % data(TOTAL_XS, g))
       end do
-      self % majorant(g) = xs
+      self % majorant(g) = xs * densityFactor
     end do
 
     if (loud) print '(A)', 'MG unionised majorant cross section calculation completed'

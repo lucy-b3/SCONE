@@ -10,6 +10,9 @@ module geometryStd_class
   use csg_class,          only : csg
   use universe_inter,     only : universe
   use surface_inter,      only : surface
+  
+  use pieceConstantField_inter,       only : pieceConstantField
+  use pieceConstantFieldFactory_func, only : new_pieceConstantField
 
   ! Nuclear Data
   use materialMenu_mod,   only : nMat
@@ -29,6 +32,8 @@ module geometryStd_class
   !! Typical geometry of a MC Neutron Transport code composed of multiple nested
   !! universes.
   !!
+  !! Supports super-imposed temperature and density fields.
+  !!
   !! Boundary conditions in diffrent movement models are handeled:
   !!   move          -> explicitBC
   !!   moveGlobal    -> explicitBC
@@ -40,17 +45,23 @@ module geometryStd_class
   !!   geometry {
   !!     type geometryStd;
   !!     <csg_class definition>
+  !!     #temperature <pieceConstantField definition>#
+  !!     #density <pieceConstantField definition>#
   !!    }
   !!
   !! Public Members:
   !!   geom -> Representation of geometry by csg_class. Contains all surfaces, cells and universe
   !!     as well as geometry graph and info about root uni and boundary surface.
+  !!   temperatureField -> Field of temperatures overlaid on the geometry
+  !!   densityField     -> Field of densities overlaid on the geometry
   !!
   !! Interface:
   !!   Geometry Interface
   !!
   type, public, extends(geometry) :: geometryStd
     type(csg) :: geom
+    class(pieceConstantField), allocatable :: temperatureField
+    class(pieceConstantField), allocatable :: densityField
 
   contains
     ! Superclass procedures
@@ -67,6 +78,10 @@ module geometryStd_class
     procedure :: teleport
     procedure :: activeMats
     procedure :: numberOfCells
+    procedure :: getTemperature
+    procedure :: getDensity
+    procedure :: getMaxDensityFactor
+    procedure :: getMaxTemperature
 
     ! Private procedures
     procedure, private :: diveToMat
@@ -86,9 +101,21 @@ contains
     class(dictionary), intent(in)          :: dict
     type(charMap), intent(in)              :: mats
     logical(defBool), optional, intent(in) :: silent
+    class(dictionary), pointer             :: tempDict
 
     ! Build the representation
     call self % geom % init(dict, mats, silent)
+
+    ! If present, build temperature and density fields
+    if (dict % isPresent('temperature')) then
+      tempDict => dict % getDictPtr('temperature')
+      call new_pieceConstantField(self % temperatureField, tempDict)
+    end if
+
+    if (dict % isPresent('density')) then
+      tempDict => dict % getDictPtr('density')
+      call new_pieceConstantField(self % densityField, tempDict)
+    end if
 
   end subroutine init
 
@@ -99,6 +126,14 @@ contains
     class(geometryStd), intent(inout) :: self
 
     call self % geom % kill()
+    if (allocated(self % temperatureField)) then
+      call self % temperatureField % kill()
+      deallocate(self % temperatureField)
+    end if      
+    if (allocated(self % densityField)) then
+      call self % densityField % kill()
+      deallocate(self % densityField)
+    end if      
 
   end subroutine kill
 
@@ -207,24 +242,42 @@ contains
     type(coordList), intent(inout) :: coords
     real(defReal), intent(inout)   :: maxDist
     integer(shortInt), intent(out) :: event
-    integer(shortInt)              :: surfIdx, level
-    real(defReal)                  :: dist
+    integer(shortInt)              :: surfIdx, level, level0
+    real(defReal)                  :: dist, fieldDist
     class(surface), pointer        :: surf
     class(universe), pointer       :: uni
-    character(100), parameter :: Here = 'move (geometryStd_class.f90)'
+    character(100), parameter :: Here = 'move_noCache (geometryStd_class.f90)'
 
     if (.not.coords % isPlaced()) then
       call fatalError(Here, 'Coordinate list is not placed in the geometry')
     end if
 
+    level0 = coords % nesting
+    
     ! Find distance to the next surface
     call self % closestDist(dist, surfIdx, level, coords)
+    
+    ! Check fields
+    fieldDist = INF
+    if (allocated(self % temperatureField)) then
+      fieldDist = min(fieldDist, self % temperatureField % distance(coords))
+    end if
 
-    if (maxDist < dist) then ! Moves within cell
+    if (allocated(self % densityField)) then
+      fieldDist = min(fieldDist, self % densityField % distance(coords))
+    end if
+
+    if (maxDist < dist .and. maxDist < fieldDist) then ! Moves within cell
       call coords % moveLocal(maxDist, coords % nesting)
       event = COLL_EV
       maxDist = maxDist ! Left for explicitness. Compiler will not stand it anyway
-
+    
+    ! This check is really awful - can we do something better?
+    else if (fieldDist < dist .and. abs(fieldDist - dist) > 10*NUDGE) then ! Stays within the same cell, but crosses field boundary
+      call coords % moveLocal(fieldDist, level0)
+      event = FIELD_EV
+      maxDist = fieldDist
+    
     else if (surfIdx == self % geom % borderIdx .and. level == 1) then ! Hits domain boundary
       ! Move global to the boundary
       call coords % moveGlobal(dist)
@@ -237,8 +290,8 @@ contains
 
       ! Place back in geometry
       call self % placeCoord(coords)
-
-    else ! Crosses to diffrent local cell
+    
+    else ! Crosses to different local cell
       ! Move to boundary at hit level
       call coords % moveLocal(dist, level)
       event = CROSS_EV
@@ -252,6 +305,7 @@ contains
       call self % diveToMat(coords, level)
 
     end if
+
 
   end subroutine move_noCache
 
@@ -268,8 +322,8 @@ contains
     real(defReal), intent(inout)   :: maxDist
     integer(shortInt), intent(out) :: event
     type(distCache), intent(inout) :: cache
-    integer(shortInt)              :: surfIdx, level
-    real(defReal)                  :: dist
+    integer(shortInt)              :: surfIdx, level, level0
+    real(defReal)                  :: dist, fieldDist
     class(surface), pointer        :: surf
     class(universe), pointer       :: uni
     character(100), parameter :: Here = 'move_withCache (geometryStd_class.f90)'
@@ -280,14 +334,33 @@ contains
       call fatalError(Here, 'Coordinate list is not placed in the geometry')
     end if
 
+    level0 = coords % nesting
+    
     ! Find distance to the next surface
     call self % closestDist_cache(dist, surfIdx, level, coords, cache)
+    
+    ! Check fields
+    fieldDist = INF
+    if (allocated(self % temperatureField)) then
+      fieldDist = min(fieldDist, self % temperatureField % distance(coords))
+    end if
 
-    if (maxDist < dist) then ! Moves within cell
+    if (allocated(self % densityField)) then
+      fieldDist = min(fieldDist, self % densityField % distance(coords))
+    end if
+
+    if (maxDist < dist .and. maxDist < fieldDist) then ! Moves within cell
       call coords % moveLocal(maxDist, coords % nesting)
       event = COLL_EV
       maxDist = maxDist ! Left for explicitness. Compiler will not stand it anyway
       cache % lvl = 0
+
+    ! This check is really awful - can we do something better?
+    else if (fieldDist < dist .and. abs(fieldDist - dist) > 10 * NUDGE) then ! Stays within the same cell, but crosses field boundary
+      call coords % moveLocal(fieldDist, level0)
+      event = FIELD_EV
+      maxDist = fieldDist
+      cache % dist(1:level0) = cache % dist(1:level0) - fieldDist
 
     else if (surfIdx == self % geom % borderIdx .and. level == 1) then ! Hits domain boundary
       ! Move global to the boundary
@@ -302,8 +375,8 @@ contains
 
       ! Place back in geometry
       call self % placeCoord(coords)
-
-    else ! Crosses to diffrent local cell
+    
+    else ! Crosses to different local cell
       ! Move to boundary at hit level
       call coords % moveLocal(dist, level)
       event = CROSS_EV
@@ -552,8 +625,13 @@ contains
       N = N - 1
       lastIdx = self % geom % graph % usedMats(N)
     end if
-    ! Check if the last entry of the list is an undefined material
+    ! Check if the last entry of the list is an actual material or an undefined material
     if (lastIdx == UNDEF_MAT) then
+      N = N - 1
+      lastIdx = self % geom % graph % usedMats(N)
+    end if
+    ! Check if the last entry of the list is an actual material or an overlap material
+    if (lastIdx == OVERLAP_MAT) then
       matList = self % geom % graph % usedMats(1:N-1)
     else
       matList = self % geom % graph % usedMats(1:N)
@@ -576,18 +654,18 @@ contains
   end function numberOfCells
 
   !!
-  !! Descend down the geometry structure untill material is reached
+  !! Descend down the geometry structure until material is reached
   !!
-  !! Requires strting level to be specified.
-  !! It is private procedure common to all movment types in geometry.
+  !! Requires starting level to be specified.
+  !! It is a private procedure common to all movement types in geometry.
   !!
   !! Args:
-  !!   coords [inout] -> CoordList of a particle. Assume thet coords are already valid for all
+  !!   coords [inout] -> CoordList of a particle. Assume that coords are already valid for all
   !!     levels above and including start
-  !!   start [in] -> Starting level for meterial search
+  !!   start [in] -> Starting level for material search
   !!
   !! Errors:
-  !!   fatalError if material cell is not found untill maximum nesting is reached
+  !!   fatalError if material cell is not found until maximum nesting is reached
   !!
   subroutine diveToMat(self, coords, start)
     class(geometryStd), intent(in) :: self
@@ -602,6 +680,7 @@ contains
       ! Find cell fill
       rootId = coords % lvl(i) % uniRootID
       localID = coords % lvl(i) % localID
+      
       call self % geom % graph % getFill(fill, id, rootID, localID)
 
       if (fill >= 0) then ! Found material cell
@@ -733,6 +812,78 @@ contains
 
     end do
   end subroutine closestDist_cache
+
+  !!
+  !! Returns the local temperature, provided the temperatureField
+  !! has been allocated
+  !!
+  !! See geometry_inter for details
+  !!
+  function getTemperature(self, coords) result(T)
+    class(geometryStd), intent(in) :: self
+    type(coordList), intent(in)    :: coords
+    real(defReal)                  :: T
+  
+    if (allocated(self % temperatureField)) then
+      T = self % temperatureField % at(coords)
+    else
+      T = -INF
+    end if
+
+  end function getTemperature
+  
+  !!
+  !! Returns the local density, provided the densityField
+  !! has been allocated
+  !!
+  !! See geometry_inter for details
+  !!
+  function getDensity(self, coords) result(rho)
+    class(geometryStd), intent(in) :: self
+    type(coordList), intent(in)    :: coords
+    real(defReal)                  :: rho
+  
+    if (allocated(self % densityField)) then
+      rho = self % densityField % at(coords)
+    else
+      rho = -INF
+    end if
+
+  end function getDensity
+  
+  !!
+  !! Returns the maximum density scaling factor across the geometry
+  !!
+  !! See geometry_inter for details
+  !!  
+  function getMaxDensityFactor(self) result(rho)
+    class(geometryStd), intent(in) :: self
+    real(defReal)                  :: rho
+
+    if (allocated(self % densityField)) then
+      rho = max(ONE, self % densityField % getMaxValue())
+    else
+      rho = ONE
+    end if
+    
+  end function getMaxDensityFactor
+  
+  !!
+  !! Returns the maximum temperature across the geometry
+  !!
+  !! See geometry_inter for details
+  !!  
+  function getMaxTemperature(self) result(temp)
+    class(geometryStd), intent(in) :: self
+    real(defReal)                  :: temp
+
+    if (allocated(self % temperatureField)) then
+      temp = self % temperatureField % getMaxValue()
+    else
+      temp = -ONE
+    end if
+    
+  end function getMaxTemperature
 
   !!
   !! Cast geometry pointer to geometryStd class pointer
