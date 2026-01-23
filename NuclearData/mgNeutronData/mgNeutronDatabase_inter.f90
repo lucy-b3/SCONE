@@ -25,6 +25,7 @@ module mgNeutronDatabase_inter
   !!
   type, public, abstract, extends(nuclearDatabase) :: mgNeutronDatabase
     integer(shortInt)  :: nG = 0
+    integer(shortInt)  :: nT = 0
   contains
   end type mgNeutronDatabase
 
@@ -44,6 +45,22 @@ module mgNeutronDatabase_inter
       class(mgNeutronDatabase), intent(in) :: self
       integer(shortInt)                    :: ng
     end function nGroups
+
+    !!
+    !! Returns the number of energy groups used
+    !!
+    !! Args:
+    !!   None
+    !!
+    !! Result:
+    !!   Integer number of energy groups
+    !!
+    pure function nTemps(self) result(nT)
+      import :: mgNeutronDatabase, shortInt
+      class(mgNeutronDatabase), intent(in) :: self
+      integer(shortInt)                    :: nT
+    end function nTemps
+
 
 
   end interface

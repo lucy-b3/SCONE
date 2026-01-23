@@ -237,8 +237,6 @@ contains
     integer(shortInt), dimension(20,20)    :: img
     integer(shortInt), dimension(20,20,20) :: img3
     class(geometry), pointer    :: geomP
-    type(visualiser)            :: viz
-    type(dictionary)            :: vizDict
     real(defReal), dimension(3) :: r
 
     ! Load dictionary
@@ -263,16 +261,10 @@ contains
     name = 'mox43'
     idxF = mats % get(name)
     
-    ! Construct visualiser and verify slice plotting
-    geomP => geom
-    call charToDict(vizDict, ' ')
-    name = 'test'
-    call viz % init(geomP, vizDict, name)
-
     !*** Test slice normal to x & y
     ! X-axis at 1.0
     r = [1.0_defReal, 0.0_defReal, 0.0_defReal]
-    call viz % slicePlot(img, r, 'x', 'material')
+    call geom % slicePlot(img, r, 'x', 'material')
 
     ! Test some pixels
     @assertEqual(idxW, img(8, 11))
@@ -282,7 +274,7 @@ contains
     
     ! Y-axis at 3.0
     r = [0.0_defReal, 3.0_defReal, 0.0_defReal]
-    call viz % slicePlot(img, r, 'y', 'material')
+    call geom % slicePlot(img, r, 'y', 'material')
 
     @assertEqual(idxW, img(15, 1))
     @assertEqual(idxW, img(13, 4))
@@ -292,17 +284,17 @@ contains
     !*** Test voxel plot
     ! Full plot
     ! Value of r is irrelevant
-    call viz % voxelPlot(img3, r, 'material')
+    call geom % voxelPlot(img3, r, 'material')
 
     ! Checksome against 2D plot
     r = [0.0_defReal, 2.75_defReal, 0.0_defReal]
-    call viz % slicePlot(img, r, 'y', 'material')
+    call geom % slicePlot(img, r, 'y', 'material')
 
     @assertEqual(img, img3(:,16,:))
 
     ! Small box all inside fuel
     r = [ 1.0_defReal, 0.0_defReal, 0.0_defReal]
-    call viz % voxelPlot(img3, r, 'material', [0.5_defReal, 0.5_defReal, 0.5_defReal])
+    call geom % voxelPlot(img3, r, 'material', [0.5_defReal, 0.5_defReal, 0.5_defReal])
 
     @assertEqual(idxF, img3)
 

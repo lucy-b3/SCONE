@@ -55,6 +55,8 @@ module mgNeutronMaterial_inter
     procedure(getFissionXS), deferred       :: getFissionXS
     procedure(getChi), deferred             :: getChi
     procedure(getScatterXS), deferred       :: getScatterXS
+    procedure(getProd), deferred            :: getProd
+    procedure(getTemp), deferred            :: getTemp
     procedure                               :: isFissile
     procedure                               :: set
 
@@ -75,12 +77,13 @@ module mgNeutronMaterial_inter
     !! Errors:
     !!   fatalError if G is out-of-bounds for the stored data
     !!
-    subroutine getMacroXSs_byG(self, xss, G, rand)
+    subroutine getMacroXSs_byG(self, xss, G, rand, t)
       import :: mgNeutronMaterial, neutronMacroXSs, shortInt, RNG
       class(mgNeutronMaterial), intent(in) :: self
       type(neutronMacroXSs), intent(out)   :: xss
       integer(shortInt), intent(in)        :: G
       class(RNG), intent(inout)            :: rand
+      integer(shortInt), optional, intent(in)  :: t
     end subroutine getMacroXSs_byG
 
     !!
@@ -89,15 +92,17 @@ module mgNeutronMaterial_inter
     !! Args:
     !!   G [in]       -> Requested energygroup
     !!   rand [inout] -> Random number generator
+    !!   t            -> Requested temperature index (if feedback present)
     !!
     !! Errors:
     !!   fatalError if G is out-of-bounds for the stored data
     !!
-    function getTotalXS(self, G, rand) result(xs)
+    function getTotalXS(self, G, rand, t) result(xs)
       import :: mgNeutronMaterial, defReal, shortInt, RNG
       class(mgNeutronMaterial), intent(in) :: self
       integer(shortInt), intent(in)        :: G
       class(RNG), intent(inout)            :: rand
+      integer(shortInt), optional, intent(in)  :: t
       real(defReal)                        :: xs
     end function getTotalXS
 
@@ -107,6 +112,7 @@ module mgNeutronMaterial_inter
     !! Args:
     !!   G [in]       -> Requested energygroup
     !!   rand [inout] -> Random number generator
+    !!   t            -> Requested temperature index (if feedback present)
     !!
     !! Result:
     !!   xs -> nuSigmaF value
@@ -114,11 +120,12 @@ module mgNeutronMaterial_inter
     !! Errors:
     !!   fatalError if G is out-of-bounds for the stored data
     !!
-    function getNuFissionXS(self, G, rand) result(xs)
+    function getNuFissionXS(self, G, rand, t) result(xs)
       import :: mgNeutronMaterial, defReal, shortInt, RNG
       class(mgNeutronMaterial), intent(in) :: self
       integer(shortInt), intent(in)        :: G
       class(RNG), intent(inout)            :: rand
+      integer(shortInt), optional, intent(in)  :: t
       real(defReal)                        :: xs
     end function getNuFissionXS
 
@@ -128,6 +135,7 @@ module mgNeutronMaterial_inter
     !! Args:
     !!   G [in]       -> Requested energygroup
     !!   rand [inout] -> Random number generator
+    !!   t            -> Requested temperature index (if feedback present)
     !!
     !! Result:
     !!   xs -> nuSigmaF value
@@ -135,11 +143,12 @@ module mgNeutronMaterial_inter
     !! Errors:
     !!   fatalError if G is out-of-bounds for the stored data
     !!
-    function getFissionXS(self, G, rand) result(xs)
+    function getFissionXS(self, G, rand, t) result(xs)
       import :: mgNeutronMaterial, defReal, shortInt, RNG
       class(mgNeutronMaterial), intent(in) :: self
       integer(shortInt), intent(in)        :: G
       class(RNG), intent(inout)            :: rand
+      integer(shortInt), optional, intent(in)  :: t
       real(defReal)                        :: xs
     end function getFissionXS
 
@@ -149,6 +158,7 @@ module mgNeutronMaterial_inter
     !! Args:
     !!   G [in]       -> Requested energygroup
     !!   rand [inout] -> Random number generator
+    !!   t            -> Requested temperature index (if feedback present)
     !!
     !! Result:
     !!   chi -> fission spectrum value
@@ -172,6 +182,7 @@ module mgNeutronMaterial_inter
     !!   Gin [in]       -> Requested ingoing energygroup
     !!   Gout [in]      -> Requested outgoing energygroup
     !!   rand [inout]   -> Random number generator
+    !!   t            -> Requested temperature index (if feedback present)
     !!
     !! Result:
     !!   xs -> scatter XS
@@ -179,14 +190,50 @@ module mgNeutronMaterial_inter
     !! Errors:
     !!   fatalError if Gin or Gout are out-of-bounds for the stored data
     !!
-    function getScatterXS(self, Gin, Gout, rand) result(xs)
+    function getScatterXS(self, Gin, Gout, rand, t) result(xs)
       import :: mgNeutronMaterial, defReal, shortInt, RNG
       class(mgNeutronMaterial), intent(in) :: self
       integer(shortInt), intent(in)        :: Gin
       integer(shortInt), intent(in)        :: Gout
       class(RNG), intent(inout)            :: rand
+      integer(shortInt), optional, intent(in)  :: t
       real(defReal)                        :: xs
     end function getScatterXS
+
+    !!
+    !! Return neutron production rate for ingoing energy Gin and outgoing
+    !! energy Gout for the material
+    !!
+    !! Args:
+    !!   Gin [in]       -> Requested ingoing energygroup
+    !!   Gout [in]      -> Requested outgoing energygroup
+    !!   rand [inout]   -> Random number generator
+    !!   t            -> Requested temperature index (if feedback present)
+    !!
+    !! Result:
+    !!   xs -> scatter XS
+    !!
+    !! Errors:
+    !!   fatalError if Gin or Gout are out-of-bounds for the stored data
+    function getProd(self, Gin, Gout, rand, t) result(xs)
+      import :: mgNeutronMaterial, defReal, shortInt, RNG
+      class(mgNeutronMaterial), intent(in) :: self
+      integer(shortInt), intent(in)            :: Gin
+      integer(shortInt), intent(in)            :: Gout
+      class(RNG), intent(inout)                :: rand
+      integer(shortInt), optional, intent(in)  :: t
+      real(defReal)                            :: xs
+    end function getProd
+
+    !!
+    !! Return XS evaluated temperature for a given index
+    !!
+    function getTemp(self, t) result(temp)
+      import :: mgNeutronMaterial, defReal, shortInt
+      class(mgNeutronMaterial), intent(in), target :: self
+      integer(shortInt)                        :: t
+      real(defReal)                            :: temp
+    end function getTemp
 
   end interface
 

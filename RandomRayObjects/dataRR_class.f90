@@ -13,6 +13,16 @@ module dataRR_class
   
   implicit none
   private
+  
+  !! XS storage for each material (with or without TH feedback)
+  type :: matXS
+    real(defFlt), allocatable :: sigmaT(:)    ! (g, t)
+    real(defFlt), allocatable :: nuSigmaF(:)  ! (g, t)
+    real(defFlt), allocatable :: sigmaF(:)    ! (g, t)
+    real(defFlt), allocatable :: chi(:)         ! (g)
+    real(defFlt), allocatable :: sigmaS(:)  ! (g1, g, t)
+    !logical :: fissile
+  end type matXS
 
   !!
   !! Nuclear data in a random ray-friendly format.
@@ -28,14 +38,18 @@ module dataRR_class
     integer(shortInt)                     :: nG     = 0
     integer(shortInt)                     :: nG2    = 0
     integer(shortInt)                     :: nMat   = 0
+    integer(shortInt)                     :: nT     = 0
+    ! real(defReal), dimension(:), allocatable :: T
 
     ! Data space - absorb all nuclear data for speed
-    real(defFlt), dimension(:), allocatable       :: sigmaT
-    real(defFlt), dimension(:), allocatable       :: nuSigmaF
-    real(defFlt), dimension(:), allocatable       :: sigmaF
-    real(defFlt), dimension(:), allocatable       :: sigmaS
-    real(defFlt), dimension(:), allocatable       :: chi
+    !real(defFlt), dimension(:), allocatable       :: sigmaT
+    !real(defFlt), dimension(:,:), allocatable       :: sigmaT
+    !real(defFlt), dimension(:,:), allocatable       :: nuSigmaF
+    !real(defFlt), dimension(:,:), allocatable       :: sigmaF
+    !real(defFlt), dimension(:,:), allocatable       :: sigmaS
+    !real(defFlt), dimension(:,:), allocatable       :: chi
     logical(defBool), dimension(:), allocatable   :: fissile
+    type(matXS), dimension(:), allocatable         :: matRR ! 
     character(nameLen), dimension(:), allocatable :: names
 
     ! Optional kinetic data
@@ -50,6 +64,9 @@ module dataRR_class
     real(defFlt), dimension(:), allocatable :: sigmaS1
     real(defFlt), dimension(:), allocatable :: sigmaS2
     real(defFlt), dimension(:), allocatable :: sigmaS3
+
+    ! Stores the temperatures of the XS files
+    real(defFlt), dimension(:,:), allocatable :: temperatures
 
   contains
     
@@ -69,9 +86,12 @@ module dataRR_class
     procedure :: getScatterPointer
     procedure :: getScatterVecPointer
     procedure :: getTotalXS
+    procedure :: getNuFissXS
     procedure :: getFissionXS
     procedure :: getScatterXS
+    procedure :: getChi
     procedure :: getNG
+    procedure :: getNT
     procedure :: getNMat
     procedure :: getNPrec
     procedure :: getName
@@ -91,13 +111,14 @@ contains
   !! Initialise necessary nuclear data.
   !! Can optionally include kinetic parameters.
   !!
-  subroutine init(self, db, doKinetics, aniOrder, loud)
+  subroutine init(self, db, doKinetics, aniOrder, loud, temp)
     class(dataRR), intent(inout)                     :: self
     class(baseMgNeutronDatabase),pointer, intent(in) :: db
     logical(defBool), intent(in)                     :: doKinetics
     integer(shortInt), intent(in)                    :: aniOrder
     logical(defBool), intent(in)                     :: loud
-    integer(shortInt)                                :: g, g1, m, matP1
+    logical(defBool), optional, intent(in)           :: temp
+    integer(shortInt)                                :: g, g1, m, matP1, t
     type(RNG)                                        :: rand
     logical(defBool)                                 :: fiss
     class(baseMgNeutronMaterial), pointer            :: mat
@@ -106,56 +127,134 @@ contains
 
     self % doKinetics = doKinetics
 
+    print *, "Made it to dataRR"
     ! Store number of energy groups for convenience
     self % nG = db % nGroups()
     self % nG2 = self % nG * self % nG
+    !self % nT = db % nTemps()
 
     ! Initialise local nuclear data
     ! Allocate nMat + 1 materials to catch any undefined materials
     ! TODO: clean nuclear database afterwards! It is no longer used
     !       and takes up memory.
     self % nMat = mm_nMat()
+    print *, "Constants found"
+        
     matP1 = self % nMat + 1
-    allocate(self % sigmaT(matP1 * self % nG))
-    self % sigmaT = 0.0_defFlt
-    allocate(self % nuSigmaF(matP1 * self % nG))
-    self % nuSigmaF = 0.0_defFlt
-    allocate(self % sigmaF(matP1 * self % nG))
-    self % sigmaF = 0.0_defFlt
-    allocate(self % chi(matP1 * self % nG))
-    self % chi = 0.0_defFlt
-    allocate(self % sigmaS(matP1 * self % nG * self % nG))
-    self % sigmaS = 0.0_defFlt
+    
+    allocate(self % matRR(self % nMat))
     allocate(self % fissile(matP1))
     self % fissile = .false.
     allocate(self % names(matP1))
     self % names = 'unnamed'
 
-    ! Create a dummy RNG to satisfy the mgDatabase access interface
-    call rand % init(1_longInt)
+    print *, "Allocated matRR and fissle"
 
-    if (loud) print *,'Initialising random ray nuclear data'
-    do m = 1, self % nMat
-      matPtr  => db % getMaterial(m)
-      mat     => baseMgNeutronMaterial_CptrCast(matPtr)
-      fiss = .false.
-      do g = 1, self % nG
-        self % sigmaT(self % nG * (m - 1) + g) = real(mat % getTotalXS(g, rand),defFlt)
-        self % nuSigmaF(self % nG * (m - 1) + g) = real(mat % getNuFissionXS(g, rand),defFlt)
-        self % sigmaF(self % nG * (m - 1) + g) = real(mat % getFissionXS(g, rand),defFlt)
-        if (self % nuSigmaF(self % nG * (m - 1) + g) > 0) fiss = .true.
-        self % chi(self % nG * (m - 1) + g) = real(mat % getChi(g, rand),defFlt)
-        ! Include scattering multiplicity
-        do g1 = 1, self % nG
-          self % sigmaS(self % nG * self % nG * (m - 1) + self % nG * (g - 1) + g1)  = &
-                  real(mat % getScatterXS(g1, g, rand) * mat % scatter % prod(g1, g) , defFlt)
+    if ((temp)) then
+
+      self % nT = db % nTemps()
+      allocate(self % temperatures(self % nMat, self % nT))
+      ! Create a dummy RNG togetMacroXSs_byG satisfy the mgDatabase access interface
+      call rand % init(1_longInt)
+      if (loud) print *,'Initialising random ray nuclear data'
+      do m = 1, self % nMat
+        !print *, 'BEGINNING ' // mm_matName(m)
+        matPtr  => db % getMaterial(m)
+        !print *, "material pointer found"
+        mat     => baseMgNeutronMaterial_CptrCast(matPtr)
+        !print *, "mat found"
+        fiss = .false.
+
+        allocate(self % matRR(m) % sigmaT(self % nG * self % nT))
+        !print *, "SigmaT allocated"
+        allocate(self % matRR(m) % nuSigmaF(self % nG * self % nT))
+        allocate(self % matRR(m) % sigmaF(self % nG * self % nT))
+        allocate(self % matRR(m) % chi(self % nG))
+        allocate(self % matRR(m) % sigmaS(self % nG * self % nG * self % nT))
+
+        !print *, "Allocated XSs with temps"
+
+        do t = 1, self % nT
+          self % temperatures(m,t) = real(mat % getTemp(t),defFlt)
         end do
-      end do
-      self % fissile(m) = fiss
-      self % names(m) = mm_matName(m)
-    end do
+        !print  *, "mat temps stored"
 
-    ! Initialise data necessary for kinetic/noise calculations
+        print *, self % temperatures(m,:)
+
+        do g = 1, self % nG
+          do t = 1, self % nT
+            self % matRR(m) % sigmaT((g - 1) * self % nT + t) = real(mat % getTotalXS(g, rand, t),defFlt)
+            !print *, self % matRR(m) % sigmaT((g - 1) * self % nT + t)
+            self % matRR(m) % nuSigmaF((g - 1) * self % nT + t) = real(mat % getNuFissionXS(g, rand, t),defFlt)
+            !print *, "nuSigmaF stored"
+            self % matRR(m) % sigmaF((g - 1) * self % nT + t) = real(mat % getFissionXS(g, rand, t),defFlt)
+            !print *, self % matRR(m) % sigmaF((g - 1) * self % nT + t)
+            if (self % matRR(m) % nuSigmaF((g - 1) * self % nT + t) > 0) fiss = .true.
+            self % matRR(m) % chi(g) = real(mat % getChi(g, rand),defFlt)
+            ! Include scattering multiplicity
+            do g1 = 1, self % nG
+              self % matRR(m) % sigmaS(((g - 1) * self % nG + (g1 - 1)) * self % nT + t)  = &
+                      real(mat % getScatterXS(g1, g, rand, t) * mat % getProd(g1, g, rand, t) , defFlt)
+              !print *, "scattering stored"
+              !print *, self % matRR(m) % sigmaS(((g - 1) * self % nG + (g1 - 1)) * self % nT + t)
+            end do
+          end do
+        end do
+        self % fissile(m) = fiss
+        self % names(m) = mm_matName(m)
+        !print *, "MATERIAL FINISHED"
+      end do
+      
+
+    else
+      ! Create a dummy RNG togetMacroXSs_byG satisfy the mgDatabase access interface
+      call rand % init(1_longInt)
+      if (loud) print *,'Initialising random ray nuclear data'
+      do m = 1, self % nMat
+        matPtr  => db % getMaterial(m)
+        mat     => baseMgNeutronMaterial_CptrCast(matPtr)
+        fiss = .false.
+
+        !print *, "Mat pointers found"
+        !print *, mm_matName(m)
+
+        allocate(self % matRR(m) % sigmaT(self % nG))
+        allocate(self % matRR(m) % nuSigmaF(self % nG))
+        allocate(self % matRR(m) % sigmaF(self % nG))
+        allocate(self % matRR(m) % chi(self % nG))
+        allocate(self % matRR(m) % sigmaS(self % nG * self % nG))
+
+        !print *, "XS allocations made"
+
+        do g = 1, self % nG
+          self % matRR(m) % sigmaT(g) = real(mat % getTotalXS(g, rand),defFlt)
+          !print *, "SigmaT stored"
+          !print *, self % matRR(m) % sigmaT(g)
+          self % matRR(m) % nuSigmaF(g) = real(mat % getNuFissionXS(g, rand),defFlt)
+          !print *, self % matRR(m) % nuSigmaF(g) 
+          self % matRR(m) % sigmaF(g) = real(mat % getFissionXS(g, rand),defFlt)
+          !print *, self % matRR(m) % sigmaF(g)
+          if (self % matRR(m) % nuSigmaF(g) > 0) fiss = .true.
+          self % matRR(m) % chi(g) = real(mat % getChi(g, rand),defFlt)
+          !print *, self % matRR(m) % chi(g)
+          !print *, "Chi stored"
+          ! Include scattering multiplicity
+          do g1 = 1, self % nG
+            self % matRR(m) % sigmaS(self % nG * (g - 1) +  g1)  = &
+                    real(mat % getScatterXS(g1, g, rand) * mat % scatter % prod(g1, g) , defFlt)
+            !print *, self % matRR(m) % sigmaS(self % nG * (g - 1) +  g1)
+            !print *, "Storing scattering"
+          end do
+        end do
+        self % fissile(m) = fiss
+        !print *, fiss
+        self % names(m) = mm_matName(m)
+      end do
+      !print *, "XSs stored"
+
+    end if 
+
+    !Initialise data necessary for kinetic/noise calculations
     if (self % doKinetics) then
       print *,'Including kinetic data'
       call fatalError(Here,'Kinetic data not yet supported')
@@ -228,6 +327,17 @@ contains
   end function getNG
 
   !!
+  !! Return the number of temperature files
+  !!
+  elemental function getNT(self) result(nT)
+    class(dataRR), intent(in) :: self
+    integer(shortInt)         :: nT
+
+    nT = self % nT
+
+  end function getNT
+
+  !!
   !! Return the number of materials
   !!
   elemental function getNMat(self) result(nM)
@@ -277,7 +387,7 @@ contains
       mIdx = matIdx
     end if
     call self % getScatterIdxs(mIdx, idx1, idx2)
-    sigS => self % sigmaS(idx1:idx2)
+    sigS => self % matRR(mIdx) % sigmaS(idx1:idx2)
 
   end subroutine getScatterPointer
   
@@ -298,7 +408,7 @@ contains
     end if
     idx1 = (matIdx - 1) * self % nG2 + (gOut - 1) * self % nG + 1
     idx2 = (matIdx - 1) * self % nG2 + gOut * self % nG 
-    sigS => self % sigmaS(idx1:idx2)
+    sigS => self % matRR(mIdx) % sigmaS(idx1:idx2)
 
   end subroutine getScatterVecPointer
 
@@ -318,7 +428,7 @@ contains
       mIdx = matIdx
     end if
     call self % getIdxs(mIdx, idx1, idx2)
-    chi => self % chi(idx1:idx2)
+    chi => self % matRR(mIdx) % chi(idx1:idx2)
 
   end subroutine getChiPointer
 
@@ -339,9 +449,9 @@ contains
     end if
     call self % getIdxs(mIdx, idx1, idx2)
     call self % getScatterIdxs(mIdx, idx1s, idx2s)
-    nuSigF => self % nuSigmaF(idx1:idx2)
-    chi    => self % chi(idx1:idx2)
-    sigS   => self % sigmaS(idx1s:idx2s)
+    nuSigF => self % matRR(mIdx) % nuSigmaF(idx1:idx2)
+    chi    => self % matRR(mIdx) % chi(idx1:idx2)
+    sigS   => self % matRR(mIdx) % sigmaS(idx1s:idx2s)
 
   end subroutine getProdPointers
   
@@ -361,7 +471,7 @@ contains
       mIdx = matIdx
     end if
     call self % getIdxs(mIdx, idx1, idx2)
-    sigT => self % sigmaT(idx1:idx2)
+    sigT => self % matRR(mIdx) % sigmaT(idx1:idx2)
 
   end subroutine getTotalPointer
   
@@ -381,17 +491,17 @@ contains
       mIdx = matIdx
     end if
     call self % getIdxs(mIdx, idx1, idx2)
-    nuFiss => self % nuSigmaF(idx1:idx2)
+    nuFiss => self % matRR(mIdx) % nuSigmaF(idx1:idx2)
 
   end subroutine getNuFissPointer
-
+  
+  !! Return nuFission XS in a given material and group
   !!
-  !! Return total XS in a given material and group
-  !!
-  elemental function getTotalXS(self, matIdx, g) result(sigT)
+  function getNuFissXS(self, matIdx, g, temp) result(nuFiss)
     class(dataRR), intent(in)     :: self
     integer(shortInt), intent(in) :: matIdx, g
-    real(defFlt)                  :: sigT
+    real(defFlt), optional, intent(in)      :: temp
+    real(defFlt)                  :: nuFiss
     integer(shortInt)             :: mIdx
 
     if (matIdx > self % nMat) then
@@ -399,16 +509,39 @@ contains
     else
       mIdx = matIdx
     end if
-    sigT = self % sigmaT((mIdx - 1) * self % nG + g)
 
-  end function getTotalXS
+    if (present(temp)) then 
+      if (temp >= self % temperatures(mIdx,1) .and. temp <= self % temperatures(mIdx,2)) then
+        nuFiss = self % matRR(mIdx) % nuSigmaF((g - 1) * self % nT + 1) + &
+                (((temp-self % temperatures(mIdx,1))/(self % temperatures(mIdx,2)-self % temperatures(mIdx,1))) &
+              *  (self % matRR(mIdx) % nuSigmaF((g - 1) * self % nT + 2) &
+              - self % matRR(mIdx) % nuSigmaF((g - 1) * self % nT + 1)))
+
+      else if (temp >= self % temperatures(mIdx,2) .and. temp <= self % temperatures(mIdx,3)) then
+        nuFiss = self % matRR(mIdx) % nuSigmaF((g - 1) * self % nT + 2) + &
+                (((temp-self % temperatures(mIdx,2))/(self % temperatures(mIdx,3)-self % temperatures(mIdx,2))) &
+              *  (self % matRR(mIdx) % nuSigmaF((g - 1) * self % nT + 3) &
+              - self % matRR(mIdx) % nuSigmaF((g - 1) * self % nT + 2)))
+      
+      else     
+        nuFiss = -1.0_defFlt 
+      end if 
+
+    else
+      nuFiss = self % matRR(mIdx) % nuSigmaF(g)
+    end if
+    
+   ! print *, nuFiss
+
+  end function getNuFissXS
   
   !!
   !! Return fission XS in a given material and group
   !!
-  elemental function getFissionXS(self, matIdx, g) result(sigF)
+  function getFissionXS(self, matIdx, g, temp) result(sigF)
     class(dataRR), intent(in)     :: self
     integer(shortInt), intent(in) :: matIdx, g
+    real(defFlt), optional, intent(in)      :: temp
     real(defFlt)                  :: sigF
     integer(shortInt)             :: mIdx
 
@@ -417,16 +550,83 @@ contains
     else
       mIdx = matIdx
     end if
-    sigF = self % sigmaF((mIdx - 1) * self % nG + g)
 
+    !print *, temp
+
+    if (present(temp)) then 
+      if (temp >= self % temperatures(mIdx,1) .and. temp <= self % temperatures(mIdx,2)) then
+        sigF = self % matRR(mIdx) % sigmaF((g - 1) * self % nT + 1) + &
+                (((temp-self % temperatures(mIdx,1))/(self % temperatures(mIdx,2)-self % temperatures(mIdx,1))) &
+             * (self % matRR(mIdx) % sigmaF((g - 1) * self % nT + 2) &
+             - self % matRR(mIdx) % sigmaF((g - 1) * self % nT + 1)))
+
+
+      else if (temp >= self % temperatures(mIdx,2) .and. temp <= self % temperatures(mIdx,3)) then
+        sigF = self % matRR(mIdx) % sigmaF((g - 1) * self % nT + 2) + &
+                (((temp-self % temperatures(mIdx,2))/(self % temperatures(mIdx,3)-self % temperatures(mIdx,2))) &
+             * (self % matRR(mIdx) % sigmaF((g - 1) * self % nT + 3) -&
+             self % matRR(mIdx) % sigmaF((g - 1) * self % nT + 2)))
+
+      else
+        sigF = -1.0_defFlt
+      end if 
+
+    else
+      sigF = self % matRR(mIdx) % sigmaF(g)
+    end if
+
+    !print *, sigF
+    
   end function getFissionXS
+
+  !! Return total XS in a given material and group
+  !!
+  function getTotalXS(self, matIdx, g, temp) result(sigT)
+    class(dataRR), intent(in)     :: self
+    integer(shortInt), intent(in) :: matIdx, g
+    real(defFlt), optional, intent(in)      :: temp
+    real(defFlt)                  :: sigT
+    integer(shortInt)             :: mIdx
+
+    if (matIdx > self % nMat) then
+      mIdx = self % nMat + 1
+    else
+      mIdx = matIdx
+    end if
+
+    if (present(temp)) then 
+      if (temp >= self % temperatures(mIdx,1) .and. temp <= self % temperatures(mIdx,2)) then
+        sigT = self % matRR(mIdx) % sigmaT((g - 1) * self % nT + 1) &
+                + (((temp-self % temperatures(mIdx,1))/(self % temperatures(mIdx,2)-self % temperatures(mIdx,1))) &
+            *  (self % matRR(mIdx) % sigmaT((g - 1) * self % nT + 2) &
+            - self % matRR(mIdx) % sigmaT((g - 1) * self % nT + 1)))
+
+
+      else if (temp >= self % temperatures(mIdx,2) .and. temp <= self % temperatures(mIdx,3)) then
+        sigT = self % matRR(mIdx) % sigmaT((g - 1) * self % nT + 2) &
+                + (((temp-self % temperatures(mIdx,2))/(self % temperatures(mIdx,3)-self % temperatures(mIdx,2))) &
+            *  (self % matRR(mIdx) % sigmaT((g - 1) * self % nT + 3) &
+            - self % matRR(mIdx) % sigmaT((g - 1) * self % nT + 2)))
+
+      else
+        sigT = -1.0_defFlt
+      end if 
+
+    else
+      sigT = self % matRR(mIdx) % sigmaT(g)
+    end if
+
+    !print *, sigT
+
+  end function getTotalXS
   
   !!
   !! Return scatter XS in a given material, ingoing group, and outgoing group
   !!
-  elemental function getScatterXS(self, matIdx, gIn, gOut) result(sigS)
+  function getScatterXS(self, matIdx, gIn, gOut, temp) result(sigS)
     class(dataRR), intent(in)     :: self
     integer(shortInt), intent(in) :: matIdx, gIn, gOut
+    real(defFlt), optional,  intent(in)    :: temp
     real(defFlt)                  :: sigS
     integer(shortInt)             :: mIdx
 
@@ -435,10 +635,56 @@ contains
     else
       mIdx = matIdx
     end if
-    sigS = self % sigmaS((mIdx - 1) * self % nG2 + self % nG * (gIn - 1) + gOut)
+
+    !print *, temp
+    !print *, self % temperatures(mIdx,1)
+    !print *, self % temperatures(mIdx,2)
+    !print *, self % temperatures(mIdx,3)
+
+    if (present(temp)) then 
+      if (temp >= self % temperatures(mIdx,1) .and. temp <= self % temperatures(mIdx,2)) then
+        sigS = self % matRR(mIdx) % sigmaS(((gIn - 1) * self % nG + (gOut - 1)) * self % nT + 1) &
+                + (((temp-self % temperatures(mIdx,1))/(self % temperatures(mIdx,2)- & 
+               self % temperatures(mIdx,1))) * &
+               (self % matRR(mIdx) % sigmaS(((gIn - 1) * self % nG + (gOut - 1)) * self % nT + 2) - &
+               self % matRR(mIdx) % sigmaS(((gIn - 1) * self % nG + (gOut - 1)) * self % nT + 1)))
+
+      else if (temp >= self % temperatures(mIdx,2) .and. temp <= self % temperatures(mIdx,3)) then
+        sigS = self % matRR(mIdx) % sigmaS(((gIn - 1) * self % nG + (gOut - 1)) * self % nT + 2)&
+                + (((temp-self % temperatures(mIdx,2))/(self % temperatures(mIdx,3)- &
+               self % temperatures(mIdx,2))) * &
+               (self % matRR(mIdx) % sigmaS(((gIn - 1) * self % nG + (gOut - 1)) * self % nT + 3) - &
+               self % matRR(mIdx) % sigmaS(((gIn - 1) * self % nG + (gOut - 1)) * self % nT + 2)))
+      else
+        sigS = -1.0_defFlt
+      end if 
+
+    else
+      sigS = self % matRR(mIdx) % sigmaS(self % nG * (gIn - 1) +  gOut)
+    end if
+
+    !print *, sigS
 
   end function getScatterXS
 
+  !!
+  !! Return chi in a given material
+  !!
+  function getChi(self, matIdx, g) result(chi)
+    class(dataRR), intent(in)     :: self
+    integer(shortInt), intent(in) :: matIdx, g
+    real(defFlt)                  :: chi
+    integer(shortInt)             :: mIdx
+
+    if (matIdx > self % nMat) then
+      mIdx = self % nMat + 1
+    else
+      mIdx = matIdx
+    end if
+
+    chi = self % matRR(mIdx) % chi(g)
+
+  end function getChi
 
   !!
   !! Return to uninitialised state
@@ -451,21 +697,9 @@ contains
     self % nG2        = 0
     self % nMat       = 0
     self % nP         = 0
+    self % nT         = 0
     self % doKinetics = .false.
-    if(allocated(self % sigmaT)) deallocate(self % sigmaT)
-    if(allocated(self % sigmaS)) deallocate(self % sigmaS)
-    if(allocated(self % nuSigmaF)) deallocate(self % nuSigmaF)
-    if(allocated(self % sigmaF)) deallocate(self % sigmaF)
-    if(allocated(self % chi)) deallocate(self % chi)
-    if(allocated(self % fissile)) deallocate(self % fissile)
-    if(allocated(self % names)) deallocate(self % names)
-    if(allocated(self % chiD)) deallocate(self % chiD)
-    if(allocated(self % chiP)) deallocate(self % chiP)
-    if(allocated(self % beta)) deallocate(self % beta)
-    if(allocated(self % invSpeed)) deallocate(self % invSpeed)
-    if(allocated(self % sigmaS1)) deallocate(self % sigmaS1)
-    if(allocated(self % sigmaS2)) deallocate(self % sigmaS2)
-    if(allocated(self % sigmaS3)) deallocate(self % sigmaS3)
+    if (allocated(self % matRR)) deallocate(self % matRR)
 
   end subroutine kill
 

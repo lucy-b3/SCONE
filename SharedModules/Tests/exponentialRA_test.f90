@@ -2,7 +2,7 @@ module exponentialRA_test
 
   use numPrecision
   use exponentialRA_func, only : exponential
-  use pfUnit_mod
+  use fUnit
 
   implicit none
 

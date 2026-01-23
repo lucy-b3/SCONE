@@ -82,6 +82,7 @@ module geometryStd_class
     procedure :: getDensity
     procedure :: getMaxDensityFactor
     procedure :: getMaxTemperature
+    procedure :: mapTemperature
 
     ! Private procedures
     procedure, private :: diveToMat
@@ -408,8 +409,8 @@ contains
     real(defReal), intent(inout)   :: maxDist
     integer(shortInt), intent(out) :: event
     logical(defBool), intent(out)  :: hitVacuum
-    integer(shortInt)              :: surfIdx, level
-    real(defReal)                  :: dist
+    integer(shortInt)              :: surfIdx, level, level0
+    real(defReal)                  :: dist, fieldDist
     class(surface), pointer        :: surf
     class(universe), pointer       :: uni
     character(100), parameter :: Here = 'moveRay_noCache (geometryStd_class.f90)'
@@ -422,13 +423,31 @@ contains
       call fatalError(Here, 'Coordinate list is not placed in the geometry')
     end if
 
+    level0 = coords % nesting
+
     ! Find distance to the next surface
     call self % closestDist(dist, surfIdx, level, coords)
 
-    if (maxDist < dist) then ! Moves within cell
+    ! Check fields
+    fieldDist = INF
+    if (allocated(self % temperatureField)) then
+      fieldDist = min(fieldDist, self % temperatureField % distance(coords))
+    end if
+
+    if (allocated(self % densityField)) then
+      fieldDist = min(fieldDist, self % densityField % distance(coords))
+    end if
+
+    if (maxDist < dist .and. maxDist < fieldDist) then ! Moves within cell
       call coords % moveLocal(maxDist, coords % nesting)
       event = COLL_EV
       maxDist = maxDist ! Left for explicitness. Compiler will not stand it anyway
+
+    ! This check is really awful - can we do something better?
+    else if (fieldDist < dist .and. abs(fieldDist - dist) > 10*NUDGE) then ! Stays within the same cell, but crosses field boundary
+      call coords % moveLocal(fieldDist, level0)
+      event = FIELD_EV
+      maxDist = fieldDist
 
     else if (surfIdx == self % geom % borderIdx .and. level == 1) then ! Hits domain boundary
       ! Move global to the boundary
@@ -475,8 +494,8 @@ contains
     integer(shortInt), intent(out) :: event
     type(distCache), intent(inout) :: cache
     logical(defBool), intent(out)  :: hitVacuum
-    integer(shortInt)              :: surfIdx, level
-    real(defReal)                  :: dist
+    integer(shortInt)              :: surfIdx, level, level0
+    real(defReal)                  :: dist, fieldDist
     class(surface), pointer        :: surf
     class(universe), pointer       :: uni
     character(100), parameter :: Here = 'moveRay_withCache (geometryStd_class.f90)'
@@ -489,14 +508,33 @@ contains
       call fatalError(Here, 'Coordinate list is not placed in the geometry')
     end if
 
+    level0 = coords % nesting
+
     ! Find distance to the next surface
     call self % closestDist_cache(dist, surfIdx, level, coords, cache)
 
-    if (maxDist < dist) then ! Moves within cell
+    ! Check fields
+    fieldDist = INF
+    if (allocated(self % temperatureField)) then
+      fieldDist = min(fieldDist, self % temperatureField % distance(coords))
+    end if
+
+    if (allocated(self % densityField)) then
+      fieldDist = min(fieldDist, self % densityField % distance(coords))
+    end if
+
+    if (maxDist < dist .and. maxDist < fieldDist) then ! Moves within cell   
       call coords % moveLocal(maxDist, coords % nesting)
       event = COLL_EV
       maxDist = maxDist ! Left for explicitness. Compiler will not stand it anyway
       cache % lvl = 0
+
+    ! This check is really awful - can we do something better?
+    else if (fieldDist < dist .and. abs(fieldDist - dist) > 10 * NUDGE) then ! Stays within the same cell, but crosses field boundary
+      call coords % moveLocal(fieldDist, level0)
+      event = FIELD_EV
+      maxDist = fieldDist
+      cache % dist(1:level0) = cache % dist(1:level0) - fieldDist
 
     else if (surfIdx == self % geom % borderIdx .and. level == 1) then ! Hits domain boundary
       ! Move global to the boundary
@@ -884,6 +922,14 @@ contains
     end if
     
   end function getMaxTemperature
+    
+  function mapTemperature(self) result(mapTemp)
+    class(geometryStd), intent(in) :: self
+    logical(defBool)               :: mapTemp
+
+    mapTemp = allocated(self % temperatureField)
+
+  end function mapTemperature
 
   !!
   !! Cast geometry pointer to geometryStd class pointer

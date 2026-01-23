@@ -6,7 +6,6 @@ module baseMgNeutronMaterial_class
   use RNG_class,         only : RNG
   use dictionary_class,  only : dictionary
   use dictDeck_class,    only : dictDeck
-  use dictParser_func,    only : fileToDict
 
   ! Nuclear Data Interfaces
   use materialHandle_inter,    only : materialHandle
@@ -35,9 +34,6 @@ module baseMgNeutronMaterial_class
   integer(shortInt), parameter, public :: CAPTURE_XS    = 3
   integer(shortInt), parameter, public :: FISSION_XS    = 4
   integer(shortInt), parameter, public :: NU_FISSION    = 5
-  integer(shortInt), parameter, public :: CHI           = 6
-  integer(shortInt), parameter, public :: NU            = 7
-  
 
   !!
   !! Basic type of MG material data
@@ -72,11 +68,7 @@ module baseMgNeutronMaterial_class
   !!     -> P# [nGxnG]
   !!
   type, public, extends(mgNeutronMaterial) :: baseMgNeutronMaterial
-    real(defReal), dimension(:,:), allocatable :: data ! Second index may include temperature
-    ! Reproducing data from multiScatterMG_class
-    real(defReal), dimension(:,:), allocatable :: scatterXss !vector of total P0 scattering XSs
-    real(defReal), dimension(:,:,:), allocatable :: P0 !P0 scattering matrix [G_out; G_in; t]
-    real(defReal), dimension(:,:,:), allocatable :: prod !Production matrix    [G_out; G_in;, t]
+    real(defReal),dimension(:,:), allocatable :: data ! Second index may include temperature
     class(multiScatterMG), allocatable        :: scatter
     type(fissionMG), allocatable              :: fission
     integer(shortInt)                         :: nG
@@ -91,12 +83,10 @@ module baseMgNeutronMaterial_class
     procedure :: getFissionXS
     procedure :: getChi
     procedure :: getScatterXS
-    procedure :: getProd
     procedure :: getTemp
 
     ! Local procedures
     procedure :: init
-    procedure :: initWithTemp
     procedure :: nGroups
     procedure :: getTotalPtr
     procedure :: getNuFissionPtr
@@ -119,9 +109,6 @@ contains
     ! Kill local content
     if(allocated(self % data))    deallocate(self % data)
     if(allocated(self % scatter)) deallocate(self % scatter)
-    if(allocated(self % P0)) deallocate(self % P0)
-    if(allocated(self % prod)) deallocate(self % prod)
-    if(allocated(self % scatterXss)) deallocate(self % scatterXss)
     if(allocated(self % fission)) deallocate(self % fission)
     if(allocated(self % temperatures)) deallocate(self % temperatures)
 
@@ -154,14 +141,14 @@ contains
       end if
 
       ! Get XSs
-      xss % total            = self % data(TOTAL_XS, self % nGroups() * (t - 1) + G)
+      xss % total            = self % data(TOTAL_XS, G)
       xss % elasticScatter   = ZERO
-      xss % inelasticScatter = self % data(IESCATTER_XS, self % nGroups() * (t - 1) + G)
-      xss % capture          = self % data(CAPTURE_XS, self % nGroups() * (t - 1) + G)
+      xss % inelasticScatter = self % data(IESCATTER_XS, G)
+      xss % capture          = self % data(CAPTURE_XS, G)
 
       if(self % isFissile()) then
-        xss % fission        = self % data(FISSION_XS, self % nGroups() * (t - 1) + G)
-        xss % nuFission      = self % data(NU_FISSION, self % nGroups() * (t - 1) + G)
+        xss % fission        = self % data(FISSION_XS, G)
+        xss % nuFission      = self % data(NU_FISSION, G)
       else
         xss % fission        = ZERO
         xss % nuFission      = ZERO
@@ -212,7 +199,7 @@ contains
                            ' Data has only: ' // numToChar(3))
       end if
 
-      xs = self % data(TOTAL_XS, self % nGroups() * (t - 1) + G)
+      xs = self % data(TOTAL_XS, self % nGroups() * (g - 1) + t)
 
     else
       xs = self % data(TOTAL_XS, G)
@@ -233,7 +220,9 @@ contains
     real(defReal)                            :: xs
     character(100), parameter :: Here = ' getNuFissionXS (baseMgNeutronMaterial_class.f90)'
 
+    ! Verify bounds
     if (self % isFissile()) then
+    
       ! Verify bounds
       if (G < 1 .or. self % nGroups() < G) then
         call fatalError(Here,'Invalid group number: '//numToChar(G)// &
@@ -247,7 +236,7 @@ contains
                              ' Data has only: ' // numToChar(3))
         end if
 
-        xs = self % data(NU_FISSION, self % nGroups() * (t - 1) + G)
+        xs = self % data(NU_FISSION, self % nGroups() * (g - 1) + t)
 
       else
         xs = self % data(NU_FISSION, G)
@@ -273,6 +262,7 @@ contains
     real(defReal)                            :: xs
     character(100), parameter :: Here = ' getFissionXS (baseMgNeutronMaterial_class.f90)'
 
+    ! Verify bounds
     if (self % isFissile()) then
 
       ! Verify bounds
@@ -288,7 +278,7 @@ contains
                              ' Data has only: ' // numToChar(3))
         end if
 
-        xs = self % data(FISSION_XS, self % nGroups() * (t - 1) + G)
+        xs = self % data(FISSION_XS, self % nGroups() * (g - 1) + t)
 
       else
         xs = self % data(FISSION_XS, G)
@@ -306,11 +296,11 @@ contains
   !!
   !! See mgNeutronMaterial documentationfor details
   !!
-  function getChi(self, G, rand) result(chiG)
+  function getChi(self, G, rand) result(chi)
     class(baseMgNeutronMaterial), intent(in) :: self
     integer(shortInt), intent(in)            :: G
     class(RNG), intent(inout)                :: rand
-    real(defReal)                            :: chiG
+    real(defReal)                            :: chi
     character(100), parameter :: Here = ' getChi (baseMgNeutronMaterial_class.f90)'
 
     if (self % isFissile()) then
@@ -318,12 +308,12 @@ contains
       if(G < 1 .or. self % nGroups() < G) then
         call fatalError(Here,'Invalid group number: '//numToChar(G)// &
                              ' Data has only: ' // numToChar(self % nGroups()))
-        chiG = ZERO ! Avoid warning
+        chi = ZERO ! Avoid warning
       end if
     
-      chiG = self % data(CHI,G)
+      chi = self % fission % data(G,2)
     else
-      chiG = ZERO
+      chi = ZERO
     end if
 
   end function getChi
@@ -331,7 +321,7 @@ contains
   !!
   !! Return scatter XS for incoming energy group Gin and outgoing group Gout
   !!
-  !! See mgNeutronMaterial documentation for details
+  !! See mgNeutronMaterial documentationfor details
   !!
   function getScatterXS(self, Gin, Gout, rand, t) result(xs)
     class(baseMgNeutronMaterial), intent(in) :: self
@@ -343,73 +333,15 @@ contains
     character(100), parameter :: Here = ' getScatterXS (baseMgNeutronMaterial_class.f90)'
 
     ! Verify bounds
-    if (Gin < 1 .or. self % nGroups() < Gin) then
-      call fatalError(Here,'Invalid group number: '//numToChar(Gin)// &
-                           ' Data has only: ' // numToChar(self % nGroups()))
+    if(Gin < 1 .or. self % nGroups() < Gin .or. Gout < 1 .or. self % nGroups() < Gout) then
+      call fatalError(Here,'Invalid group numbers: '//numToChar(Gin)//' and '//numToChar(Gout) &
+                           //' Data has only: ' // numToChar(self % nGroups()))
       xs = ZERO ! Avoid warning
     end if
+    !xs = self % scatter % P0(Gout,Gin) 
 
-    if (Gout < 1 .or. self % nGroups() < Gout) then
-      call fatalError(Here,'Invalid group number: '//numToChar(Gout)// &
-                           ' Data has only: ' // numToChar(self % nGroups()))
-      xs = ZERO ! Avoid warning
-    end if
-
-    if (present(t)) then
-      if(t < 1 .or. t>3) then
-        call fatalError(Here,'Invalid temperature number: '//numToChar(t)// &
-                           ' Data has only: ' // numToChar(3))
-      end if
-
-      xs = self % P0(Gout,Gin,t)
-
-    else
-      xs = self % scatter % P0(Gout,Gin)
-    end if
- 
+  
   end function getScatterXS
-
-  !!
-  !! Return neutron production rate for incoming energy group Gin and outgoing group Gout
-  !!
-  !! See mgNeutronMaterial documentationfor details
-  !!
-  function getProd(self, Gin, Gout, rand, t) result(xs)
-    class(baseMgNeutronMaterial), intent(in) :: self
-    integer(shortInt), intent(in)            :: Gin
-    integer(shortInt), intent(in)            :: Gout
-    class(RNG), intent(inout)                :: rand
-    integer(shortInt), optional, intent(in)  :: t
-    real(defReal)                            :: xs
-    character(100), parameter :: Here = ' getProd (baseMgNeutronMaterial_class.f90)'
-
-    ! Verify bounds
-    if (Gin < 1 .or. self % nGroups() < Gin) then
-      call fatalError(Here,'Invalid group number: '//numToChar(Gin)// &
-                           ' Data has only: ' // numToChar(self % nGroups()))
-      xs = ZERO ! Avoid warning
-    end if
-
-    ! Verify bounds
-    if (Gout < 1 .or. self % nGroups() < Gout) then
-      call fatalError(Here,'Invalid group number: '//numToChar(Gout)// &
-                           ' Data has only: ' // numToChar(self % nGroups()))
-      xs = ZERO ! Avoid warning
-    end if
-
-    if (present(t)) then
-      if(t < 1 .or. t>3) then
-        call fatalError(Here,'Invalid temperature number: '//numToChar(t)// &
-                           ' Data has only: ' // numToChar(3))
-      end if
-
-      xs = self % prod(Gout,Gin,t)
-
-    else
-      xs = self % scatter % prod(Gout,Gin)
-    end if
-
-  end function getProd
 
 
   !!
@@ -443,6 +375,109 @@ contains
   !!   stage. The following scatterKey are supported:
   !!     -> P0
   !!     -> P1
+  !!
+  subroutine init(self, dict, scatterKey)
+    class(baseMgNeutronMaterial), intent(inout) :: self
+    class(dictionary),target, intent(in)        :: dict
+    character(nameLen), intent(in)              :: scatterKey
+    integer(shortInt)                           :: nG, N, i
+    real(defReal), dimension(:), allocatable    :: temp
+    type(dictDeck)                              :: deck
+    character(100), parameter :: Here = 'init (baseMgNeutronMaterial_class.f90)'
+
+
+    ! Read number of groups
+    call dict % get(nG, 'numberOfGroups')
+    if(nG < 1) call fatalError(Here,'Number of groups is invalid' // numToChar(nG))
+    self % nG = nG
+
+    ! Set fissile flag
+    call self % set(fissile = dict % isPresent('fission'))
+
+    ! Build scattering reaction
+    ! Prepare input deck
+    deck % dict => dict
+
+    ! Load evaluated XS temperatures
+    call dict % get(temp, 'temperatures')
+    if(size(temp) /= 3) then
+      call fatalError(Here,'XS evaluation temperatures have the wrong size. Must be: 3 is ' &
+                          //numToChar(size(temp)))
+    end if
+    self % temperatures(:) = temp
+
+    ! Choose Scattering type
+    select case(scatterKey)
+      case ('P0')
+        allocate( multiScatterMG :: self % scatter)
+
+      case ('P1')
+        allocate( multiScatterP1MG :: self % scatter)
+
+      case default
+        call fatalError(Here,'scatterKey: '//trim(scatterKey)//'is wrong. Must be P0 or P1')
+
+    end select
+
+    ! Initialise
+    call self % scatter % init(deck, macroAllScatter)
+
+    ! Deal with fission
+    if(self % isFissile()) allocate(self % fission)
+    if(self % isFissile()) call self % fission % init(deck, macroFission)
+
+    ! Allocate space for data
+    if(self % isFissile()) then
+      N = 5
+    else
+      N = 3
+    end if
+
+    allocate(self % data(N, nG))
+
+    ! Load cross sections
+    call dict % get(temp, 'capture')
+    if(size(temp) /= nG) then
+      call fatalError(Here,'Capture XSs have wong size. Must be: ' &
+                          // numToChar(nG)//' is '//numToChar(size(temp)))
+    end if
+    self % data(CAPTURE_XS,:) = temp
+
+    ! Extract values of scattering XS
+    if(size(self % scatter % scatterXSs) /= nG) then
+      call fatalError(Here, 'Somthing went wrong. Inconsistant # of groups in material and reaction&
+                            &. Clearly programming error.')
+    end if
+    self % data(IESCATTER_XS,:) = self % scatter % scatterXSs
+
+    ! Load Fission-data
+    if( self % isFissile()) then
+      ! Load Fission
+      call dict % get(temp, 'fission')
+      if(size(temp) /= nG) then
+        call fatalError(Here,'Fission XSs have wong size. Must be: ' &
+                            // numToChar(nG)//' is '//numToChar(size(temp)))
+      end if
+      self % data(FISSION_XS,:) = temp
+
+      ! Calculate nuFission
+      call dict % get(temp, 'nu')
+      if(size(temp) /= nG) then
+        call fatalError(Here,'Nu vector has wong size. Must be: ' &
+                            // numToChar(nG)//' is '//numToChar(size(temp)))
+      end if
+      self % data(NU_FISSION,:) = temp * self % data(FISSION_XS,:)
+    end if
+
+    ! Calculate total XS
+    do i =1,nG
+      self % data(TOTAL_XS, i) = self % data(IESCATTER_XS, i) + self % data(CAPTURE_XS, i)
+      if(self % isFissile()) then
+        self % data(TOTAL_XS, i) = self % data(TOTAL_XS, i) + self % data(FISSION_XS, i)
+      end if
+    end do
+  end subroutine init
+
   !! NEW INIT FROM PAUL
   subroutine init(self, dict, scatterKey)
     class(baseMgNeutronMaterial), intent(inout) :: self
@@ -450,9 +485,7 @@ contains
     character(nameLen), intent(in)              :: scatterKey
     integer(shortInt)                           :: nG, N, i
     real(defReal), dimension(:), allocatable    :: temp
-    type(dictionary), target                    :: tempDict
     type(dictDeck)                              :: deck
-    character(pathLen)                          :: path
     character(100), parameter :: Here = 'init (baseMgNeutronMaterial_class.f90)'
 
     ! CHECK FOR hotFile and coldFile
@@ -460,70 +493,52 @@ contains
     ! OTHERWISE SKIP TEMPERATURE STUFF
 
     if (dict % isPresent('hotFile')) then
+      allocate(self % temperatures(3))
 
+      call dict % get(self % temperatures, 'temp')
+      ! Check if temps are valid
+
+      
+      ! Hot data init
       call dict % get(path,'hotFile')
       call fileToDict(tempDict, path)
-      call tempDict % get(nG, 'numberOfGroups')
-      !print *, nG
-      if(nG < 1) call fatalError(Here,'Number of groups is invalid' // numToChar(nG))
-      self % nG = nG
 
-      !print *, "made it to thermal initialisation"
-      allocate(self % temperatures(3))
-      !print *, "allocated temperatures"
-      allocate(self % scatterXSs(nG, 3))
-      !print *, "allocated scatterXSs"
-      allocate(self % P0(nG, nG, 3))
-      !print *, "allocated P0"
-      allocate(self % prod(nG, nG, 3))
-      !print *, "allocated prod"
 
-      ! Load evaluated XS temperatures
-      call dict % get(temp, 'temp')
-      !print *, temp
-      ! Check if temps are valid
-      if(size(temp) /= 3) then
-        call fatalError(Here,'XS evaluation temperatures have the wrong size. Must be: 3 is ' &
-                            //numToChar(size(temp)))
-      end if
-    
-      self % temperatures = temp
-      !print *, "temperatures stored"
-      
-      ! Cold data init
-      call dict % get(path,'coldFile')
-      call fileToDict(tempDict, path)
-      call self % initWithTemp(tempDict, scatterKey, 1)
 
       ! Med data init
       call dict % get(path,'medFile')
       call fileToDict(tempDict, path)
-      call self % initWithTemp(tempDict, scatterKey, 2)
 
-     ! Hot data init
-      call dict % get(path,'hotFile')
+      ! Cold data init
+      call dict % get(path,'coldFile')
       call fileToDict(tempDict, path)
-      call self % initWithTemp(tempDict, scatterKey, 3)
-      
-      !print *, "ALL 3 XS FILES STORED"
+
       
     else
       ! GET REGULAR xsFile using pathToDict
       call dict % get(path,'xsFile')
       call fileToDict(tempDict, path)
 
+      ! PASTE THE REST OF INIT
+           
       ! Read number of groups
-      call tempDict % get(nG, 'numberOfGroups')
-      !print *, nG
+      call dict % get(nG, 'numberOfGroups')
       if(nG < 1) call fatalError(Here,'Number of groups is invalid' // numToChar(nG))
       self % nG = nG
 
       ! Set fissile flag
-      call self % set(fissile = tempDict % isPresent('fission'))
+      call self % set(fissile = dict % isPresent('fission'))
 
       ! Build scattering reaction
       ! Prepare input deck
-      deck % dict => tempDict
+      deck % dict => dict
+
+      ! Load evaluated XS temperatures
+      call dict % get(temp, 'temperatures')
+      if(size(temp) /= 3) then
+        call fatalError(Here,'XS evaluation temperatures have the wrong size. Must be: 3 is ' &
+                            //numToChar(size(temp)))
+      end if
 
       ! Choose Scattering type
       select case(scatterKey)
@@ -547,7 +562,7 @@ contains
 
       ! Allocate space for data
       if(self % isFissile()) then
-        N = 7
+        N = 5
       else
         N = 3
       end if
@@ -555,7 +570,7 @@ contains
       allocate(self % data(N, nG))
 
       ! Load cross sections
-      call tempDict % get(temp, 'capture')
+      call dict % get(temp, 'capture')
       if(size(temp) /= nG) then
         call fatalError(Here,'Capture XSs have wong size. Must be: ' &
                             // numToChar(nG)//' is '//numToChar(size(temp)))
@@ -572,29 +587,20 @@ contains
       ! Load Fission-data
       if( self % isFissile()) then
         ! Load Fission
-        call tempDict % get(temp, 'fission')
+        call dict % get(temp, 'fission')
         if(size(temp) /= nG) then
           call fatalError(Here,'Fission XSs have wong size. Must be: ' &
                               // numToChar(nG)//' is '//numToChar(size(temp)))
         end if
         self % data(FISSION_XS,:) = temp
- 
-        ! Load Chi
-        call tempDict % get(temp, 'chi')
-        if(size(temp) /= nG) then
-          call fatalError(Here,'Fission XSs have wong size. Must be: ' &
-                              // numToChar(nG)//' is '//numToChar(size(temp)))
-        end if
-        self % data(CHI,:) = temp
 
         ! Calculate nuFission
-        call tempDict % get(temp, 'nu')
+        call dict % get(temp, 'nu')
         if(size(temp) /= nG) then
           call fatalError(Here,'Nu vector has wong size. Must be: ' &
                               // numToChar(nG)//' is '//numToChar(size(temp)))
         end if
         self % data(NU_FISSION,:) = temp * self % data(FISSION_XS,:)
-        self % data(NU,:) = temp
       end if
 
       ! Calculate total XS
@@ -604,155 +610,10 @@ contains
           self % data(TOTAL_XS, i) = self % data(TOTAL_XS, i) + self % data(FISSION_XS, i)
         end if
       end do
-
-    end if
     
+    
+    ! IF TEMPERATURES, ALLOCATE ARRAYS AND REPEAT INIT FOR DIFFERENT PATHS
   end subroutine init
-
-  !!
-  !! Initialises the temperature dependent XSs
-  !! from a given input file
-  !!
-  subroutine initWithTemp(self, dict, scatterKey, t)
-    class(baseMgNeutronMaterial), intent(inout) :: self
-    class(dictionary),target, intent(in)        :: dict
-    character(nameLen), intent(in)              :: scatterKey
-    integer(shortInt), intent(in)               :: t
-    integer(shortInt)                           :: nG, N, i
-    real(defReal), dimension(:), allocatable    :: temp
-    type(dictDeck)                              :: deck
-    character(100), parameter :: Here = 'initWithTemp (baseMgNeutronMaterial_class.f90)'
-
-    ! Read number of groups
-      call dict % get(nG, 'numberOfGroups')
-      if(nG < 1) call fatalError(Here,'Number of groups is invalid' // numToChar(nG))
-      self % nG = nG
-
-      ! Set fissile flag
-      call self % set(fissile = dict % isPresent('fission'))
-      !print *, "fissile flag set"
-
-      ! Build scattering reaction
-      ! Prepare input deck
-      deck % dict => dict
-
-      ! Choose Scattering type
-      !select case(scatterKey)
-      !  case ('P0')
-      !   allocate( multiScatterMG :: self % scatter)
-
-      !  case ('P1')
-      !    allocate( multiScatterP1MG :: self % scatter)
-
-      !  case default
-      !    call fatalError(Here,'scatterKey: '//trim(scatterKey)//'is wrong. Must be P0 or P1')
-
-      !end select
-
-      ! Initialise
-
-      !call self % scatter % init(deck, macroAllScatter)
-      ! Read scattering matrix
-      call dict % get(temp, 'P0')
-      if( size(temp) /= nG*nG) then
-        call fatalError(Here,'Invalid size of P0. Expected: '//numToChar(nG**2)//&
-                        ' got: '//numToChar(size(temp)))
-      end if
-      self % P0(:,:,t) = reshape(temp,[nG, nG])
-      !print *, 'P0 stored'
-      
-      ! Read production matrix
-      call dict % get(temp, 'scatteringMultiplicity')
-      if( size(temp) /= nG*nG) then
-        call fatalError(Here,'Invalid size of scatteringMultiplicity. Expected: '//numToChar(nG**2)//&
-                       ' got: '//numToChar(size(temp)))
-      end if
-  
-      self % prod(:,:,t) = reshape(temp,[nG, nG])
-      !print *, "prod stored"
-  
-      ! Calculate P0 total scattering XSs
-      ! Behold the GLORY of Fortran you lowly C++ slaves!
-      ! ...Sadly slightly diminished by a compiler bug which
-      ! sizes scatterXSs as 1 before it's allocated. But this
-      ! should work without the allocation, normally!
-      self % scatterXSs(:,t) = sum(self % P0(:,:,t), 1)
-      !print *, 'scatterXSs stored'
-  
-      ! Deal with fission
-      !if(self % isFissile()) allocate(self % fission)
-      !if(self % isFissile()) call self % fission % init(deck, macroFission)
-
-      ! Allocate space for data
-      if(self % isFissile()) then
-        N = 7
-      else
-        N = 3
-      end if
-
-      if (.not. allocated(self % data)) allocate(self % data(N, nG*3))
-      !print *, "data allocated"
-
-      ! Load cross sections
-      call dict % get(temp, 'capture')
-      if(size(temp) /= nG) then
-        call fatalError(Here,'Capture XSs have wong size. Must be: ' &
-                            // numToChar(nG)//' is '//numToChar(size(temp)))
-      end if
-      self % data(CAPTURE_XS, nG*(t-1) + 1 : nG*t) = temp
-      !print *, 'capture stored'
-
-      ! Extract values of scattering XS
-      if(size(self % scatterXSs(:,t)) /= nG) then
-        call fatalError(Here, 'Somthing went wrong. Inconsistant # of groups in material and reaction&
-                              &. Clearly programming error.')
-      end if
-      self % data(IESCATTER_XS,nG*(t-1) + 1 : nG*t) = self % scatterXSs(:,t)
-      !print *, 'IE scatter stored'
-
-      ! Load Fission-data
-      if( self % isFissile()) then
-        ! Load Fission
-        call dict % get(temp, 'fission')
-        if(size(temp) /= nG) then
-          call fatalError(Here,'Fission XSs have wong size. Must be: ' &
-                              // numToChar(nG)//' is '//numToChar(size(temp)))
-        end if
-        self % data(FISSION_XS,nG*(t-1) + 1 : nG*t) = temp
- 
-        ! Load Chi
-        call dict % get(temp, 'chi')
-        if(size(temp) /= nG) then
-          call fatalError(Here,'Fission XSs have wong size. Must be: ' &
-                              // numToChar(nG)//' is '//numToChar(size(temp)))
-        end if
-        self % data(CHI,:) = temp
-
-        ! Calculate nuFission
-        call dict % get(temp, 'nu')
-        if(size(temp) /= nG) then
-          call fatalError(Here,'Nu vector has wong size. Must be: ' &
-                              // numToChar(nG)//' is '//numToChar(size(temp)))
-        end if
-        self % data(NU_FISSION,nG*(t-1) + 1 : nG*t) = temp * self % data(FISSION_XS,:)
-        self % data(NU,:) = temp
-      end if
-
-      ! Calculate total XS
-
-      do i =1,nG
-        self % data(TOTAL_XS, nG * (t - 1) + i) = self % data(IESCATTER_XS, nG * (t - 1) + i) &
-                + self % data(CAPTURE_XS, nG * (t - 1) + i)
-        if(self % isFissile()) then
-          self % data(TOTAL_XS, nG * (t - 1) + i) = self % data(TOTAL_XS, nG * (t - 1) + i) &
-                  + self % data(FISSION_XS, nG * (t - 1) + i)
-        end if
-      end do
-
-      !print *, 'All mat data stored'
-
-  end subroutine initWithTemp
-  
 
   !!
   !! Return number of energy groups
@@ -804,14 +665,14 @@ contains
   !!
   !! Return pointer to Chis 
   !!
-  function getChiPtr(self) result(chiG)
+  function getChiPtr(self) result(chi)
     class(baseMgNeutronMaterial), intent(in), target :: self
-    real(defReal), dimension(:), pointer             :: chiG
+    real(defReal), dimension(:), pointer             :: chi
 
     if (self % isFissile()) then
-      chiG => self % fission % data(:,2)
+      chi => self % fission % data(:,2)
     else
-      chiG => null()
+      chi => null()
     end if
 
   end function getChiPtr

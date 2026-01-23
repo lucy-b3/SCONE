@@ -148,6 +148,8 @@ module randomRayPhysicsPackage_class
     logical(defBool)   :: printVolume = .false.
     logical(defBool)   :: printCells  = .false.
     type(visualiser)   :: viz
+    logical(defBool)   :: mapTemp  = .false.
+    class(tallyMap), allocatable :: tempMap
     logical(defBool)   :: mapFission  = .false.
     class(tallyMap), allocatable :: fissionMap
     logical(defBool)   :: mapFlux     = .false.
@@ -269,6 +271,7 @@ contains
       self % mapFlux = .false.
     end if
 
+
     ! Register timer
     self % timerMain = registerTimer('simulationTime')
     self % timerTransport = registerTimer('transportTime')
@@ -308,6 +311,17 @@ contains
     call graphDict % get(graphType,'type')
     if (graphType /= 'extended') call fatalError(Here,&
             'Geometry graph type must be "extended" for random ray calculations.')
+    
+    ! Check whether there is an initial temperature map
+    ! If so, read and initialise the map to be used
+    self % mapTemp = self % geom % mapTemperature()
+    !if (dict % isPresent('temperature')) then
+    !  self % mapTemp = .true.
+    !  !tempDict => dict % getDictPtr('tempMap')
+    !  !call new_tallyMap(self % tempMap, tempDict)
+    !else
+    !  self % mapTemp = .false.
+    !end if
 
     ! Activatee nuclear data
     call ndReg_activate(P_NEUTRON_MG, nucData, self % geom % activeMats(), silent = .not. self % loud)
@@ -354,7 +368,9 @@ contains
 
     ! Initialise RR arrays and nuclear data
     call self % arrays % init(self % mgData, self % geom, &
-            self % pop * (self % termination - self % dead), self % rho, lin, ani, .false., self % loud)
+            self % pop * (self % termination - self % dead), self % rho, lin, ani, .false., self % loud, self % mapTemp)
+
+    print *, "End TRRM init"
     
   end subroutine init
 
@@ -365,8 +381,9 @@ contains
   !!
   subroutine run(self)
     class(randomRayPhysicsPackage), intent(inout) :: self
-
+    print *, "Made it to run physicsPackage"
     if (self % loud) call self % printSettings()
+    print *, "Cycles beginning"
     call self % cycles()
     call self % printResults()
 
@@ -442,7 +459,7 @@ contains
 
         ! Transport ray until termination criterion met
         call transportSweep(r, ints, self % nG, self % cache, self % dead, &
-                self % termination, arrayPtr)
+                self % termination, arrayPtr, self % mapTemp)
         intersections = intersections + ints
 
       end do

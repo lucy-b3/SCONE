@@ -79,6 +79,7 @@ module baseMgNeutronDatabase_class
 
     ! Local interface
     procedure :: nGroups
+    procedure :: nTemps
 
   end type baseMgNeutronDatabase
 
@@ -365,16 +366,19 @@ contains
     do i=1,nMat
       ! Get Path to the xsFile
       matDef => mm_getMatPtr(i)
-      call matDef % extraInfo % get(path,'xsFile')
+      ! COMMENTED BY PAUL
+      !call matDef % extraInfo % get(path,'xsFile')
 
       ! Print status
       if(loud) then
-        print '(A)', "Building material: " // trim(matDef % name) // " From: " // trim(path)
+        print '(A)', "Building material: " // trim(matDef % name)! // " From: " // trim(path)
       end if
 
       ! Load dictionary
-      call fileToDict(tempDict, path)
-      call self % mats(i) % init(tempDict, scatterKey)
+      !COMMENTED BY PAUL
+      !call fileToDict(tempDict, path)
+      !call self % mats(i) % init(tempDict, scatterKey)
+      call self % mats(i) % init(matDef % extraInfo, scatterKey)
 
     end do
 
@@ -385,6 +389,9 @@ contains
         call fatalError(Here,'Inconsistent # of groups in materials in matIdx '//numToChar(i))
       end if
     end do
+
+    ! Load number of temperatures (update later)
+    self % nT = 3
 
   end subroutine init
 
@@ -486,6 +493,23 @@ contains
     nG = self % nG
 
   end function nGroups
+
+  !!
+  !! Return number of energy groups in this database
+  !!
+  !! Args:
+  !!   None
+  !!
+  !! Errors:
+  !!   None
+  !!
+  pure function nTemps(self) result(nT)
+    class(baseMgNeutronDatabase), intent(in) :: self
+    integer(shortInt)                        :: nT
+
+    nT = self % nT
+
+  end function nTemps
 
   !!
   !! Cast nuclearDatabase pointer to baseMgNeutronDatabase type pointer
