@@ -187,6 +187,7 @@ contains
     real(defFlt)                                          :: lenFlt, temp, temp0, totVec
     real(defFlt), dimension(nG)                           :: attenuate, delta, fluxVec, tau
     real(defFlt), pointer, dimension(:)                   :: scalarVec, sourceVec
+    real(defReal), dimension(3)                           :: dir0
     
     XSData => arrays % getDataPointer()
     geom => arrays % getGeomPointer()
@@ -199,6 +200,11 @@ contains
     !print *, matIdx
     if (mapTemp) then
       temp = geom % getTemperature(r % coords)
+      !if (temp < 0.0) then
+        !print *, cIdx
+        !print *, temp
+        !print *, r % coords % uniqueID
+      !end if
       !print *, temp
       !temp = 301.5
     end if
@@ -234,6 +240,11 @@ contains
       cIdx   = r % coords % uniqueID
       if (mapTemp) then
         temp = geom % getTemperature(r % coords)
+        !if (temp < 0.0) then
+          !print *, cIdx
+          !print *, temp
+          !print *, r % coords % uniqueID
+        !end if
         !temp = 301.5
       end if
       if (matIdx0 /= matIdx .or. temp0 /= temp) then
@@ -250,13 +261,14 @@ contains
       call checkRayLength(totalLength, dead, termination, activeRay, length)
 
       ! Move ray
+      dir0 = r % dirGlobal()
       call moveRay(r, doCache, ints, geom, length, event, cache, hitVacuum)
       totalLength = totalLength + length
       
       ! Set new cell's position. Use half distance across cell
       ! to try and avoid FP error
       if (.not. arrays % found(cIdx)) then
-        call arrays % newFound(cIdx, r % rGlobal() + length * HALF * r % dirGlobal())
+        call arrays % newFound(cIdx, r % rGlobal() - length * HALF * dir0)
       end if
 
       lenFlt = real(length,defFlt)

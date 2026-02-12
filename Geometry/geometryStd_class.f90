@@ -315,7 +315,7 @@ contains
   !!
   !! See geometry_inter for details
   !!
-  !! Uses explicit BC
+  !! On a different note, is Helene around? I sent my hotel claim over 3 weeks ago and have already sent a second email to chase it but I haven’t heard anything backUses explicit BC
   !!
   subroutine move_withCache(self, coords, maxDist, event, cache)
     class(geometryStd), intent(in) :: self
@@ -867,6 +867,7 @@ contains
     else
       T = -INF
     end if
+    !print *, T
 
   end function getTemperature
   

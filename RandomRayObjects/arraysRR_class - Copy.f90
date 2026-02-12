@@ -236,7 +236,6 @@ contains
     self % prevFlux      = 1.0_defFlt
     self % fluxScores    = ZERO
     self % power         = ZERO
-    self % powerScores   = ZERO
     self % source        = 0.0_defFlt
     self % volumeTracks  = ZERO
     self % lengthSquared = ZERO
@@ -459,7 +458,6 @@ contains
 
     power = self % powerScores(1, cIdx)
 
-    !print *, power
   end function getPowerScore
 
   !!
@@ -665,10 +663,10 @@ contains
     real(defFlt), save                        :: sigGG, D, norm_V
     type(particle), save                      :: s
     integer(shortInt), save                   :: g, matIdx, idx
-    real(defFlt), save                        :: total, temp
+    real(defFlt)                              :: total, temp
     integer(shortInt)                         :: cIdx
-    real(defReal)                             :: pos(3), dir(3)
-    !$omp threadprivate(total,temp, vol, norm_V, idx, g, matIdx, sigGG, D, s)
+    real(defReal), dimension(:), allocatable  :: pos, dir
+    !$omp threadprivate( vol, norm_V, idx, g, matIdx, sigGG, D)
 
     norm = ONE / self % lengthPerIt
     normVol = ONE / (self % lengthPerIt * it)
@@ -713,7 +711,7 @@ contains
         
         if (self % feedback) then
           total = self % XSData % getTotalXS(matIdx, g , temp)
-          !print *, total
+         ! print *, total
         else
           total = self % XSData % getTotalXS(matIdx, g)
         end if
@@ -748,6 +746,9 @@ contains
 
     end do
     !$omp end parallel do
+
+    !print *, self % scalarflux
+    !print *, self % volume
 
   end subroutine normaliseFluxAndVolumeFlatIso
   
@@ -793,11 +794,11 @@ contains
     real(defFlt), save                        :: pow
     type(particle), save                      :: s
     integer(shortInt), save                   :: g, matIdx, idx
-    real(defFlt), save                        :: fission, temp
+    real(defFlt)                              :: fission, temp
     integer(shortInt)                         :: cIdx
-    real(defReal) :: pos(3), dir(3)
+    real(defReal), dimension(:), allocatable  :: pos, dir
     character(100), parameter      :: Here = 'calculatePower (arraysRR_class.f90)'
-    !$omp threadprivate( vol, pow, idx, g, matIdx, s, fission, temp)
+    !$omp threadprivate( vol, pow, idx, g, matIdx)
 
     !$omp parallel do
     do cIdx = 1, self % nCells
@@ -823,7 +824,6 @@ contains
         cycle
       end if
 
-      self % power(cIdx) = 0.0_defFlt
       do g = 1, self % nG
 
         idx = self % nG * (cIdx - 1) + g
@@ -843,6 +843,8 @@ contains
 
       end do
     !$omp end parallel do
+
+    !print *, self % power
 
     self % power = self % power * (targetPow/sum(self % power))
 
@@ -889,10 +891,10 @@ contains
     real(defFlt)                             :: scatter, fission, nuFission, chi, scatterXS, temp, vol
     !real(defFlt), dimension(:), pointer      :: nuFission, chi, scatterXS, fluxVec 
     real(defFlt), dimension(:), pointer      :: fluxVec
-    type(particle)                           :: s
+    type(particle), save                :: s
     integer(shortInt)                        :: matIdx, g, gIn, baseIdx, idx, sIdx1, sIdx2
-    real(defReal)                            :: pos(3), dir(3)
-    
+    real(defReal), dimension(:), allocatable   :: pos, dir
+
     if (it>1) then
       vol = self % volume(cIdx)
       if (vol < volume_tolerance) return
@@ -911,7 +913,6 @@ contains
       if (it == 1) then
         !Uses mid temperature for first iteration will cell pos is unknown
         temp = self % XSData % getTemperature(matIdx,2)
-        !print *, temp
       else
         temp = self % geom % getTemperature(s % coords)
       end if
@@ -1054,11 +1055,11 @@ contains
     integer(shortInt), intent (in)       :: cIdx
     real(defReal), intent(out)           :: fissionRate, prevFissionRate
     real(defReal)                        :: vol
-    type(particle)                       :: s
+    type(particle), save                 :: s
     integer(shortInt)                    :: g, matIdx
     real(defFlt)                         :: temp, nuSigmaF
     real(defFlt), dimension(:), pointer  :: flux, prevFlux
-    real(defReal) :: pos(3), dir(3)
+    real(defReal), dimension(:), allocatable   :: pos, dir
 
     vol = self % volume(cIdx)
     if (vol < volume_tolerance) return
@@ -1197,9 +1198,9 @@ contains
   !!
   subroutine accumulateFluxScores(self)
     class(arraysRR), intent(inout) :: self
-    real(defReal), save            :: flux, pow
+    real(defReal), save            :: flux
     integer(shortInt)              :: idx
-    !$omp threadprivate(flux, pow)
+    !$omp threadprivate(flux)
 
     !$omp parallel do schedule(static)
     do idx = 1, size(self % scalarFlux)
@@ -1209,16 +1210,6 @@ contains
     end do
     !$omp end parallel do
 
-    !$omp parallel do schedule(static)
-    do idx = 1, size(self % power)
-      pow = real(self % power(idx),defReal)
-      !print *, pow
-      self % powerScores(1, idx) = self % powerScores(1, idx) + pow
-      self % powerScores(2, idx) = self % powerScores(2, idx) + pow * pow
-    end do
-    !$omp end parallel do
-
-    !print *, self % powerScores(1,:)
   end subroutine accumulateFluxScores
   
   !!
@@ -1254,20 +1245,20 @@ contains
     !Finalise powers
     !$omp parallel do schedule(static)
     do idx = 1, size(self % power)
-      self % powerScores(1, idx) = self % powerScores(1, idx) * N1
-      self % powerScores(2, idx) = self % powerScores(2, idx) * N1
-      self % powerScores(2, idx) = Nm1 * (self % powerScores(2, idx) - &
-            self % powerScores(1, idx) * self % powerScores(1, idx))
-      if (self % powerScores(2, idx) <= ZERO) then
-        self % powerScores(2, idx) = ZERO
+      self % fluxScores(1, idx) = self % fluxScores(1, idx) * N1
+      self % fluxScores(2, idx) = self % fluxScores(2, idx) * N1
+      self % fluxScores(2, idx) = Nm1 * (self % fluxScores(2, idx) - &
+            self % fluxScores(1, idx) * self % fluxScores(1, idx))
+      if (self % fluxScores(2, idx) <= ZERO) then
+        self % fluxScores(2, idx) = ZERO
       else
-        self % powerScores(2, idx) = sqrt(self % powerScores(2, idx))
+        self % fluxScores(2, idx) = sqrt(self % fluxScores(2, idx))
       end if
     end do
     !$omp end parallel do
 
   end subroutine finaliseFluxScores
-  
+
   !!
   !! Outputs integral flux or fission rate when
   !! given a tally map
@@ -1285,10 +1276,11 @@ contains
     type(particleState), save                       :: p
     type(particle), save                       :: s
     real(defReal), save                        :: vol
-    real(defFlt), save                         :: sig, temp
+    real(defFlt), save                         :: sig
+    real(defFlt)                               :: temp
     integer(shortInt), save                    :: i, matIdx, g
     real(defReal), dimension(:), allocatable   :: res, resSD, pos, dir
-    !$omp threadprivate(temp, s, vol, sig, i, matIdx, g)
+    !$omp threadprivate(s, vol, sig, i, matIdx, g)
 
     resArrayShape = [map % binArrayShape()]
     allocate(res(map % bins(0)))
@@ -1297,8 +1289,7 @@ contains
     resSD = ZERO
 
     ! Find whether cells are in map and sum their contributions
-    !reduction(+: res, resSD)
-    !$omp parallel do 
+    !$omp parallel do reduction(+: res, resSD)
     do cIdx = 1, self % nCells
         
       vol    =  self % volume(cIdx)
@@ -1324,57 +1315,44 @@ contains
           !print *, pos
         !end if
       end if
-  
-      if (i > 0) then
-        matIdx = self % geom % geom % graph % getMatFromUID(cIdx)
-        if (option == 3) then
-          !$omp atomic 
-          res(i) = res(i) + self % getPowerScore(cIdx)
-          !res(i) = self % getPowerScore(cIdx)
-          !resSD(i) = self % getFluxSD(cIdx,g)**2
-          !$omp atomic 
-          resSD(i) = resSD(i) + self % getPowerSD(cIdx)**2
-        else
-          do g = 1, self % nG
-            if (option == 1) then
-              if (self % feedback) then                    
-                sig = self % XSData % getFissionXS(matIdx, g, temp)
-              else
-                sig = self % XSData % getFissionXS(matIdx, g)
-              end if
-            else
-              sig = 1.0_defFlt
-            end if
-            !print *, self % getFluxScore(cIdx,g) 
-            !$omp atomic
-            res(i) = res(i) + vol * self % getFluxScore(cIdx,g) * sig
 
-            ! Neglects uncertainty in volume - assumed small.
-            !$omp atomic
-            resSD(i) = resSD(i) + &
-                    self % getFluxSD(cIdx,g)**2 * vol * vol * sig * sig
-          end do
-  
-        end if
+      if (i > 0) then
+        matIdx = self % geom % geom % graph % getMatFromUID(cIdx) 
+        do g = 1, self % nG
+          if (option == 1) then
+            if (self % feedback) then                    
+              sig = self % XSData % getFissionXS(matIdx, g, temp)
+            else
+              sig = self % XSData % getFissionXS(matIdx, g)
+            end if
+          else
+            sig = 1.0_defFlt
+          end if
+          print *, self % getFluxScore(cIdx,g) 
+          res(i) = res(i) + vol * self % getFluxScore(cIdx,g) * sig
+
+          ! Neglects uncertainty in volume - assumed small.
+          resSD(i) = resSD(i) + &
+                  self % getFluxSD(cIdx,g)**2 * vol * vol * sig * sig
+        end do
       end if
+
     end do
     !$omp end parallel do
 
-    !print *, map % bins(0)
-    !print *, size(resSD)
+    print *, map % bins(0)
+    print *, size(resSD)
 
     do i = 1,size(resSD)
       resSD(i) = sqrt(resSD(i))
       if (res(i) > 0) resSD(i) = resSD(i) / res(i)
     end do
 
-    !print *, resArrayShape
+    print *, resArrayShape
     if (option == 1) then
       name = 'fiss1G'
-    else if (option == 2) then
-      name = 'flux1G'
     else
-      name = 'power'
+      name = 'flux1G'
     end if
     call out % startBlock(name)
     call out % startArray(name, resArrayShape)
@@ -1462,8 +1440,6 @@ contains
     if(allocated(self % scalarFlux)) deallocate(self % scalarFlux)
     if(allocated(self % prevFlux)) deallocate(self % prevFlux)
     if(allocated(self % fluxScores)) deallocate(self % fluxScores)
-    if(allocated(self % power)) deallocate(self % power)
-    if(allocated(self % powerScores)) deallocate(self % powerScores)
     if(allocated(self % source)) deallocate(self % source)
     if(allocated(self % fixedSource)) deallocate(self % fixedSource)
     if(allocated(self % sourceIdx)) deallocate(self % sourceIdx)
