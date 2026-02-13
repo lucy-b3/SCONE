@@ -96,6 +96,7 @@ module dataRR_class
     procedure :: getNPrec
     procedure :: getName
     procedure :: isFissile
+    procedure :: getTemperature
 
     ! Private procedures
     procedure, private :: getIdxs
@@ -127,7 +128,7 @@ contains
 
     self % doKinetics = doKinetics
 
-    print *, "Made it to dataRR"
+    !print *, "Made it to dataRR"
     ! Store number of energy groups for convenience
     self % nG = db % nGroups()
     self % nG2 = self % nG * self % nG
@@ -138,7 +139,7 @@ contains
     ! TODO: clean nuclear database afterwards! It is no longer used
     !       and takes up memory.
     self % nMat = mm_nMat()
-    print *, "Constants found"
+    !print *, "Constants found"
         
     matP1 = self % nMat + 1
     
@@ -148,7 +149,7 @@ contains
     allocate(self % names(matP1))
     self % names = 'unnamed'
 
-    print *, "Allocated matRR and fissle"
+    !print *, "Allocated matRR and fissle"
 
     if ((temp)) then
 
@@ -179,7 +180,7 @@ contains
         end do
         !print  *, "mat temps stored"
 
-        print *, self % temperatures(m,:)
+        !print *, self % temperatures(m,:)
 
         do g = 1, self % nG
           do t = 1, self % nT
@@ -685,6 +686,26 @@ contains
     chi = self % matRR(mIdx) % chi(g)
 
   end function getChi
+
+  !!
+  !! Get evaluated XS temperature for a given
+  !! material and temperature index
+  !!
+  function getTemperature(self, matIdx, t) result(temp)
+    class(dataRR), intent(in)     :: self
+    integer(shortInt), intent(in) :: matIdx, t
+    real(defFlt)                  :: temp
+    integer(shortInt)             :: mIdx
+
+    if (matIdx > self % nMat) then
+      mIdx = self % nMat + 1
+    else
+      mIdx = matIdx
+    end if
+
+    temp = self % temperatures(mIdx,t)
+  
+  end function getTemperature
 
   !!
   !! Return to uninitialised state

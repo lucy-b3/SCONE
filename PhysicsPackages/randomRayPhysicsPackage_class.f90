@@ -154,6 +154,9 @@ module randomRayPhysicsPackage_class
     class(tallyMap), allocatable :: fissionMap
     logical(defBool)   :: mapFlux     = .false.
     class(tallyMap), allocatable :: fluxMap
+    logical(defBool)   :: mapPower     = .false.
+    class(tallyMap), allocatable :: powerMap
+    real(defReal)      :: power = ZERO
 
     ! Results space
     ! keffScore is public for integration testing
@@ -185,7 +188,7 @@ contains
 
   !!
   !! Initialise Physics Package from dictionary
-  !!
+ !!
   !! See physicsPackage_inter for details
   !!
   subroutine init(self, dict, loud)
@@ -220,6 +223,7 @@ contains
     call dict % get(self % pop, 'pop')
     call dict % get(self % active, 'active')
     call dict % get(self % inactive, 'inactive')
+    call dict % getOrDefault(self % power, 'power', ZERO)
     call dict % getOrDefault(self % keff, 'keff', ONE)
     
     ! Perform distance caching?
@@ -239,7 +243,7 @@ contains
 
     ! Get output format and verify
     ! Initialise output file before calculation (so mistake in format will be cought early)
-    call dict % getOrDefault(self % outputFormat, 'outputFormat', 'asciiMATLAB')
+    call dict % getOrDefault(self % outputFormat, 'outputFormat', 'asciiJSON')
     call test_out % init(self % outputFormat)
 
     ! Check settings
@@ -269,6 +273,16 @@ contains
       call new_tallyMap(self % fluxMap, tempDict)
     else
       self % mapFlux = .false.
+    end if
+
+    ! Check whether there is a map for outputting cell-wise powers
+    ! If so, read and initialise the map to be used
+    if (dict % isPresent('powerMap')) then
+      self % mapPower = .true.
+      tempDict => dict % getDictPtr('powerMap')
+      call new_tallyMap(self % powerMap, tempDict)
+    else
+      self % mapPower = .false.
     end if
 
 
@@ -370,7 +384,7 @@ contains
     call self % arrays % init(self % mgData, self % geom, &
             self % pop * (self % termination - self % dead), self % rho, lin, ani, .false., self % loud, self % mapTemp)
 
-    print *, "End TRRM init"
+    !print *, "End TRRM init"
     
   end subroutine init
 
@@ -381,9 +395,7 @@ contains
   !!
   subroutine run(self)
     class(randomRayPhysicsPackage), intent(inout) :: self
-    print *, "Made it to run physicsPackage"
     if (self % loud) call self % printSettings()
-    print *, "Cycles beginning"
     call self % cycles()
     call self % printResults()
 
@@ -439,7 +451,7 @@ contains
       it = itInac + itAct
       
       ONE_KEFF = ONE / self % keff
-      call arrayPtr % updateSource(ONE_KEFF)
+      call arrayPtr % updateSource(ONE_KEFF, it)
 
       ! Reset and start transport timer
       call timerReset(self % timerTransport)
@@ -474,6 +486,9 @@ contains
 
       ! Normalise flux estimate and combines with source
       call arrayPtr % normaliseFluxAndVolume(it)
+
+      !Calculate power distribution from flux
+      call arrayPtr % calculatePower(self % power)
 
       ! Calculate new k and accumulate stats
       self % keff = arrayPtr % calculateKeff(self % keff)
@@ -591,13 +606,20 @@ contains
     call out % startBlock(name)
     call out % printResult(self % keffScore(1), self % keffScore(2), name)
     call out % endBlock()
-    
+
     outPtr => out
     ! Send fission rates to map output
-    if (self % mapFission) call self % arrays % outputMap(outPtr, self % fissionMap, .true.)
+    !if (self % mapFission) call self % arrays % outputMap(outPtr, self % fissionMap, .true.)
+    if (self % mapFission) call self % arrays % outputMap(outPtr, self % fissionMap, 1)
 
     ! Send fluxes to map output
-    if (self % mapFlux) call self % arrays % outputMap(outPtr, self % fluxMap, .false.)
+    !if (self % mapFlux) call self % arrays % outputMap(outPtr, self % fluxMap, .false.)
+    if (self % mapFlux) call self % arrays % outputMap(outPtr, self % fluxMap, 2)
+    !outPtr => null()
+
+    ! Send powers to map output
+    !if (self % mapPower) call self % arrays % outputMap(outPtr, self % powerMap, .false.)
+    if (self % mapPower) call self % arrays % outputMap(outPtr, self % powerMap, 3)
     outPtr => null()
 
     ! Send all fluxes and SDs to VTK

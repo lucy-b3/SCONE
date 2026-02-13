@@ -161,7 +161,8 @@ contains
 
     ! Size field value array
     self % outLocalID = product(self % sizeN)
-    self % N = product(self % sizeN * self % nMat)
+    !self % N = product(self % sizeN * self % nMat)
+    self%N = product(self%sizeN) * self%nMat
     allocate(self % val(self % N + 1))
 
     ! Read field values for each material
@@ -208,6 +209,7 @@ contains
     integer(shortInt)                 :: localID
     
     localID = self % map (coords)
+    
     if (localID == 0) localID = self % N + 1
     val = self % val(localID)
 
@@ -225,11 +227,9 @@ contains
     integer(shortInt)                 :: idx0
     
     idx = self % getLocalID(coords % lvl(1) % r, coords % lvl(1) % dir)
-
     ! Outside the field
     if (idx == 0) then
       return
-
     end if
 
     ! Compare against material idx

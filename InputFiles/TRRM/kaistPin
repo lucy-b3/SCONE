@@ -1,0 +1,131 @@
+type randomRayPhysicsPackage;
+
+pop      10000;
+active   200;
+inactive  200;
+dead       20;
+termination 220;
+plot 0;
+cache 1;
+XSdata   mg;
+dataType mg;
+outputFile kaistPinOut;
+printFlux 1 ;
+
+power 60000; !60kW per pin
+
+fissionMap {type multiMap;
+            maps (xax yax zax);
+            xax { type spaceMap; axis x; grid lin; min -0.63; max 0.63; N 1;}
+            yax { type spaceMap; axis y; grid lin; min -0.63; max 0.63; N 1;}
+            zax { type spaceMap; axis z; grid lin; min -182.88; max 182.88; N 20;}
+}
+fluxMap {type multiMap;
+            maps (xax yax zax);
+            xax { type spaceMap; axis x; grid lin; min -0.63; max 0.63; N 1;}
+            yax { type spaceMap; axis y; grid lin; min -0.63; max 0.63; N 1;}
+            zax { type spaceMap; axis z; grid lin; min -182.88; max 182.88; N 20;}
+}
+
+powerMap {type multiMap;
+            maps (xax yax zax);
+            xax { type spaceMap; axis x; grid lin; min -0.63; max 0.63; N 1;}
+            yax { type spaceMap; axis y; grid lin; min -0.63; max 0.63; N 1;}
+            zax { type spaceMap; axis z; grid lin; min -182.88; max 182.88; N 20;}
+}
+
+
+geometry {
+    type geometryStd;
+    boundary (1 1 1 1 1 1);
+    graph {type extended;}
+
+temperature {type cartesianField;
+             origin  (0 0 0);
+             shape   (1 1 20);
+             pitch   (1.26 1.26 20.0);
+             materials (fuel);
+             !fuel ( 679 676 675 675 676 678 678 677 680 676 675 674 674 675 674 677 676 678 676 676 );
+             fuel ( 700 705 710 715 720 725 730 735 740 745 750 745 740 735 730 725 720 715 710 705 );
+             !uel ( 700 705 710 715 720 725 730 735 740 745 750 745 740 735 730 725 720 715 710 705 );
+             default -1.0;
+}
+
+    surfaces {
+          squareBound        { id 3; type box; origin (0.0 0.0 0.0); halfwidth (0.63 0.63 182.88);}
+    }
+
+
+    cells
+    {
+    }
+
+    universes
+    {
+      
+      pin { id 2; type pinUniverse; radii (0.0); fills (fuel);}
+
+
+      root
+      {
+          id 1;
+          type rootUniverse;
+          border 3; 
+          fill u<4>;
+      }
+
+    fuellattice{
+      id 4;
+      type latUniverse;
+      pitch (1.260 1.260 18.288);
+      shape (1 1 20);
+      padMat void;
+      map (
+	     2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+          );
+    }
+    }
+}
+
+
+viz {
+  myVTK {
+    type vtk;
+    what uniqueID;
+    corner (-32.13 -32.13 -1.0);
+    width (64.26 64.26 2.0);
+    vox (2000 2000 1);
+  }
+  bmp1 {
+    type bmp;
+    output myGeometry;
+    what uniqueID; ! Could also be material
+    centre (0.0 0.0 0.0);
+    !width (25.0 25.0); ! This is optional - SCONE should do the whole geometry by default, but you can zoom in by using this
+    axis z; ! This is the perpendicular axis, so you'll get an xy plot
+    res (1500 1500); !Resolution in x and y. Can be tuned to taste.
+  }
+}
+
+
+
+nuclearData {
+  handles { 
+    mg { type baseMgNeutronDatabase; PN P0;} 
+  } 
+
+
+materials {
+   
+    fuel {
+      temp (500 700 900);
+      coldFile ../XS_C5G7/UO2;
+      medFile ../XS_C5G7/UO2;
+      hotFile ../XS_C5G7/UO2;
+      composition { }
+   }
+
+
+}
+
+}

@@ -83,7 +83,10 @@ module arraysRR_class
     real(defFlt), dimension(:), allocatable    :: scalarFlux
     real(defFlt), dimension(:), allocatable    :: prevFlux
     real(defReal), dimension(:,:), allocatable :: fluxScores
-    
+   
+    real(defFlt), dimension(:), allocatable    :: power
+    real(defReal), dimension(:,:), allocatable :: powerScores
+
     ! Source arrays
     real(defFlt), dimension(:), allocatable      :: source
     real(defFlt), dimension(:), allocatable      :: fixedSource
@@ -115,6 +118,8 @@ module arraysRR_class
     procedure :: getPrevFlux
     procedure :: getFluxScore
     procedure :: getFluxSD
+    procedure :: getPowerScore
+    procedure :: getPowerSD
     procedure :: getNG
     procedure :: getCellPos
     procedure :: hasHit
@@ -139,6 +144,7 @@ module arraysRR_class
     procedure :: accumulateFluxScores
     procedure :: finaliseFluxScores
     procedure :: calculateKeff
+    procedure :: calculatePower
 
     ! Output procedures
     procedure :: outputMap
@@ -216,6 +222,8 @@ contains
     allocate(self % scalarFlux(self % nG * self % nCells))
     allocate(self % prevFlux(self % nG * self % nCells))
     allocate(self % fluxScores(2, self % nG * self % nCells))
+    allocate(self % power(self % nCells))
+    allocate(self % powerScores(2, self % nCells)) 
     allocate(self % source(self % nG * self % nCells))
     allocate(self % volumeTracks(self % nCells))
     allocate(self % lengthSquared(self % nCells))
@@ -227,6 +235,8 @@ contains
     self % scalarFlux    = 0.0_defFlt
     self % prevFlux      = 1.0_defFlt
     self % fluxScores    = ZERO
+    self % power         = ZERO
+    self % powerScores   = ZERO
     self % source        = 0.0_defFlt
     self % volumeTracks  = ZERO
     self % lengthSquared = ZERO
@@ -440,6 +450,32 @@ contains
   end function getFluxSD
 
   !!
+  !! Return final power value given cell
+  !!
+  function getPowerScore(self, cIdx) result(power)
+    class(arraysRR), intent(in)   :: self
+    integer(shortInt), intent(in) :: cIdx
+    real(defReal)                 :: power
+
+    power = self % powerScores(1, cIdx)
+
+    !print *, power
+  end function getPowerScore
+
+  !!
+  !! Return final power standard deviation given cell
+  !! Will return square of power scores if called before finaliseFluxScores
+  !!
+  function getPowerSD(self, cIdx) result(power)
+    class(arraysRR), intent(in)   :: self
+    integer(shortInt), intent(in) :: cIdx
+    real(defReal)                 :: power
+
+    power = self % powerScores(2, cIdx)
+
+  end function getPowerSD
+
+  !!
   !! Return cell position given cell ID
   !!
   function getCellPos(self, cIdx, g) result(x)
@@ -629,10 +665,10 @@ contains
     real(defFlt), save                        :: sigGG, D, norm_V
     type(particle), save                      :: s
     integer(shortInt), save                   :: g, matIdx, idx
-    real(defFlt)                              :: total, temp
+    real(defFlt), save                        :: total, temp
     integer(shortInt)                         :: cIdx
-    real(defReal), dimension(:), allocatable  :: pos, dir
-    !$omp threadprivate( vol, norm_V, idx, g, matIdx, sigGG, D)
+    real(defReal)                             :: pos(3), dir(3)
+    !$omp threadprivate(total,temp, vol, norm_V, idx, g, matIdx, sigGG, D, s)
 
     norm = ONE / self % lengthPerIt
     normVol = ONE / (self % lengthPerIt * it)
@@ -642,16 +678,16 @@ contains
       matIdx = self % geom % geom % graph % getMatFromUID(cIdx) 
       
       ! Fudge a particle state to search tally map    
-      !s % r = self % cellPos(:,cIdx)
       pos = self % cellPos(:,cIdx)
-      !print *, pos
-      dir = [1,0,0] 
+      dir = [0.5,0.5,0.5]
       call s % coords % init(pos, dir)
-
+      s % coords % matIdx = matIdx
       if (self % feedback) then
         temp = self % geom % getTemperature(s % coords)
-        !print *, temp
-        !temp = 301.5
+        !if (temp < 0.0) then
+          !print *, temp
+          !print *, pos
+        !end if
       end if
 
       ! Update volume due to additional rays
@@ -677,7 +713,7 @@ contains
         
         if (self % feedback) then
           total = self % XSData % getTotalXS(matIdx, g , temp)
-         ! print *, total
+          !print *, total
         else
           total = self % XSData % getTotalXS(matIdx, g)
         end if
@@ -713,9 +749,6 @@ contains
     end do
     !$omp end parallel do
 
-    !print *, self % cellPos
-
-
   end subroutine normaliseFluxAndVolumeFlatIso
   
   !!
@@ -748,67 +781,144 @@ contains
     integer(shortInt), intent(in)             :: it
 
   end subroutine normaliseFluxAndVolumeLIFA
+
+  !!
+  !! Calculates thermal power from flux distribution
+  !! 
+  subroutine calculatePower(self, targetPow)
+    class(arraysRR), intent(inout) :: self
+    real(defReal), intent(in)  :: targetPow
+    real(defReal)                             :: norm, normVol
+    real(defReal), save                       :: vol
+    real(defFlt), save                        :: pow
+    type(particle), save                      :: s
+    integer(shortInt), save                   :: g, matIdx, idx
+    real(defFlt), save                        :: fission, temp
+    integer(shortInt)                         :: cIdx
+    real(defReal) :: pos(3), dir(3)
+    character(100), parameter      :: Here = 'calculatePower (arraysRR_class.f90)'
+    !$omp threadprivate( vol, pow, idx, g, matIdx, s, fission, temp)
+
+    !$omp parallel do
+    do cIdx = 1, self % nCells
+
+
+      matIdx = self % geom % geom % graph % getMatFromUID(cIdx)
+      vol = self % volume(cIdx)
+
+      ! Fudge a particle state to search tally map
+      pos = self % cellPos(:,cIdx)
+      dir = [0.5,0.5,0.5]
+      call s % coords % init(pos, dir)
+      s % coords % matIdx = matIdx
+      if (self % feedback) then
+        temp = self % geom % getTemperature(s % coords)
+      end if
+
+      !idx   = self % nG * (cIdx - 1) + g
+
+      ! Save effort by skipping normalisation if volume is too small
+      if (vol < volume_tolerance) then
+          self % power(cIdx) = 0.0_defFlt
+        cycle
+      end if
+
+      self % power(cIdx) = 0.0_defFlt
+      do g = 1, self % nG
+
+        idx = self % nG * (cIdx - 1) + g
+
+        if (self % feedback) then
+          fission = self % XSData % getFissionXS(matIdx, g , temp)
+         ! print *, total
+        else
+          fission = self % XSData % getFissionXS(matIdx, g)
+        end if
+
+        pow = self % scalarFlux(idx) * energyPerFission * self % volume(cIdx) * joulesPerMeV * fission
+        !print *, pow
+        self % power(cIdx) = self % power(cIdx) + pow       
+
+      end do 
+
+      end do
+    !$omp end parallel do
+
+    self % power = self % power * (targetPow/sum(self % power))
+
+    !print *, self % power
+  end subroutine calculatePower
   
   !!
   !! Update all sources given a prevFlux
   !! This nesting allows using combined OMP + SIMD
   !!
-  subroutine updateSource(self, ONE_KEFF)
+  subroutine updateSource(self, ONE_KEFF, it)
     class(arraysRR), intent(inout) :: self
     real(defReal), intent(in)      :: ONE_KEFF
+    integer(shortInt), intent(in)  :: it
     real(defFlt)                   :: ONE_K
     integer(shortInt)              :: cIdx
     character(100), parameter      :: Here = 'updateSource (arraysRR_class.f90)'
 
     ONE_K = real(ONE_KEFF, defFlt)
 
+
     !print *, self % cellPos
     select case(self % simulationType)
       case(flatIso)
         !$omp parallel do 
         do cIdx = 1, self % nCells
-          !print *, self % cellPos(:,cIdx)
-          call self % sourceUpdateKernelFlatIso(cIdx, ONE_K)
+          call self % sourceUpdateKernelFlatIso(cIdx, ONE_K, it)
         end do
         !$omp end parallel do
       case default
         call fatalError(Here,'Unsupported simulation type requested')
     end select
 
-    !print *, self % cellPos
-
   end subroutine updateSource
 
   !!
   !! Kernel to update sources given a cell index
   !!
-  subroutine sourceUpdateKernelFlatIso(self, cIdx, ONE_KEFF)
+  subroutine sourceUpdateKernelFlatIso(self, cIdx, ONE_KEFF, it)
     class(arraysRR), target, intent(inout)   :: self
     integer(shortInt), intent(in)            :: cIdx
     real(defFlt), intent(in)                 :: ONE_KEFF
-    real(defFlt)                             :: scatter, fission, nuFission, chi, scatterXS, temp
+    integer(shortInt), intent(in)            :: it
+    real(defFlt)                             :: scatter, fission, nuFission, chi, scatterXS, temp, vol
     !real(defFlt), dimension(:), pointer      :: nuFission, chi, scatterXS, fluxVec 
     real(defFlt), dimension(:), pointer      :: fluxVec
-    type(particle), save                :: s
+    type(particle)                           :: s
     integer(shortInt)                        :: matIdx, g, gIn, baseIdx, idx, sIdx1, sIdx2
-    real(defReal), dimension(:), allocatable   :: pos, dir
+    real(defReal)                            :: pos(3), dir(3)
+    
+    if (it>1) then
+      vol = self % volume(cIdx)
+      if (vol < volume_tolerance) return
+    end if
 
     ! Identify material
     matIdx = self % geom % geom % graph % getMatFromUID(cIdx) 
+    !print *, 'source material has matidx ' // numToChar(matIdx)
 
     ! Fudge a particle state to search tally map    
-    !s % r = self % cellPos(:,cIdx)
     pos = self % cellPos(:,cIdx)
-    !print *, pos
-    dir = [1,0,0] 
+    dir = [0.5,0.5,0.5]
     call s % coords % init(pos, dir)
-
+    s % coords % matIdx = matIdx
     if (self % feedback) then
-      temp = self % geom % getTemperature(s % coords)
-      !print *, cIdx
-      !print *, pos
-      !print *, temp
-      temp = 301.5
+      if (it == 1) then
+        !Uses mid temperature for first iteration will cell pos is unknown
+        temp = self % XSData % getTemperature(matIdx,2)
+        !print *, temp
+      else
+        temp = self % geom % getTemperature(s % coords)
+      end if
+      !if (temp < 0.0) then
+        !print *, temp
+        !print *, pos
+      !end if
     end if
 
     ! Guard against void cells
@@ -944,16 +1054,18 @@ contains
     integer(shortInt), intent (in)       :: cIdx
     real(defReal), intent(out)           :: fissionRate, prevFissionRate
     real(defReal)                        :: vol
-    type(particle), save                 :: s
+    type(particle)                       :: s
     integer(shortInt)                    :: g, matIdx
     real(defFlt)                         :: temp, nuSigmaF
     real(defFlt), dimension(:), pointer  :: flux, prevFlux
-    real(defReal), dimension(:), allocatable   :: pos, dir
+    real(defReal) :: pos(3), dir(3)
+
+    vol = self % volume(cIdx)
+    if (vol < volume_tolerance) return
 
     fissionRate     = ZERO
     prevFissionRate = ZERO
 
-    !print *, self % feedback
     ! Identify material
     matIdx = self % geom % geom % graph % getMatFromUID(cIdx) 
       
@@ -964,15 +1076,16 @@ contains
     if (vol < volume_tolerance) return
 
     ! Fudge a particle state to search tally map
-    !s % r = self % cellPos(:,cIdx)
     pos = self % cellPos(:,cIdx)
-    !print *, pos
-    dir = [1,0,0]
+    dir = [0.5,0.5,0.5]
     call s % coords % init(pos, dir)
+    s % coords % matIdx = matIdx
     if (self % feedback) then
       temp = self % geom % getTemperature(s % coords)
-      !print *, temp
-      !temp = 301.5
+      !if (temp < 0.0) then
+        !print *, temp
+        !print *, pos
+      !end if 
     end if
     
     !call self % XSData % getNuFissPointer(matIdx, nuSigmaF)
@@ -1084,9 +1197,9 @@ contains
   !!
   subroutine accumulateFluxScores(self)
     class(arraysRR), intent(inout) :: self
-    real(defReal), save            :: flux
+    real(defReal), save            :: flux, pow
     integer(shortInt)              :: idx
-    !$omp threadprivate(flux)
+    !$omp threadprivate(flux, pow)
 
     !$omp parallel do schedule(static)
     do idx = 1, size(self % scalarFlux)
@@ -1096,6 +1209,16 @@ contains
     end do
     !$omp end parallel do
 
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % power)
+      pow = real(self % power(idx),defReal)
+      !print *, pow
+      self % powerScores(1, idx) = self % powerScores(1, idx) + pow
+      self % powerScores(2, idx) = self % powerScores(2, idx) + pow * pow
+    end do
+    !$omp end parallel do
+
+    !print *, self % powerScores(1,:)
   end subroutine accumulateFluxScores
   
   !!
@@ -1128,27 +1251,44 @@ contains
     end do
     !$omp end parallel do
 
-  end subroutine finaliseFluxScores
+    !Finalise powers
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % power)
+      self % powerScores(1, idx) = self % powerScores(1, idx) * N1
+      self % powerScores(2, idx) = self % powerScores(2, idx) * N1
+      self % powerScores(2, idx) = Nm1 * (self % powerScores(2, idx) - &
+            self % powerScores(1, idx) * self % powerScores(1, idx))
+      if (self % powerScores(2, idx) <= ZERO) then
+        self % powerScores(2, idx) = ZERO
+      else
+        self % powerScores(2, idx) = sqrt(self % powerScores(2, idx))
+      end if
+    end do
+    !$omp end parallel do
 
+  end subroutine finaliseFluxScores
+  
   !!
   !! Outputs integral flux or fission rate when
   !! given a tally map
   !!
-  subroutine outputMap(self, out, map, doFission)
+  !subroutine outputMap(self, out, map, doFission)
+  subroutine outputMap(self, out, map, option)
     class(arraysRR), intent(in)                :: self
     class(outputFile), intent(inout)           :: out
     class(tallyMap), pointer, intent(in)       :: map
-    logical(defBool), intent(in)               :: doFission
+    !logical(defBool), intent(in)               :: doFission
+    integer(shortInt), intent(in)              :: option
     character(nameLen)                         :: name
     integer(shortInt)                          :: cIdx
     integer(shortInt),dimension(:),allocatable :: resArrayShape
+    type(particleState), save                       :: p
     type(particle), save                       :: s
     real(defReal), save                        :: vol
-    real(defFlt), save                         :: sig
-    real(defFlt)                               :: temp
+    real(defFlt), save                         :: sig, temp
     integer(shortInt), save                    :: i, matIdx, g
     real(defReal), dimension(:), allocatable   :: res, resSD, pos, dir
-    !$omp threadprivate(s, vol, sig, i, matIdx, g)
+    !$omp threadprivate(temp, s, vol, sig, i, matIdx, g)
 
     resArrayShape = [map % binArrayShape()]
     allocate(res(map % bins(0)))
@@ -1157,55 +1297,84 @@ contains
     resSD = ZERO
 
     ! Find whether cells are in map and sum their contributions
-    !$omp parallel do reduction(+: res, resSD)
+    !reduction(+: res, resSD)
+    !$omp parallel do 
     do cIdx = 1, self % nCells
         
       vol    =  self % volume(cIdx)
       if (vol < volume_tolerance) cycle
 
-      ! Fudge a particle state to search tally map
-      !s % r = self % cellPos(:,cIdx)
-      pos = self % cellPos(:,cIdx)
-      dir = [1,0,0] 
+      matIdx = self % geom % geom % graph % getMatFromUID(cIdx)
 
+      ! Fudge a particle state to search tally map
+      p % r = self % cellPos(:,cIdx)
+      i = map % map(p)
+
+      ! Fudge a particle to search temperature map
+      pos = self % cellPos(:,cIdx)
+      dir = [0.5,0.5,0.5]
       call s % coords % init(pos, dir)
+      s % coords % matIdx = matIdx
+     
+      !i = map % map(s) 
       if (self % feedback) then
         temp = self % geom % getTemperature(s % coords)
-        !print *, temp
-        !temp = 301.5
+        !if (temp < 0.0) then
+          !print *, temp
+          !print *, pos
+        !end if
       end if
-
+  
       if (i > 0) then
-        matIdx = self % geom % geom % graph % getMatFromUID(cIdx) 
-        do g = 1, self % nG
-          if (doFission) then
-            if (self % feedback) then                    
-              sig = self % XSData % getFissionXS(matIdx, g, temp)
+        matIdx = self % geom % geom % graph % getMatFromUID(cIdx)
+        if (option == 3) then
+          !$omp atomic 
+          res(i) = res(i) + self % getPowerScore(cIdx)
+          !res(i) = self % getPowerScore(cIdx)
+          !resSD(i) = self % getFluxSD(cIdx,g)**2
+          !$omp atomic 
+          resSD(i) = resSD(i) + self % getPowerSD(cIdx)**2
+        else
+          do g = 1, self % nG
+            if (option == 1) then
+              if (self % feedback) then                    
+                sig = self % XSData % getFissionXS(matIdx, g, temp)
+              else
+                sig = self % XSData % getFissionXS(matIdx, g)
+              end if
             else
-              sig = self % XSData % getFissionXS(matIdx, g)
+              sig = 1.0_defFlt
             end if
-          else
-            sig = 1.0_defFlt
-          end if
-          res(i) = res(i) + vol * self % getFluxScore(cIdx,g) * sig
-          ! Neglects uncertainty in volume - assumed small.
-          resSD(i) = resSD(i) + &
-                  self % getFluxSD(cIdx,g)**2 * vol * vol * sig * sig
-        end do
-      end if
+            !print *, self % getFluxScore(cIdx,g) 
+            !$omp atomic
+            res(i) = res(i) + vol * self % getFluxScore(cIdx,g) * sig
 
+            ! Neglects uncertainty in volume - assumed small.
+            !$omp atomic
+            resSD(i) = resSD(i) + &
+                    self % getFluxSD(cIdx,g)**2 * vol * vol * sig * sig
+          end do
+  
+        end if
+      end if
     end do
     !$omp end parallel do
+
+    !print *, map % bins(0)
+    !print *, size(resSD)
 
     do i = 1,size(resSD)
       resSD(i) = sqrt(resSD(i))
       if (res(i) > 0) resSD(i) = resSD(i) / res(i)
     end do
 
-    if (doFission) then
+    !print *, resArrayShape
+    if (option == 1) then
       name = 'fiss1G'
-    else
+    else if (option == 2) then
       name = 'flux1G'
+    else
+      name = 'power'
     end if
     call out % startBlock(name)
     call out % startArray(name, resArrayShape)
@@ -1293,6 +1462,8 @@ contains
     if(allocated(self % scalarFlux)) deallocate(self % scalarFlux)
     if(allocated(self % prevFlux)) deallocate(self % prevFlux)
     if(allocated(self % fluxScores)) deallocate(self % fluxScores)
+    if(allocated(self % power)) deallocate(self % power)
+    if(allocated(self % powerScores)) deallocate(self % powerScores)
     if(allocated(self % source)) deallocate(self % source)
     if(allocated(self % fixedSource)) deallocate(self % fixedSource)
     if(allocated(self % sourceIdx)) deallocate(self % sourceIdx)

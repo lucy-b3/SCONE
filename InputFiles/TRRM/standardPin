@@ -1,0 +1,124 @@
+type randomRayPhysicsPackage;
+
+pop      2000;
+active   500;
+inactive  1000;
+dead       20;
+termination 220;
+plot 0;
+cache 1;
+XSdata   mg;
+dataType mg;
+outputFile standardPinOut;
+printFlux 1 ;
+
+power 60000; !60kW per pin
+
+fissionMap {type multiMap;
+            maps (xax yax zax);
+            xax { type spaceMap; axis x; grid lin; min -0.63; max 0.63; N 1;}
+            yax { type spaceMap; axis y; grid lin; min -0.63; max 0.63; N 1;}
+            zax { type spaceMap; axis z; grid lin; min -200.0; max 200.0; N 20;}
+}
+fluxMap {type multiMap;
+            maps (xax yax zax);
+            xax { type spaceMap; axis x; grid lin; min -0.63; max 0.63; N 1;}
+            yax { type spaceMap; axis y; grid lin; min -0.63; max 0.63; N 1;}
+            zax { type spaceMap; axis z; grid lin; min -200.0; max 200.0; N 20;}
+}
+
+powerMap {type multiMap;
+            maps (xax yax zax);
+            xax { type spaceMap; axis x; grid lin; min -0.63; max 0.63; N 1;}
+            yax { type spaceMap; axis y; grid lin; min -0.63; max 0.63; N 1;}
+            zax { type spaceMap; axis z; grid lin; min -200.0; max 200.0; N 20;}
+}
+
+
+geometry {
+    type geometryStd;
+    boundary (1 1 1 1 0 0);
+    graph {type extended;}
+
+    surfaces {
+          squareBound        { id 3; type box; origin (0.0 0.0 0.0); halfwidth (0.63 0.63 200.0);}
+    }
+
+
+    cells
+    {
+    }
+
+    universes
+    {
+      
+      pin { id 2; type pinUniverse; radii (0.54 0.0); fills (UO2 water);}
+
+
+      root
+      {
+          id 1;
+          type rootUniverse;
+          border 3; 
+          fill u<4>;
+      }
+
+    fuellattice{
+      id 4;
+      type latUniverse;
+      pitch (1.26 1.26 20.0);
+      shape (1 1 20);
+      padMat void;
+      map (
+	     2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+          );
+    }
+    }
+}
+
+
+!viz {
+!  myVTK {
+!    type vtk;
+!    what uniqueID;
+!    corner (-32.13 -32.13 -1.0);
+!    width (64.26 64.26 2.0);
+!    vox (2000 2000 1);
+!  }
+!  bmp1 {
+!    type bmp;
+!    output pinCell;
+!    what uniqueID; ! Could also be material
+!    centre (0.0 0.0 0.0);
+!    !width (25.0 25.0); ! This is optional - SCONE should do the whole geometry by default, but you can zoom in by using this
+!    axis z; ! This is the perpendicular axis, so you'll get an xy plot
+!    res (1500 1500); !Resolution in x and y. Can be tuned to taste.
+!  }
+!}
+
+
+
+nuclearData {
+  handles { 
+    mg { type baseMgNeutronDatabase; PN P0;} 
+  } 
+
+
+materials {
+
+    water {
+      temp 300;
+      xsFile ../XS_C5G7/moder;
+      composition { }
+   }
+
+   UO2 {
+      temp 300;
+      xsFile ../XS_C5G7/UO2;
+       composition { }
+   }
+
+
+}
+
+}

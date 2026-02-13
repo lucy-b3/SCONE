@@ -29,8 +29,6 @@ program scone
   ! Get path to input file
   call getInputFile(inputPath)
 
-  print *, "Input file found"
-
   ! Set Number of threads
   if (clOptionIsPresent('--omp')) then
     call getFromCL(cores, '--omp', 1)
