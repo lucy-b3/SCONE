@@ -846,7 +846,7 @@ contains
 
     self % power = self % power * (targetPow/sum(self % power))
 
-    !print *, self % power
+    print *, self % power
   end subroutine calculatePower
   
   !!

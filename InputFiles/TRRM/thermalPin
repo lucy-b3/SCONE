@@ -1,6 +1,6 @@
 type randomRayPhysicsPackage;
 
-pop      1000;
+pop      2000;
 active   500;
 inactive  1000;
 dead       20;
@@ -37,7 +37,7 @@ powerMap {type multiMap;
 
 geometry {
     type geometryStd;
-    boundary (1 1 1 1 1 1);
+    boundary (1 1 1 1 0 0);
     graph {type extended;}
 
 temperature {type cartesianField;
