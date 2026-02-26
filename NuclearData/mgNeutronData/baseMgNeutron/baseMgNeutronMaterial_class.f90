@@ -726,7 +726,7 @@ contains
           call fatalError(Here,'Fission XSs have wong size. Must be: ' &
                               // numToChar(nG)//' is '//numToChar(size(temp)))
         end if
-        self % data(CHI,:) = temp
+        self % data(CHI,nG*(t-1) + 1 : nG*t) = temp
 
         ! Calculate nuFission
         call dict % get(temp, 'nu')
@@ -734,8 +734,8 @@ contains
           call fatalError(Here,'Nu vector has wong size. Must be: ' &
                               // numToChar(nG)//' is '//numToChar(size(temp)))
         end if
-        self % data(NU_FISSION,nG*(t-1) + 1 : nG*t) = temp * self % data(FISSION_XS,:)
-        self % data(NU,:) = temp
+        self % data(NU_FISSION,nG*(t-1) + 1 : nG*t) = temp * self % data(FISSION_XS,nG*(t-1) + 1 : nG*t)
+        self % data(NU,nG*(t-1) + 1 : nG*t) = temp
       end if
 
       ! Calculate total XS

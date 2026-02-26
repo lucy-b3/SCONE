@@ -673,22 +673,11 @@ contains
     norm = ONE / self % lengthPerIt
     normVol = ONE / (self % lengthPerIt * it)
 
+    !print *, self % scalarFlux
+
     !$omp parallel do 
     do cIdx = 1, self % nCells
       matIdx = self % geom % geom % graph % getMatFromUID(cIdx) 
-      
-      ! Fudge a particle state to search tally map    
-      pos = self % cellPos(:,cIdx)
-      dir = [0.5,0.5,0.5]
-      call s % coords % init(pos, dir)
-      s % coords % matIdx = matIdx
-      if (self % feedback) then
-        temp = self % geom % getTemperature(s % coords)
-        !if (temp < 0.0) then
-          !print *, temp
-          !print *, pos
-        !end if
-      end if
 
       ! Update volume due to additional rays
       self % volume(cIdx) = self % volumeTracks(cIdx) * normVol
@@ -703,6 +692,24 @@ contains
         cycle
       end if
       norm_V = real(norm / vol, defFlt)
+
+      if ((matIdx < 1) .or. (matIdx > self % XSData % getNMat())) then
+        print *, cIdx
+        print *, "matIdx = " // numToChar(matIdx) // " in normaliseFlux"
+      end if
+
+      ! Fudge a particle state to search tally map
+      pos = self % cellPos(:,cIdx)
+      dir = [0.5,0.5,0.5]
+      call s % coords % init(pos, dir)
+      s % coords % matIdx = matIdx
+      if (self % feedback) then
+        temp = self % geom % getTemperature(s % coords)
+        !if (temp < 0.0) then
+          !print *, temp
+          !print *, pos
+        !end if
+      end if
 
       !call self % XSData % getTotalPointer(matIdx, total)
 
@@ -738,7 +745,7 @@ contains
           end if
           self % scalarFlux(idx) =  (self % scalarFlux(idx) + self % source(idx)/total &
                 + D * self % prevFlux(idx) ) / (1 + D)
-        
+
         ! Alternatively, handle unidentified/void regions
         else
           self % scalarFlux(idx) = self % scalarFlux(idx) + &
@@ -748,6 +755,8 @@ contains
 
     end do
     !$omp end parallel do
+
+    !print *, self % scalarFlux
 
   end subroutine normaliseFluxAndVolumeFlatIso
   
@@ -806,6 +815,14 @@ contains
       matIdx = self % geom % geom % graph % getMatFromUID(cIdx)
       vol = self % volume(cIdx)
 
+      !idx   = self % nG * (cIdx - 1) + g
+
+      ! Save effort by skipping if volume is too small
+      if (vol < volume_tolerance) then
+          self % power(cIdx) = 0.0_defFlt
+        cycle
+      end if
+
       ! Fudge a particle state to search tally map
       pos = self % cellPos(:,cIdx)
       dir = [0.5,0.5,0.5]
@@ -815,13 +832,6 @@ contains
         temp = self % geom % getTemperature(s % coords)
       end if
 
-      !idx   = self % nG * (cIdx - 1) + g
-
-      ! Save effort by skipping normalisation if volume is too small
-      if (vol < volume_tolerance) then
-          self % power(cIdx) = 0.0_defFlt
-        cycle
-      end if
 
       self % power(cIdx) = 0.0_defFlt
       do g = 1, self % nG
@@ -840,13 +850,17 @@ contains
         self % power(cIdx) = self % power(cIdx) + pow       
 
       end do 
+      
+      if (self % power(cIdx) < 0.0_defFlt) then
+        print *, "Negative power found"
+      end if 
 
-      end do
+    end do
     !$omp end parallel do
 
     self % power = self % power * (targetPow/sum(self % power))
 
-    print *, self % power
+    !print *, self % power
   end subroutine calculatePower
   
   !!
@@ -862,7 +876,6 @@ contains
     character(100), parameter      :: Here = 'updateSource (arraysRR_class.f90)'
 
     ONE_K = real(ONE_KEFF, defFlt)
-
 
     !print *, self % cellPos
     select case(self % simulationType)
@@ -902,7 +915,21 @@ contains
     matIdx = self % geom % geom % graph % getMatFromUID(cIdx) 
     !print *, 'source material has matidx ' // numToChar(matIdx)
 
-    ! Fudge a particle state to search tally map    
+    ! Guard against void cells
+    if (matIdx > self % XSData % getNMat()) then
+      baseIdx = self % nG * (cIdx - 1)
+      do g = 1, self % nG
+        idx = baseIdx + g
+        self % source(idx) = 0.0_defFlt
+      end do
+      return
+    end if
+
+    if ((matIdx < 1) .or. (matIdx >  self % XSData % getNMat())) then
+      print *, "matIdx = " // numToChar(matIdx) // " in sourceUpdate"
+    end if
+
+    ! Fudge a particle state to search tally map
     pos = self % cellPos(:,cIdx)
     dir = [0.5,0.5,0.5]
     call s % coords % init(pos, dir)
@@ -919,16 +946,6 @@ contains
         !print *, temp
         !print *, pos
       !end if
-    end if
-
-    ! Guard against void cells
-    if (matIdx > self % XSData % getNMat()) then
-      baseIdx = self % nG * (cIdx - 1)
-      do g = 1, self % nG
-        idx = baseIdx + g
-        self % source(idx) = 0.0_defFlt
-      end do
-      return
     end if
 
     ! Obtain XSs
@@ -1068,12 +1085,16 @@ contains
 
     ! Identify material
     matIdx = self % geom % geom % graph % getMatFromUID(cIdx) 
-      
+    
     ! Check whether to continue in this cell
     if (matIdx > self % XSData % getNMat()) return
     if (.not. self % XSData % isFissile(matIdx)) return
     vol = self % volume(cIdx)
     if (vol < volume_tolerance) return
+
+    if ((matIdx < 1) .or. (matIdx > self % XSData % getNMat())) then
+      print *, "matIdx = " // numToChar(matIdx) // " in calculateKeff"
+    end if
 
     ! Fudge a particle state to search tally map
     pos = self % cellPos(:,cIdx)
@@ -1287,8 +1308,9 @@ contains
     real(defReal), save                        :: vol
     real(defFlt), save                         :: sig, temp
     integer(shortInt), save                    :: i, matIdx, g
-    real(defReal), dimension(:), allocatable   :: res, resSD, pos, dir
-    !$omp threadprivate(temp, s, vol, sig, i, matIdx, g)
+    real(defReal), dimension(:), allocatable   :: res, resSD
+    real(defReal), dimension(3), save           ::  pos, dir
+    !$omp threadprivate(temp, s, vol, sig, i, matIdx, g, p)
 
     resArrayShape = [map % binArrayShape()]
     allocate(res(map % bins(0)))
@@ -1298,7 +1320,8 @@ contains
 
     ! Find whether cells are in map and sum their contributions
     !reduction(+: res, resSD)
-    !$omp parallel do 
+    !!$omp parallel do 
+    !$omp parallel do reduction(+:res,resSD)
     do cIdx = 1, self % nCells
         
       vol    =  self % volume(cIdx)
@@ -1328,11 +1351,9 @@ contains
       if (i > 0) then
         matIdx = self % geom % geom % graph % getMatFromUID(cIdx)
         if (option == 3) then
-          !$omp atomic 
           res(i) = res(i) + self % getPowerScore(cIdx)
           !res(i) = self % getPowerScore(cIdx)
           !resSD(i) = self % getFluxSD(cIdx,g)**2
-          !$omp atomic 
           resSD(i) = resSD(i) + self % getPowerSD(cIdx)**2
         else
           do g = 1, self % nG
@@ -1346,11 +1367,9 @@ contains
               sig = 1.0_defFlt
             end if
             !print *, self % getFluxScore(cIdx,g) 
-            !$omp atomic
             res(i) = res(i) + vol * self % getFluxScore(cIdx,g) * sig
 
             ! Neglects uncertainty in volume - assumed small.
-            !$omp atomic
             resSD(i) = resSD(i) + &
                     self % getFluxSD(cIdx,g)**2 * vol * vol * sig * sig
           end do

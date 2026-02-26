@@ -184,6 +184,7 @@ contains
     real(defReal)                                         :: totalLength, length
     logical(defBool)                                      :: activeRay, hitVacuum
     type(distCache)                                       :: cache
+    type(coordList)                                       :: coords
     real(defFlt)                                          :: lenFlt, temp, temp0, totVec
     real(defFlt), dimension(nG)                           :: attenuate, delta, fluxVec, tau
     real(defFlt), pointer, dimension(:)                   :: scalarVec, sourceVec
@@ -195,24 +196,17 @@ contains
     ! Set initial angular flux to angle average of cell source
     cIdx = r % coords % uniqueID
     matIdx  = r % coords % matIdx
+    coords = r % coords
     !call XSData % getTotalPointer(matIdx, totVec)
 
-    !print *, matIdx
-    if (mapTemp) then
-      temp = geom % getTemperature(r % coords)
-      !if (temp < 0.0) then
-        !print *, cIdx
-        !print *, temp
-        !print *, r % coords % uniqueID
-      !end if
-      !print *, temp
-      !temp = 301.5
-    end if
-    
     ! Catch for regions with voids
     ! Assumes these are defined as 'void'
     ! TODO: Use a more robust criterion, as for branching later
     if (matIdx <= XSData % getNMat()) then
+      if (mapTemp) then
+        temp = geom % getTemperature(coords)
+      end if
+
       do g = 1, nG
         if (mapTemp) then
           totVec = XSData % getTotalXS(matIdx, g , temp)    
@@ -238,20 +232,12 @@ contains
       ! Get material and cell the ray is moving through
       matIdx = r % coords % matIdx
       cIdx   = r % coords % uniqueID
-      if (mapTemp) then
-        temp = geom % getTemperature(r % coords)
-        !if (temp < 0.0) then
-          !print *, cIdx
-          !print *, temp
-          !print *, r % coords % uniqueID
-        !end if
-        !temp = 301.5
-      end if
-      if (matIdx0 /= matIdx .or. temp0 /= temp) then
+      coords = r % coords
+      
+      if (matIdx0 /= matIdx) then !.or. temp0 /= temp) then
       !if (matIdx0 /= matIdx) then
         matIdx0 = matIdx
-        temp0 = temp
-        
+        !temp0 = temp  
         ! Cache total cross section
         !call XSData % getTotalPointer(matIdx, totVec)
         !call XSData % getTotalXS(matIdx, temp, totVec)
@@ -278,11 +264,24 @@ contains
       ! TODO: Should use a better branching criterion. Maybe create it in data?
       ! Standard route
       if (matIdx <= XSData % getNMat()) then
+        if (mapTemp) then
+          temp = geom % getTemperature(coords)
+        end if
+        if ((matIdx < 1) .or. (matIdx > XSData % getNMat())) then
+          print *, "matIdx = " // numToChar(matIdx) // " in rayHandling"
+        end if
 
         !$omp simd
         do g = 1, nG
           if (mapTemp) then
             totVec = XSData % getTotalXS(matIdx, g , temp)
+            !if (totVec < 0) then
+              !print *, "Zero totalXS found"
+              !print *, cIdx
+              !print *, matIdx
+              !print *, temp
+              !print *, totVec
+            !end if
             !print *, temp
           else
             totVec = XSData % getTotalXS(matIdx, g)
@@ -300,7 +299,10 @@ contains
             call arrays % getFluxPointer(cIdx, scalarVec)
             !$omp simd
             do g = 1, nG
+              ! avgAng(g) = lenFlt * sourceVec(g) + delta(g)
+              !scalarVec(g) = scalarVec(g) + avgAng(g) 
               scalarVec(g) = scalarVec(g) + delta(g) 
+              !print *, scalarVec(g)
             end do
             call arrays % incrementVolume(cIdx, length)
           call arrays % unsetLock(cIdx)

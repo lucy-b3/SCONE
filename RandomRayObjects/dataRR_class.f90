@@ -595,6 +595,10 @@ contains
       mIdx = matIdx
     end if
 
+    !print *, temp
+    !print *, self % temperatures(mIdx,:)
+    !print *, mIdx
+
     if (present(temp)) then 
       if (temp >= self % temperatures(mIdx,1) .and. temp <= self % temperatures(mIdx,2)) then
         sigT = self % matRR(mIdx) % sigmaT((g - 1) * self % nT + 1) &
