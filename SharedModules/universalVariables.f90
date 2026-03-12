@@ -93,5 +93,16 @@ module universalVariables
   ! Global name variables used to define specific geometry or field types
   character(nameLen), parameter :: nameUFS  = 'uniFissSites'
   character(nameLen), parameter :: nameWW   = 'WeightWindows'
+  character(nameLen), parameter :: nameTemperature  = 'temperature'
+  character(nameLen), parameter :: nameDensity      = 'density'
+
+  ! Flags associated with fields
+  real(defReal), parameter :: NO_TEMPERATURE = -INF, &
+                              NO_DENSITY = -INF
+  
+  ! Flag to indicate source file format
+  integer(shortInt), parameter, public :: NO_PRINTING = 0, &
+                                          ASCII_FILE  = 1, &
+                                          BINARY_FILE = 2
 
 end module universalVariables

@@ -1,8 +1,8 @@
 type randomRayPhysicsPackage;
 
-pop      2000;
-active   500;
-inactive  1000;
+pop      10000;
+active   200;
+inactive  200;
 dead       20;
 termination 220;
 plot 0;
@@ -34,6 +34,16 @@ powerMap {type multiMap;
             zax { type spaceMap; axis z; grid lin; min -200.0; max 200.0; N 20;}
 }
 
+coupling {
+	receiveFile ;
+	sendFile ;
+	updateFreq ;
+	maxIt ;
+	tally ;
+	fieldPaths ;
+	fieldNames ;
+}
+
 
 geometry {
     type geometryStd;
@@ -44,9 +54,9 @@ temperature {type cartesianField;
              origin  (0 0 0);
              shape   (1 1 20);
              pitch   (1.26 1.26 20.0);
-             materials (UO2 water);
-             UO2 ( 900 905 910 915 920 925 930 935 940 945 950 945 940 935 930 925 920 915 910 905 );
-             water ( 600 602 604 606 608 610 612 614 616 618 620 622 624 626 628 630 632 634 636 638);
+             materials (fuel coolant);
+             fuel ( 644 715 776 825 863 890 909 921 929 934 936 937 933 926 912 890 857 812 755 686 );
+             coolant ( 569 570 572 574 576 578 581 584 586 589 592 594 597 600 602 604 606 608 609 610 );
              default -1.0;
 }
 
@@ -62,7 +72,7 @@ temperature {type cartesianField;
     universes
     {
       
-      pin { id 2; type pinUniverse; radii (0.54 0.0); fills (UO2 water);}
+      pin { id 2; type pinUniverse; radii (0.54 0.0); fills (fuel coolant);}
 
 
       root
@@ -116,19 +126,19 @@ nuclearData {
 
 materials {
    
-    UO2 {
-      temp (890 950 1010);
-      coldFile ../XS_C5G7/UO2Low;
-      medFile ../XS_C5G7/UO2Med;
-      hotFile ../XS_C5G7/UO2High;
+    fuel {
+      temp (600 800 1000);
+      coldFile ../UO2Low;
+      medFile ../UO2Med;
+      hotFile ../UO2High;
       composition { }
    }
 
-    water {
-      temp (590 620 660);
-      coldFile ../XS_C5G7/moderLow;
-      medFile ../XS_C5G7/moderMed;
-      hotFile ../XS_C5G7/moderHigh;
+    coolant {
+      temp (500 600 700);
+      coldFile ../moderLow;
+      medFile ../moderMed;
+      hotFile ../moderHigh;
       composition { }
    }
 

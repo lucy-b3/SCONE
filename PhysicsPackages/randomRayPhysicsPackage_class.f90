@@ -45,6 +45,9 @@ module randomRayPhysicsPackage_class
   ! Random ray - or a standard particle
   use particle_class,                 only : ray => particle
 
+  ! Coupling
+  use couplingAdmin_class,            only : couplingAdmin
+
   implicit none
   private
 
@@ -157,6 +160,9 @@ module randomRayPhysicsPackage_class
     logical(defBool)   :: mapPower     = .false.
     class(tallyMap), allocatable :: powerMap
     real(defReal)      :: power = ZERO
+
+    ! Coupling handler
+    type(couplingAdmin) :: couplingInfo
 
     ! Results space
     ! keffScore is public for integration testing
@@ -285,7 +291,6 @@ contains
       self % mapPower = .false.
     end if
 
-
     ! Register timer
     self % timerMain = registerTimer('simulationTime')
     self % timerTransport = registerTimer('transportTime')
@@ -336,6 +341,12 @@ contains
     !else
     !  self % mapTemp = .false.
     !end if
+
+    ! Check if the calculation is coupled
+    if (dict % isPresent('coupling')) then
+      tempDict => dict % getDictPtr('coupling')
+      call self % couplingInfo % init(tempDict)
+    end if
 
     ! Activatee nuclear data
     call ndReg_activate(P_NEUTRON_MG, nucData, self % geom % activeMats(), silent = .not. self % loud)
@@ -509,6 +520,8 @@ contains
         keepRunning = (itAct < self % active)
       else
         isActive = (itInac >= self % inactive)
+        ! Deactivate coupling for active cycles
+        if (isActive) call self % couplingInfo % endCoupling()
       end if
 
       ! Set previous iteration flux to scalar flux
@@ -543,6 +556,9 @@ contains
         print *, 'Time per integration (ns): ', &
                 trim(numToChar(transport_T*10**9/(self % nG * intersections)))
       end if
+      
+      ! Perform coupling operations
+      call self % couplingInfo % couple(i)
 
     end do
 
