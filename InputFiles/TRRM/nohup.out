@@ -1,0 +1,4122 @@
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+ 
+         _____ __________  _   ________  
+        / ___// ____/ __ \/ | / / ____/  
+        \__ \/ /   / / / /  |/ / __/     
+       ___/ / /___/ /_/ / /|  / /___     
+      /____/\____/\____/_/ |_/_____/     
+ 
+ 
+ Compiler Info :   GCC version 9.4.0
+ OpenMP Threads:   10
+
+  <*((((><  <*((((><  <*((((><  <*((((><  <*((((><  <*((((><  <*((((><  <*((((><  <*((((><  <*((((>< 
+ <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+ /\/\ READING GEOMETRY /\/\
+ Building Surfaces
+ DONE!
+ Building Cells
+ DONE!
+ Building Universes
+ DONE!
+ CHECKING GEOMETRY:
+  Recursion in definition - NOT PRESENT!
+  Nesting level - FINE!
+  Outside below root - NOT PRESENT!
+ BUILDING GEOMETRY GRAPH
+ DONE!
+ GEOMETRY INFORMATION 
+  Number of Surfaces: 1
+  Number of Cells: 0
+  Number of Universes: 3
+  Nesting Levels: 3
+  Unique Cells: 41
+  Unused universes (ID): 
+  Boundary Surface ID: 3
+  Boundary Surface Type: box
+  Boundary Conditions: 1 1 1 1 0 0
+ \/\/ FINISHED READING GEOMETRY \/\/
+ <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+Building material: water
+Building material: UO2
+ Chi is not normalised. Relative error wrt ONE:   9.1776099999663074E-006 The normalisation has been adjusted automatically
+MG unionised majorant cross section calculation completed
+ Initialising random ray nuclear data
+ <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+ /\/\ RANDOM RAY EIGENVALUE CALCULATION /\/\
+ Using 1000 iterations for the inactive cycles
+ Using 500 iterations for the active cycles
+
+ Rays per cycle: 2000
+ Ray dead length:    20.000000000000000
+ Ray termination length:    220.00000000000000
+ Initial RNG Seed:   997234047
+
+ Number of cells in the geometry: 41
+ Number of energy groups: 7
+ Accelerated with distance caching
+ <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 1 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.94761922540257482
+ Elapsed time:   0:00:00
+ End time:       0:02:27
+ Time to end:    0:02:26
+ Time per integration (ns):    16.729777599305873
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 2 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.93882462866294036
+ Elapsed time:   0:00:00
+ End time:       0:02:04
+ Time to end:    0:02:04
+ Time per integration (ns):    11.660398986937738
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 3 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.92024859359668632
+ Elapsed time:   0:00:00
+ End time:       0:02:06
+ Time to end:    0:02:05
+ Time per integration (ns):    14.798952893798276
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 4 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.89119339572706902
+ Elapsed time:   0:00:00
+ End time:       0:02:06
+ Time to end:    0:02:06
+ Time per integration (ns):    14.772419057213790
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 5 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.85793494444505225
+ Elapsed time:   0:00:00
+ End time:       0:02:08
+ Time to end:    0:02:08
+ Time per integration (ns):    15.387670870480395
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 6 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.82472703559174787
+ Elapsed time:   0:00:00
+ End time:       0:02:11
+ Time to end:    0:02:11
+ Time per integration (ns):    16.933458823400048
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 7 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.79449280716548787
+ Elapsed time:   0:00:00
+ End time:       0:02:14
+ Time to end:    0:02:13
+ Time per integration (ns):    17.075678403134994
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 8 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.76984082242060026
+ Elapsed time:   0:00:00
+ End time:       0:02:16
+ Time to end:    0:02:15
+ Time per integration (ns):    17.570132048882950
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 9 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.75170979652559988
+ Elapsed time:   0:00:00
+ End time:       0:02:18
+ Time to end:    0:02:17
+ Time per integration (ns):    17.803776529274071
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 10 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.73976407562393365
+ Elapsed time:   0:00:00
+ End time:       0:02:20
+ Time to end:    0:02:19
+ Time per integration (ns):    18.287366615175682
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 11 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.73565043301396627
+ Elapsed time:   0:00:01
+ End time:       0:02:22
+ Time to end:    0:02:21
+ Time per integration (ns):    17.890722512342514
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 12 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.73661790410622585
+ Elapsed time:   0:00:01
+ End time:       0:02:23
+ Time to end:    0:02:22
+ Time per integration (ns):    18.390431481128005
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 13 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.74274146181151723
+ Elapsed time:   0:00:01
+ End time:       0:02:24
+ Time to end:    0:02:23
+ Time per integration (ns):    17.919766960440743
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 14 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.75657812723270979
+ Elapsed time:   0:00:01
+ End time:       0:02:26
+ Time to end:    0:02:24
+ Time per integration (ns):    18.258413991947744
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 15 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.77038447254478160
+ Elapsed time:   0:00:01
+ End time:       0:02:26
+ Time to end:    0:02:25
+ Time per integration (ns):    18.226969002682420
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 16 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.78897844820763330
+ Elapsed time:   0:00:01
+ End time:       0:02:28
+ Time to end:    0:02:26
+ Time per integration (ns):    18.741671085562633
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 17 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.80948959037874957
+ Elapsed time:   0:00:01
+ End time:       0:02:29
+ Time to end:    0:02:27
+ Time per integration (ns):    19.008156637571890
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 18 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.83228343259631321
+ Elapsed time:   0:00:01
+ End time:       0:02:29
+ Time to end:    0:02:28
+ Time per integration (ns):    18.404881647629971
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 19 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.85602297368793956
+ Elapsed time:   0:00:01
+ End time:       0:02:30
+ Time to end:    0:02:28
+ Time per integration (ns):    18.474179838968119
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 20 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.88271595438733597
+ Elapsed time:   0:00:02
+ End time:       0:02:30
+ Time to end:    0:02:28
+ Time per integration (ns):    17.607694421375435
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 21 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.90505701499623903
+ Elapsed time:   0:00:02
+ End time:       0:02:30
+ Time to end:    0:02:28
+ Time per integration (ns):    17.357504777868154
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 22 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.93173904343943714
+ Elapsed time:   0:00:02
+ End time:       0:02:31
+ Time to end:    0:02:28
+ Time per integration (ns):    18.155039657080479
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 23 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.95532144351922355
+ Elapsed time:   0:00:02
+ End time:       0:02:31
+ Time to end:    0:02:29
+ Time per integration (ns):    18.406290161248865
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 24 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:   0.97935543401849989
+ Elapsed time:   0:00:02
+ End time:       0:02:31
+ Time to end:    0:02:29
+ Time per integration (ns):    17.940655628177947
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 25 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.0018915367369161
+ Elapsed time:   0:00:02
+ End time:       0:02:32
+ Time to end:    0:02:29
+ Time per integration (ns):    18.138654929103033
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 26 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.0229227819331896
+ Elapsed time:   0:00:02
+ End time:       0:02:32
+ Time to end:    0:02:29
+ Time per integration (ns):    18.634388133090912
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 27 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.0446739175633417
+ Elapsed time:   0:00:02
+ End time:       0:02:32
+ Time to end:    0:02:30
+ Time per integration (ns):    18.544636753114506
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 28 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.0654781193400109
+ Elapsed time:   0:00:02
+ End time:       0:02:33
+ Time to end:    0:02:30
+ Time per integration (ns):    18.559212103988891
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 29 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.0814324813288922
+ Elapsed time:   0:00:02
+ End time:       0:02:33
+ Time to end:    0:02:30
+ Time per integration (ns):    18.504458510914255
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 30 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.0996179082539395
+ Elapsed time:   0:00:03
+ End time:       0:02:33
+ Time to end:    0:02:30
+ Time per integration (ns):    18.235955573817229
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 31 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.1167423202797202
+ Elapsed time:   0:00:03
+ End time:       0:02:34
+ Time to end:    0:02:30
+ Time per integration (ns):    18.707194493895965
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 32 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.1281294166451012
+ Elapsed time:   0:00:03
+ End time:       0:02:34
+ Time to end:    0:02:31
+ Time per integration (ns):    18.720984973889003
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 33 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.1423321994380351
+ Elapsed time:   0:00:03
+ End time:       0:02:34
+ Time to end:    0:02:31
+ Time per integration (ns):    18.697607300470722
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 34 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.1581935835995771
+ Elapsed time:   0:00:03
+ End time:       0:02:34
+ Time to end:    0:02:31
+ Time per integration (ns):    18.509014899161027
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 35 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.1711458285215004
+ Elapsed time:   0:00:03
+ End time:       0:02:35
+ Time to end:    0:02:31
+ Time per integration (ns):    18.465034254661710
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 36 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.1779290081892662
+ Elapsed time:   0:00:03
+ End time:       0:02:35
+ Time to end:    0:02:31
+ Time per integration (ns):    18.516837871167045
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 37 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.1865701252011174
+ Elapsed time:   0:00:03
+ End time:       0:02:35
+ Time to end:    0:02:31
+ Time per integration (ns):    18.631265277535789
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 38 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.1991575710866478
+ Elapsed time:   0:00:03
+ End time:       0:02:35
+ Time to end:    0:02:31
+ Time per integration (ns):    18.672251022198143
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 39 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2070019946160089
+ Elapsed time:   0:00:04
+ End time:       0:02:35
+ Time to end:    0:02:31
+ Time per integration (ns):    18.747876207639528
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 40 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2150957886302602
+ Elapsed time:   0:00:04
+ End time:       0:02:36
+ Time to end:    0:02:31
+ Time per integration (ns):    18.585301171482580
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 41 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2217826862599119
+ Elapsed time:   0:00:04
+ End time:       0:02:36
+ Time to end:    0:02:32
+ Time per integration (ns):    18.864907924043646
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 42 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2293382344420567
+ Elapsed time:   0:00:04
+ End time:       0:02:36
+ Time to end:    0:02:32
+ Time per integration (ns):    18.164359768589474
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 43 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2368874503972198
+ Elapsed time:   0:00:04
+ End time:       0:02:36
+ Time to end:    0:02:32
+ Time per integration (ns):    18.546288268032761
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 44 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2389823480539075
+ Elapsed time:   0:00:04
+ End time:       0:02:36
+ Time to end:    0:02:32
+ Time per integration (ns):    18.856558677009073
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 45 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2457266724492402
+ Elapsed time:   0:00:04
+ End time:       0:02:37
+ Time to end:    0:02:32
+ Time per integration (ns):    18.903605739714873
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 46 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2474379710148629
+ Elapsed time:   0:00:04
+ End time:       0:02:37
+ Time to end:    0:02:32
+ Time per integration (ns):    18.593524812381876
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 47 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2502237178288798
+ Elapsed time:   0:00:04
+ End time:       0:02:37
+ Time to end:    0:02:32
+ Time per integration (ns):    18.639756807102430
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 48 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2558851752288156
+ Elapsed time:   0:00:05
+ End time:       0:02:37
+ Time to end:    0:02:32
+ Time per integration (ns):    18.712320769502252
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 49 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2580665258901531
+ Elapsed time:   0:00:05
+ End time:       0:02:37
+ Time to end:    0:02:32
+ Time per integration (ns):    18.830872114484880
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 50 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2648757906391304
+ Elapsed time:   0:00:05
+ End time:       0:02:37
+ Time to end:    0:02:32
+ Time per integration (ns):    18.448114945164644
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 51 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2623427387392367
+ Elapsed time:   0:00:05
+ End time:       0:02:37
+ Time to end:    0:02:32
+ Time per integration (ns):    18.045869091917908
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 52 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2676198623839141
+ Elapsed time:   0:00:05
+ End time:       0:02:37
+ Time to end:    0:02:32
+ Time per integration (ns):    18.656976894365016
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 53 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2671187640373403
+ Elapsed time:   0:00:05
+ End time:       0:02:37
+ Time to end:    0:02:32
+ Time per integration (ns):    18.493841751615427
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 54 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2736566230047401
+ Elapsed time:   0:00:05
+ End time:       0:02:37
+ Time to end:    0:02:32
+ Time per integration (ns):    18.495167197322008
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 55 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2748555992757435
+ Elapsed time:   0:00:05
+ End time:       0:02:38
+ Time to end:    0:02:32
+ Time per integration (ns):    18.630399349939651
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 56 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2736729926690722
+ Elapsed time:   0:00:05
+ End time:       0:02:38
+ Time to end:    0:02:32
+ Time per integration (ns):    18.736843830069756
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 57 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2767549378244729
+ Elapsed time:   0:00:06
+ End time:       0:02:38
+ Time to end:    0:02:32
+ Time per integration (ns):    18.675115445171944
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 58 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2769817477132472
+ Elapsed time:   0:00:06
+ End time:       0:02:38
+ Time to end:    0:02:32
+ Time per integration (ns):    18.574296897290839
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 59 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2770759127831597
+ Elapsed time:   0:00:06
+ End time:       0:02:38
+ Time to end:    0:02:32
+ Time per integration (ns):    18.493963958669777
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 60 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2801045187426867
+ Elapsed time:   0:00:06
+ End time:       0:02:38
+ Time to end:    0:02:32
+ Time per integration (ns):    18.583905908217289
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 61 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2841539044856769
+ Elapsed time:   0:00:06
+ End time:       0:02:38
+ Time to end:    0:02:32
+ Time per integration (ns):    18.668017550045793
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 62 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2811226370627697
+ Elapsed time:   0:00:06
+ End time:       0:02:38
+ Time to end:    0:02:32
+ Time per integration (ns):    18.281535939450915
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 63 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2812138661295858
+ Elapsed time:   0:00:06
+ End time:       0:02:38
+ Time to end:    0:02:31
+ Time per integration (ns):    17.397676943429868
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 64 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2852521461432656
+ Elapsed time:   0:00:06
+ End time:       0:02:38
+ Time to end:    0:02:31
+ Time per integration (ns):    18.028470406881052
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 65 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2864606174594433
+ Elapsed time:   0:00:06
+ End time:       0:02:38
+ Time to end:    0:02:31
+ Time per integration (ns):    18.486352496871270
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 66 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2879630250677185
+ Elapsed time:   0:00:06
+ End time:       0:02:38
+ Time to end:    0:02:31
+ Time per integration (ns):    18.258633001746244
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 67 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2892718786828026
+ Elapsed time:   0:00:07
+ End time:       0:02:38
+ Time to end:    0:02:31
+ Time per integration (ns):    18.263510623660686
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 68 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2903979771786149
+ Elapsed time:   0:00:07
+ End time:       0:02:38
+ Time to end:    0:02:31
+ Time per integration (ns):    17.961711562352171
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 69 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2925854146942664
+ Elapsed time:   0:00:07
+ End time:       0:02:38
+ Time to end:    0:02:31
+ Time per integration (ns):    17.856346111553840
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 70 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2880008250174833
+ Elapsed time:   0:00:07
+ End time:       0:02:38
+ Time to end:    0:02:31
+ Time per integration (ns):    18.667575392804569
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 71 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2888301582930761
+ Elapsed time:   0:00:07
+ End time:       0:02:38
+ Time to end:    0:02:31
+ Time per integration (ns):    18.379983342314087
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 72 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2880167136931668
+ Elapsed time:   0:00:07
+ End time:       0:02:38
+ Time to end:    0:02:31
+ Time per integration (ns):    18.314836021097250
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 73 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2916341382913439
+ Elapsed time:   0:00:07
+ End time:       0:02:38
+ Time to end:    0:02:31
+ Time per integration (ns):    18.381612243297763
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 74 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2923952694268541
+ Elapsed time:   0:00:07
+ End time:       0:02:38
+ Time to end:    0:02:30
+ Time per integration (ns):    17.800670456969804
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 75 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2897017980333334
+ Elapsed time:   0:00:07
+ End time:       0:02:38
+ Time to end:    0:02:30
+ Time per integration (ns):    18.658487037320096
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 76 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2894945508772520
+ Elapsed time:   0:00:08
+ End time:       0:02:38
+ Time to end:    0:02:30
+ Time per integration (ns):    18.614382221311160
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 77 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2891457716991577
+ Elapsed time:   0:00:08
+ End time:       0:02:38
+ Time to end:    0:02:30
+ Time per integration (ns):    18.783215425549766
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 78 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2923415286020463
+ Elapsed time:   0:00:08
+ End time:       0:02:39
+ Time to end:    0:02:30
+ Time per integration (ns):    18.845793907015899
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 79 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2891075740788844
+ Elapsed time:   0:00:08
+ End time:       0:02:39
+ Time to end:    0:02:30
+ Time per integration (ns):    18.505220975222898
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 80 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2914500484653977
+ Elapsed time:   0:00:08
+ End time:       0:02:39
+ Time to end:    0:02:30
+ Time per integration (ns):    18.460859425819102
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 81 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2890619129175429
+ Elapsed time:   0:00:08
+ End time:       0:02:39
+ Time to end:    0:02:30
+ Time per integration (ns):    18.749287280481951
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 82 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2903691469398109
+ Elapsed time:   0:00:08
+ End time:       0:02:39
+ Time to end:    0:02:30
+ Time per integration (ns):    18.508382572748367
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 83 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2919228100599518
+ Elapsed time:   0:00:08
+ End time:       0:02:39
+ Time to end:    0:02:30
+ Time per integration (ns):    17.149916101349568
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 84 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2920690480922492
+ Elapsed time:   0:00:08
+ End time:       0:02:39
+ Time to end:    0:02:30
+ Time per integration (ns):    18.004145846200881
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 85 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2935577844130255
+ Elapsed time:   0:00:09
+ End time:       0:02:39
+ Time to end:    0:02:30
+ Time per integration (ns):    18.588686577716182
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 86 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2912058917297240
+ Elapsed time:   0:00:09
+ End time:       0:02:39
+ Time to end:    0:02:29
+ Time per integration (ns):    18.260476025184886
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 87 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2972077479201145
+ Elapsed time:   0:00:09
+ End time:       0:02:39
+ Time to end:    0:02:29
+ Time per integration (ns):    18.600852931857439
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 88 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2966852058224423
+ Elapsed time:   0:00:09
+ End time:       0:02:39
+ Time to end:    0:02:29
+ Time per integration (ns):    18.512217038230506
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 89 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2957361905125180
+ Elapsed time:   0:00:09
+ End time:       0:02:39
+ Time to end:    0:02:29
+ Time per integration (ns):    18.330291656008900
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 90 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2921167946073511
+ Elapsed time:   0:00:09
+ End time:       0:02:39
+ Time to end:    0:02:29
+ Time per integration (ns):    17.007817112399785
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 91 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2908930731504706
+ Elapsed time:   0:00:09
+ End time:       0:02:39
+ Time to end:    0:02:29
+ Time per integration (ns):    17.333427132526076
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 92 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2946017701863648
+ Elapsed time:   0:00:09
+ End time:       0:02:39
+ Time to end:    0:02:29
+ Time per integration (ns):    18.663393125648430
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 93 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2981129247518970
+ Elapsed time:   0:00:09
+ End time:       0:02:39
+ Time to end:    0:02:29
+ Time per integration (ns):    18.601964949548591
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 94 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3009393593511551
+ Elapsed time:   0:00:09
+ End time:       0:02:39
+ Time to end:    0:02:29
+ Time per integration (ns):    18.716639614365189
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 95 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2962083181749426
+ Elapsed time:   0:00:10
+ End time:       0:02:39
+ Time to end:    0:02:29
+ Time per integration (ns):    18.695599122680562
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 96 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2929463227961828
+ Elapsed time:   0:00:10
+ End time:       0:02:39
+ Time to end:    0:02:29
+ Time per integration (ns):    18.401443892173969
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 97 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2964802391948786
+ Elapsed time:   0:00:10
+ End time:       0:02:39
+ Time to end:    0:02:29
+ Time per integration (ns):    18.800918574205696
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 98 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2920965065394272
+ Elapsed time:   0:00:10
+ End time:       0:02:39
+ Time to end:    0:02:28
+ Time per integration (ns):    18.746857235009077
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 99 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2946566773884884
+ Elapsed time:   0:00:10
+ End time:       0:02:39
+ Time to end:    0:02:28
+ Time per integration (ns):    18.568121763569309
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 100 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2936245094237753
+ Elapsed time:   0:00:10
+ End time:       0:02:39
+ Time to end:    0:02:28
+ Time per integration (ns):    18.356965364586358
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 101 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2976384120736981
+ Elapsed time:   0:00:10
+ End time:       0:02:39
+ Time to end:    0:02:28
+ Time per integration (ns):    18.493942395298379
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 102 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2973542928729793
+ Elapsed time:   0:00:10
+ End time:       0:02:39
+ Time to end:    0:02:28
+ Time per integration (ns):    18.665686110357331
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 103 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2970964504347973
+ Elapsed time:   0:00:10
+ End time:       0:02:39
+ Time to end:    0:02:28
+ Time per integration (ns):    18.775857776597942
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 104 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3002370648516055
+ Elapsed time:   0:00:11
+ End time:       0:02:39
+ Time to end:    0:02:28
+ Time per integration (ns):    18.427620245292303
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 105 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2951567816228069
+ Elapsed time:   0:00:11
+ End time:       0:02:39
+ Time to end:    0:02:28
+ Time per integration (ns):    17.503581256997762
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 106 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2961390764279903
+ Elapsed time:   0:00:11
+ End time:       0:02:39
+ Time to end:    0:02:28
+ Time per integration (ns):    18.289562639196774
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 107 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2947872156412779
+ Elapsed time:   0:00:11
+ End time:       0:02:39
+ Time to end:    0:02:28
+ Time per integration (ns):    17.204511357917081
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 108 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2969947516914890
+ Elapsed time:   0:00:11
+ End time:       0:02:39
+ Time to end:    0:02:27
+ Time per integration (ns):    18.122273782697143
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 109 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2953294210231932
+ Elapsed time:   0:00:11
+ End time:       0:02:39
+ Time to end:    0:02:27
+ Time per integration (ns):    17.648234789483798
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 110 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3011921037856791
+ Elapsed time:   0:00:11
+ End time:       0:02:39
+ Time to end:    0:02:27
+ Time per integration (ns):    18.795287102590336
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 111 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2963904472972587
+ Elapsed time:   0:00:11
+ End time:       0:02:39
+ Time to end:    0:02:27
+ Time per integration (ns):    18.680125060819719
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 112 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2979088086755695
+ Elapsed time:   0:00:11
+ End time:       0:02:39
+ Time to end:    0:02:27
+ Time per integration (ns):    18.670313084012026
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 113 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2976526482223147
+ Elapsed time:   0:00:12
+ End time:       0:02:39
+ Time to end:    0:02:27
+ Time per integration (ns):    18.765578204093007
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 114 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2989541898620589
+ Elapsed time:   0:00:12
+ End time:       0:02:39
+ Time to end:    0:02:27
+ Time per integration (ns):    18.299975667201235
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 115 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3018419307083131
+ Elapsed time:   0:00:12
+ End time:       0:02:39
+ Time to end:    0:02:27
+ Time per integration (ns):    18.602826096556033
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 116 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3015009550257068
+ Elapsed time:   0:00:12
+ End time:       0:02:39
+ Time to end:    0:02:27
+ Time per integration (ns):    18.428537542385541
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 117 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2998601960001508
+ Elapsed time:   0:00:12
+ End time:       0:02:39
+ Time to end:    0:02:27
+ Time per integration (ns):    18.445899240364827
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 118 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2973823084612941
+ Elapsed time:   0:00:12
+ End time:       0:02:39
+ Time to end:    0:02:27
+ Time per integration (ns):    18.517078817805093
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 119 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3032596959778229
+ Elapsed time:   0:00:12
+ End time:       0:02:39
+ Time to end:    0:02:27
+ Time per integration (ns):    18.679214814532884
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 120 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2986779882451602
+ Elapsed time:   0:00:12
+ End time:       0:02:39
+ Time to end:    0:02:26
+ Time per integration (ns):    18.656102950421008
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 121 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2950243526444061
+ Elapsed time:   0:00:12
+ End time:       0:02:39
+ Time to end:    0:02:26
+ Time per integration (ns):    17.389125096686794
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 122 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2997934370884285
+ Elapsed time:   0:00:12
+ End time:       0:02:39
+ Time to end:    0:02:26
+ Time per integration (ns):    17.404906999334855
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 123 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2958581551550550
+ Elapsed time:   0:00:13
+ End time:       0:02:39
+ Time to end:    0:02:26
+ Time per integration (ns):    18.503510595229663
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 124 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2978053013929636
+ Elapsed time:   0:00:13
+ End time:       0:02:39
+ Time to end:    0:02:26
+ Time per integration (ns):    18.917744708190799
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 125 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3007611106870365
+ Elapsed time:   0:00:13
+ End time:       0:02:39
+ Time to end:    0:02:26
+ Time per integration (ns):    18.565108094689837
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 126 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3004005614298670
+ Elapsed time:   0:00:13
+ End time:       0:02:39
+ Time to end:    0:02:26
+ Time per integration (ns):    18.414421616533144
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 127 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2969297269294087
+ Elapsed time:   0:00:13
+ End time:       0:02:39
+ Time to end:    0:02:26
+ Time per integration (ns):    17.450607850868902
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 128 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2988871818858920
+ Elapsed time:   0:00:13
+ End time:       0:02:39
+ Time to end:    0:02:25
+ Time per integration (ns):    16.969703088819429
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 129 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3043604827620952
+ Elapsed time:   0:00:13
+ End time:       0:02:39
+ Time to end:    0:02:25
+ Time per integration (ns):    17.505005935634760
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 130 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2994992877782967
+ Elapsed time:   0:00:13
+ End time:       0:02:39
+ Time to end:    0:02:25
+ Time per integration (ns):    18.316225581973111
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 131 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2965344622636992
+ Elapsed time:   0:00:13
+ End time:       0:02:39
+ Time to end:    0:02:25
+ Time per integration (ns):    18.802943758237411
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 132 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2997862005263210
+ Elapsed time:   0:00:14
+ End time:       0:02:39
+ Time to end:    0:02:25
+ Time per integration (ns):    18.589329364577800
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 133 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3027629956927056
+ Elapsed time:   0:00:14
+ End time:       0:02:39
+ Time to end:    0:02:25
+ Time per integration (ns):    18.662437053806524
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 134 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3010336072324244
+ Elapsed time:   0:00:14
+ End time:       0:02:39
+ Time to end:    0:02:25
+ Time per integration (ns):    18.153992206186128
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 135 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3008086349050740
+ Elapsed time:   0:00:14
+ End time:       0:02:39
+ Time to end:    0:02:25
+ Time per integration (ns):    18.199878995902449
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 136 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2999371893618024
+ Elapsed time:   0:00:14
+ End time:       0:02:39
+ Time to end:    0:02:25
+ Time per integration (ns):    18.452077202006780
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 137 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3060771513815230
+ Elapsed time:   0:00:14
+ End time:       0:02:39
+ Time to end:    0:02:25
+ Time per integration (ns):    17.314727194487162
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 138 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2983339663612588
+ Elapsed time:   0:00:14
+ End time:       0:02:39
+ Time to end:    0:02:24
+ Time per integration (ns):    17.210684001064187
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 139 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2999801832884392
+ Elapsed time:   0:00:14
+ End time:       0:02:39
+ Time to end:    0:02:24
+ Time per integration (ns):    17.841182168485595
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 140 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3030244251981962
+ Elapsed time:   0:00:14
+ End time:       0:02:39
+ Time to end:    0:02:24
+ Time per integration (ns):    18.028001869058446
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 141 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3028453976023788
+ Elapsed time:   0:00:14
+ End time:       0:02:39
+ Time to end:    0:02:24
+ Time per integration (ns):    18.920876473896652
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 142 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2977154626747016
+ Elapsed time:   0:00:15
+ End time:       0:02:39
+ Time to end:    0:02:24
+ Time per integration (ns):    18.636927643247546
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 143 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2972361483442967
+ Elapsed time:   0:00:15
+ End time:       0:02:39
+ Time to end:    0:02:24
+ Time per integration (ns):    18.481948614456570
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 144 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3046009517021453
+ Elapsed time:   0:00:15
+ End time:       0:02:39
+ Time to end:    0:02:24
+ Time per integration (ns):    18.480351009507668
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 145 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2987004964658992
+ Elapsed time:   0:00:15
+ End time:       0:02:39
+ Time to end:    0:02:24
+ Time per integration (ns):    18.571140445138777
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 146 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3032334976781137
+ Elapsed time:   0:00:15
+ End time:       0:02:39
+ Time to end:    0:02:24
+ Time per integration (ns):    18.865203823766500
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 147 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3022734695970000
+ Elapsed time:   0:00:15
+ End time:       0:02:39
+ Time to end:    0:02:24
+ Time per integration (ns):    18.687441928717320
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 148 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2968679727389012
+ Elapsed time:   0:00:15
+ End time:       0:02:39
+ Time to end:    0:02:23
+ Time per integration (ns):    18.462220196573735
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 149 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2995116979827099
+ Elapsed time:   0:00:15
+ End time:       0:02:39
+ Time to end:    0:02:23
+ Time per integration (ns):    18.107841549158596
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 150 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3023134005039454
+ Elapsed time:   0:00:15
+ End time:       0:02:39
+ Time to end:    0:02:23
+ Time per integration (ns):    18.546882283319178
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 151 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2998671058212534
+ Elapsed time:   0:00:16
+ End time:       0:02:39
+ Time to end:    0:02:23
+ Time per integration (ns):    18.163783747198238
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 152 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3048627969580031
+ Elapsed time:   0:00:16
+ End time:       0:02:39
+ Time to end:    0:02:23
+ Time per integration (ns):    18.378229058472872
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 153 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3009261114854742
+ Elapsed time:   0:00:16
+ End time:       0:02:39
+ Time to end:    0:02:23
+ Time per integration (ns):    18.207735750445377
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 154 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3009412757588019
+ Elapsed time:   0:00:16
+ End time:       0:02:39
+ Time to end:    0:02:23
+ Time per integration (ns):    17.442083274203746
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 155 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3035492391413661
+ Elapsed time:   0:00:16
+ End time:       0:02:39
+ Time to end:    0:02:23
+ Time per integration (ns):    18.660744009672811
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 156 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3009473491588079
+ Elapsed time:   0:00:16
+ End time:       0:02:39
+ Time to end:    0:02:23
+ Time per integration (ns):    18.519999739509739
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 157 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3021841878764977
+ Elapsed time:   0:00:16
+ End time:       0:02:39
+ Time to end:    0:02:23
+ Time per integration (ns):    18.536903057972086
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 158 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3010270351672120
+ Elapsed time:   0:00:16
+ End time:       0:02:39
+ Time to end:    0:02:22
+ Time per integration (ns):    17.983730044309308
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 159 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2985299697241182
+ Elapsed time:   0:00:16
+ End time:       0:02:39
+ Time to end:    0:02:22
+ Time per integration (ns):    18.386049250163317
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 160 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2955559923199169
+ Elapsed time:   0:00:17
+ End time:       0:02:39
+ Time to end:    0:02:22
+ Time per integration (ns):    18.100959309326040
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 161 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2988215172706297
+ Elapsed time:   0:00:17
+ End time:       0:02:39
+ Time to end:    0:02:22
+ Time per integration (ns):    17.675455443766175
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 162 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3013526684700729
+ Elapsed time:   0:00:17
+ End time:       0:02:39
+ Time to end:    0:02:22
+ Time per integration (ns):    18.619724453141998
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 163 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3038247646884515
+ Elapsed time:   0:00:17
+ End time:       0:02:39
+ Time to end:    0:02:22
+ Time per integration (ns):    19.136347510775515
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 164 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3038921333655078
+ Elapsed time:   0:00:17
+ End time:       0:02:39
+ Time to end:    0:02:22
+ Time per integration (ns):    18.863257231099858
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 165 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3014584457204392
+ Elapsed time:   0:00:17
+ End time:       0:02:39
+ Time to end:    0:02:22
+ Time per integration (ns):    18.641097504503435
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 166 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3041537273062540
+ Elapsed time:   0:00:17
+ End time:       0:02:39
+ Time to end:    0:02:22
+ Time per integration (ns):    18.832340173945514
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 167 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2991670391345846
+ Elapsed time:   0:00:17
+ End time:       0:02:39
+ Time to end:    0:02:22
+ Time per integration (ns):    18.616635570113928
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 168 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3032082377053007
+ Elapsed time:   0:00:17
+ End time:       0:02:39
+ Time to end:    0:02:22
+ Time per integration (ns):    18.950283770467006
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 169 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3003157418333791
+ Elapsed time:   0:00:18
+ End time:       0:02:39
+ Time to end:    0:02:21
+ Time per integration (ns):    18.408433443549288
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 170 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2993931071421967
+ Elapsed time:   0:00:18
+ End time:       0:02:39
+ Time to end:    0:02:21
+ Time per integration (ns):    18.655780377132906
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 171 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3078468749277736
+ Elapsed time:   0:00:18
+ End time:       0:02:40
+ Time to end:    0:02:21
+ Time per integration (ns):    18.920467805462437
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 172 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3024835512316999
+ Elapsed time:   0:00:18
+ End time:       0:02:40
+ Time to end:    0:02:21
+ Time per integration (ns):    18.683532977632016
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 173 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2989709832329925
+ Elapsed time:   0:00:18
+ End time:       0:02:40
+ Time to end:    0:02:21
+ Time per integration (ns):    18.974649864992678
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 174 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2976938068313848
+ Elapsed time:   0:00:18
+ End time:       0:02:40
+ Time to end:    0:02:21
+ Time per integration (ns):    18.727037032585308
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 175 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3008316834818752
+ Elapsed time:   0:00:18
+ End time:       0:02:40
+ Time to end:    0:02:21
+ Time per integration (ns):    18.677431886828913
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 176 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3015507820775196
+ Elapsed time:   0:00:18
+ End time:       0:02:40
+ Time to end:    0:02:21
+ Time per integration (ns):    18.869313875287240
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 177 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3086990285073377
+ Elapsed time:   0:00:18
+ End time:       0:02:40
+ Time to end:    0:02:21
+ Time per integration (ns):    19.058149628251677
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 178 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2960365250694907
+ Elapsed time:   0:00:19
+ End time:       0:02:40
+ Time to end:    0:02:21
+ Time per integration (ns):    18.811202487430290
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 179 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3006334413975753
+ Elapsed time:   0:00:19
+ End time:       0:02:40
+ Time to end:    0:02:21
+ Time per integration (ns):    18.600934510647043
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 180 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3007425471936698
+ Elapsed time:   0:00:19
+ End time:       0:02:40
+ Time to end:    0:02:20
+ Time per integration (ns):    17.033213767126242
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 181 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3043204896619021
+ Elapsed time:   0:00:19
+ End time:       0:02:40
+ Time to end:    0:02:20
+ Time per integration (ns):    18.020067274624072
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 182 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2996144236164293
+ Elapsed time:   0:00:19
+ End time:       0:02:40
+ Time to end:    0:02:20
+ Time per integration (ns):    18.888093200779696
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 183 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3077840614740808
+ Elapsed time:   0:00:19
+ End time:       0:02:40
+ Time to end:    0:02:20
+ Time per integration (ns):    18.725684792573897
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 184 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3028320965985267
+ Elapsed time:   0:00:19
+ End time:       0:02:40
+ Time to end:    0:02:20
+ Time per integration (ns):    18.594321757036038
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 185 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3041022357236047
+ Elapsed time:   0:00:19
+ End time:       0:02:40
+ Time to end:    0:02:20
+ Time per integration (ns):    19.324562522258905
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 186 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3043047761987649
+ Elapsed time:   0:00:19
+ End time:       0:02:40
+ Time to end:    0:02:20
+ Time per integration (ns):    18.972489260143199
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 187 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2986316507027331
+ Elapsed time:   0:00:19
+ End time:       0:02:40
+ Time to end:    0:02:20
+ Time per integration (ns):    18.489948156578468
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 188 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2992140654497639
+ Elapsed time:   0:00:20
+ End time:       0:02:40
+ Time to end:    0:02:20
+ Time per integration (ns):    17.721994217044891
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 189 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3026605646369831
+ Elapsed time:   0:00:20
+ End time:       0:02:40
+ Time to end:    0:02:20
+ Time per integration (ns):    18.598447120382431
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 190 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3055092031960631
+ Elapsed time:   0:00:20
+ End time:       0:02:40
+ Time to end:    0:02:20
+ Time per integration (ns):    18.716002027815275
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 191 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2976415831324608
+ Elapsed time:   0:00:20
+ End time:       0:02:40
+ Time to end:    0:02:19
+ Time per integration (ns):    18.858062253842334
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 192 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3067223982990197
+ Elapsed time:   0:00:20
+ End time:       0:02:40
+ Time to end:    0:02:19
+ Time per integration (ns):    19.228851466811413
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 193 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2968362129239595
+ Elapsed time:   0:00:20
+ End time:       0:02:40
+ Time to end:    0:02:19
+ Time per integration (ns):    18.500487775980893
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 194 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3067132877752217
+ Elapsed time:   0:00:20
+ End time:       0:02:40
+ Time to end:    0:02:19
+ Time per integration (ns):    18.821973244187259
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 195 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3037112549525101
+ Elapsed time:   0:00:20
+ End time:       0:02:40
+ Time to end:    0:02:19
+ Time per integration (ns):    19.026845608685559
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 196 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3020029777051785
+ Elapsed time:   0:00:20
+ End time:       0:02:40
+ Time to end:    0:02:19
+ Time per integration (ns):    18.836136484237748
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 197 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2946833566518632
+ Elapsed time:   0:00:21
+ End time:       0:02:40
+ Time to end:    0:02:19
+ Time per integration (ns):    18.906241326780272
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 198 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3064401484845674
+ Elapsed time:   0:00:21
+ End time:       0:02:40
+ Time to end:    0:02:19
+ Time per integration (ns):    18.842327065467650
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 199 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3028661286045118
+ Elapsed time:   0:00:21
+ End time:       0:02:40
+ Time to end:    0:02:19
+ Time per integration (ns):    19.008027679636260
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 200 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3050909334722676
+ Elapsed time:   0:00:21
+ End time:       0:02:40
+ Time to end:    0:02:19
+ Time per integration (ns):    18.819308450670441
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 201 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2986547899292193
+ Elapsed time:   0:00:21
+ End time:       0:02:40
+ Time to end:    0:02:19
+ Time per integration (ns):    18.358350557398808
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 202 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3014530409511593
+ Elapsed time:   0:00:21
+ End time:       0:02:40
+ Time to end:    0:02:18
+ Time per integration (ns):    18.515409631923898
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 203 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3040738226040156
+ Elapsed time:   0:00:21
+ End time:       0:02:40
+ Time to end:    0:02:18
+ Time per integration (ns):    18.423821831891161
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 204 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3076534782260560
+ Elapsed time:   0:00:21
+ End time:       0:02:40
+ Time to end:    0:02:18
+ Time per integration (ns):    18.955023980721826
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 205 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3006450685868312
+ Elapsed time:   0:00:21
+ End time:       0:02:40
+ Time to end:    0:02:18
+ Time per integration (ns):    18.938707208863619
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 206 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3037759710179442
+ Elapsed time:   0:00:22
+ End time:       0:02:40
+ Time to end:    0:02:18
+ Time per integration (ns):    18.655324270805185
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 207 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3064553222231137
+ Elapsed time:   0:00:22
+ End time:       0:02:40
+ Time to end:    0:02:18
+ Time per integration (ns):    19.028931475320203
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 208 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3041083719296840
+ Elapsed time:   0:00:22
+ End time:       0:02:40
+ Time to end:    0:02:18
+ Time per integration (ns):    18.774490276368837
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 209 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3053440584494951
+ Elapsed time:   0:00:22
+ End time:       0:02:40
+ Time to end:    0:02:18
+ Time per integration (ns):    18.980499245754789
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 210 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3049450507967788
+ Elapsed time:   0:00:22
+ End time:       0:02:40
+ Time to end:    0:02:18
+ Time per integration (ns):    18.839336193478704
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 211 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3008849462144216
+ Elapsed time:   0:00:22
+ End time:       0:02:40
+ Time to end:    0:02:18
+ Time per integration (ns):    18.726852808612609
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 212 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3048631563464113
+ Elapsed time:   0:00:22
+ End time:       0:02:40
+ Time to end:    0:02:18
+ Time per integration (ns):    19.015036335819467
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 213 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3057555260117817
+ Elapsed time:   0:00:22
+ End time:       0:02:40
+ Time to end:    0:02:17
+ Time per integration (ns):    18.924574820452730
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 214 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3020543394920649
+ Elapsed time:   0:00:22
+ End time:       0:02:40
+ Time to end:    0:02:17
+ Time per integration (ns):    18.046478127057632
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 215 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3058855674024177
+ Elapsed time:   0:00:23
+ End time:       0:02:40
+ Time to end:    0:02:17
+ Time per integration (ns):    17.600172732638473
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 216 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2973205458093773
+ Elapsed time:   0:00:23
+ End time:       0:02:40
+ Time to end:    0:02:17
+ Time per integration (ns):    18.364516181607971
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 217 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3041612587616027
+ Elapsed time:   0:00:23
+ End time:       0:02:40
+ Time to end:    0:02:17
+ Time per integration (ns):    18.715957572284498
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 218 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3026203376246193
+ Elapsed time:   0:00:23
+ End time:       0:02:40
+ Time to end:    0:02:17
+ Time per integration (ns):    18.721290729535561
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 219 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3061508928901153
+ Elapsed time:   0:00:23
+ End time:       0:02:40
+ Time to end:    0:02:17
+ Time per integration (ns):    18.891104734847932
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 220 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3098411708403976
+ Elapsed time:   0:00:23
+ End time:       0:02:40
+ Time to end:    0:02:17
+ Time per integration (ns):    18.804034874221038
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 221 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2985019192464453
+ Elapsed time:   0:00:23
+ End time:       0:02:40
+ Time to end:    0:02:17
+ Time per integration (ns):    18.509310912466841
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 222 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3047198681304770
+ Elapsed time:   0:00:23
+ End time:       0:02:40
+ Time to end:    0:02:17
+ Time per integration (ns):    17.856286881338164
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 223 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3054444272097145
+ Elapsed time:   0:00:23
+ End time:       0:02:40
+ Time to end:    0:02:16
+ Time per integration (ns):    18.297123876108504
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 224 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3079524044890281
+ Elapsed time:   0:00:24
+ End time:       0:02:40
+ Time to end:    0:02:16
+ Time per integration (ns):    18.797935630653068
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 225 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3075088727897264
+ Elapsed time:   0:00:24
+ End time:       0:02:40
+ Time to end:    0:02:16
+ Time per integration (ns):    19.021380547561087
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 226 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3029989948805725
+ Elapsed time:   0:00:24
+ End time:       0:02:40
+ Time to end:    0:02:16
+ Time per integration (ns):    18.674073160009563
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 227 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3044468072981659
+ Elapsed time:   0:00:24
+ End time:       0:02:40
+ Time to end:    0:02:16
+ Time per integration (ns):    19.303956712158055
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 228 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3089552475029786
+ Elapsed time:   0:00:24
+ End time:       0:02:40
+ Time to end:    0:02:16
+ Time per integration (ns):    18.366982405713046
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 229 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3027118986207937
+ Elapsed time:   0:00:24
+ End time:       0:02:40
+ Time to end:    0:02:16
+ Time per integration (ns):    18.734970825202272
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 230 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3087227954060470
+ Elapsed time:   0:00:24
+ End time:       0:02:40
+ Time to end:    0:02:16
+ Time per integration (ns):    19.046471022053815
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 231 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3012136239405596
+ Elapsed time:   0:00:24
+ End time:       0:02:40
+ Time to end:    0:02:16
+ Time per integration (ns):    18.719976410443120
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 232 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2994833916351460
+ Elapsed time:   0:00:24
+ End time:       0:02:40
+ Time to end:    0:02:16
+ Time per integration (ns):    18.660137846332628
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 233 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3028575492298311
+ Elapsed time:   0:00:25
+ End time:       0:02:40
+ Time to end:    0:02:15
+ Time per integration (ns):    18.431880151207956
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 234 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3028650288004313
+ Elapsed time:   0:00:25
+ End time:       0:02:40
+ Time to end:    0:02:15
+ Time per integration (ns):    18.800505306855651
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 235 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3077477247542055
+ Elapsed time:   0:00:25
+ End time:       0:02:40
+ Time to end:    0:02:15
+ Time per integration (ns):    18.474199359004338
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 236 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3086846410234907
+ Elapsed time:   0:00:25
+ End time:       0:02:41
+ Time to end:    0:02:15
+ Time per integration (ns):    18.634212493783973
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 237 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3117310133882889
+ Elapsed time:   0:00:25
+ End time:       0:02:41
+ Time to end:    0:02:15
+ Time per integration (ns):    19.142365914296388
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 238 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3007843756960213
+ Elapsed time:   0:00:25
+ End time:       0:02:41
+ Time to end:    0:02:15
+ Time per integration (ns):    18.995424072685573
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 239 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3068018507040720
+ Elapsed time:   0:00:25
+ End time:       0:02:41
+ Time to end:    0:02:15
+ Time per integration (ns):    18.932120911233650
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 240 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3006464250657146
+ Elapsed time:   0:00:25
+ End time:       0:02:41
+ Time to end:    0:02:15
+ Time per integration (ns):    18.483909835489698
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 241 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3078977688617022
+ Elapsed time:   0:00:25
+ End time:       0:02:41
+ Time to end:    0:02:15
+ Time per integration (ns):    18.555651347201810
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 242 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3074428491202827
+ Elapsed time:   0:00:25
+ End time:       0:02:41
+ Time to end:    0:02:15
+ Time per integration (ns):    18.699919901490787
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 243 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3031376804738954
+ Elapsed time:   0:00:26
+ End time:       0:02:41
+ Time to end:    0:02:15
+ Time per integration (ns):    18.414395115506327
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 244 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3152612458786719
+ Elapsed time:   0:00:26
+ End time:       0:02:41
+ Time to end:    0:02:14
+ Time per integration (ns):    18.996595423121654
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 245 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3075657881434797
+ Elapsed time:   0:00:26
+ End time:       0:02:41
+ Time to end:    0:02:14
+ Time per integration (ns):    17.394907231812006
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 246 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3045645191241593
+ Elapsed time:   0:00:26
+ End time:       0:02:41
+ Time to end:    0:02:14
+ Time per integration (ns):    18.010160408854496
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 247 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3012558752911685
+ Elapsed time:   0:00:26
+ End time:       0:02:41
+ Time to end:    0:02:14
+ Time per integration (ns):    18.926015099029446
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 248 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3113524152637772
+ Elapsed time:   0:00:26
+ End time:       0:02:41
+ Time to end:    0:02:14
+ Time per integration (ns):    19.015516256287022
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 249 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3056305094497078
+ Elapsed time:   0:00:26
+ End time:       0:02:41
+ Time to end:    0:02:14
+ Time per integration (ns):    18.953041615020062
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 250 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3035276161859732
+ Elapsed time:   0:00:26
+ End time:       0:02:41
+ Time to end:    0:02:14
+ Time per integration (ns):    19.047685580690526
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 251 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2992309744517256
+ Elapsed time:   0:00:26
+ End time:       0:02:41
+ Time to end:    0:02:14
+ Time per integration (ns):    18.826344205026892
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 252 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3049090836621131
+ Elapsed time:   0:00:27
+ End time:       0:02:41
+ Time to end:    0:02:14
+ Time per integration (ns):    18.921000154284947
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 253 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3072248579985968
+ Elapsed time:   0:00:27
+ End time:       0:02:41
+ Time to end:    0:02:14
+ Time per integration (ns):    18.659421525512457
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 254 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3107712827981184
+ Elapsed time:   0:00:27
+ End time:       0:02:41
+ Time to end:    0:02:13
+ Time per integration (ns):    18.620977596183039
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 255 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3101634998791656
+ Elapsed time:   0:00:27
+ End time:       0:02:41
+ Time to end:    0:02:13
+ Time per integration (ns):    19.123593608956845
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 256 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3011287197220749
+ Elapsed time:   0:00:27
+ End time:       0:02:41
+ Time to end:    0:02:13
+ Time per integration (ns):    18.786693802135620
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 257 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3039676097730257
+ Elapsed time:   0:00:27
+ End time:       0:02:41
+ Time to end:    0:02:13
+ Time per integration (ns):    18.873518337677957
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 258 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3093857576018533
+ Elapsed time:   0:00:27
+ End time:       0:02:41
+ Time to end:    0:02:13
+ Time per integration (ns):    19.152682319018503
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 259 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3021542250721665
+ Elapsed time:   0:00:27
+ End time:       0:02:41
+ Time to end:    0:02:13
+ Time per integration (ns):    18.835723258441654
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 260 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3037514724530237
+ Elapsed time:   0:00:27
+ End time:       0:02:41
+ Time to end:    0:02:13
+ Time per integration (ns):    18.584724401411858
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 261 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3061255256566360
+ Elapsed time:   0:00:28
+ End time:       0:02:41
+ Time to end:    0:02:13
+ Time per integration (ns):    17.796138536410716
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 262 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3063573285239740
+ Elapsed time:   0:00:28
+ End time:       0:02:41
+ Time to end:    0:02:13
+ Time per integration (ns):    18.847386705373278
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 263 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3025557782896529
+ Elapsed time:   0:00:28
+ End time:       0:02:41
+ Time to end:    0:02:13
+ Time per integration (ns):    18.372751175300664
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 264 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3084314796501688
+ Elapsed time:   0:00:28
+ End time:       0:02:41
+ Time to end:    0:02:12
+ Time per integration (ns):    17.554790216307484
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 265 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3066001528171951
+ Elapsed time:   0:00:28
+ End time:       0:02:41
+ Time to end:    0:02:12
+ Time per integration (ns):    18.075499985064894
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 266 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3046228145529621
+ Elapsed time:   0:00:28
+ End time:       0:02:41
+ Time to end:    0:02:12
+ Time per integration (ns):    19.014775215146301
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 267 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3065280628195988
+ Elapsed time:   0:00:28
+ End time:       0:02:41
+ Time to end:    0:02:12
+ Time per integration (ns):    19.029206541997006
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 268 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3061574883439806
+ Elapsed time:   0:00:28
+ End time:       0:02:41
+ Time to end:    0:02:12
+ Time per integration (ns):    18.783160627784785
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 269 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3042191224662218
+ Elapsed time:   0:00:28
+ End time:       0:02:41
+ Time to end:    0:02:12
+ Time per integration (ns):    18.712635793268930
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 270 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3045193291094808
+ Elapsed time:   0:00:29
+ End time:       0:02:41
+ Time to end:    0:02:12
+ Time per integration (ns):    17.358199467749628
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 271 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3065280908071524
+ Elapsed time:   0:00:29
+ End time:       0:02:41
+ Time to end:    0:02:12
+ Time per integration (ns):    18.271020684394099
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 272 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3060652482656374
+ Elapsed time:   0:00:29
+ End time:       0:02:41
+ Time to end:    0:02:12
+ Time per integration (ns):    18.977088287699065
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 273 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3077333240612790
+ Elapsed time:   0:00:29
+ End time:       0:02:41
+ Time to end:    0:02:11
+ Time per integration (ns):    19.173336948483932
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 274 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3062885883924811
+ Elapsed time:   0:00:29
+ End time:       0:02:41
+ Time to end:    0:02:11
+ Time per integration (ns):    18.706606109559839
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 275 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3066992759246678
+ Elapsed time:   0:00:29
+ End time:       0:02:41
+ Time to end:    0:02:11
+ Time per integration (ns):    18.909654817439286
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 276 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3059053226554496
+ Elapsed time:   0:00:29
+ End time:       0:02:41
+ Time to end:    0:02:11
+ Time per integration (ns):    18.970002919831959
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 277 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3030555308733978
+ Elapsed time:   0:00:29
+ End time:       0:02:41
+ Time to end:    0:02:11
+ Time per integration (ns):    19.060494616194632
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 278 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3076049729818460
+ Elapsed time:   0:00:29
+ End time:       0:02:41
+ Time to end:    0:02:11
+ Time per integration (ns):    18.996567129748861
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 279 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3122011844283168
+ Elapsed time:   0:00:30
+ End time:       0:02:41
+ Time to end:    0:02:11
+ Time per integration (ns):    19.104549765428253
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 280 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3043431363137497
+ Elapsed time:   0:00:30
+ End time:       0:02:41
+ Time to end:    0:02:11
+ Time per integration (ns):    18.704004041601163
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 281 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3099788591904267
+ Elapsed time:   0:00:30
+ End time:       0:02:41
+ Time to end:    0:02:11
+ Time per integration (ns):    19.053715670367112
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 282 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3077033043765902
+ Elapsed time:   0:00:30
+ End time:       0:02:41
+ Time to end:    0:02:11
+ Time per integration (ns):    18.834448126195920
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 283 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3077880916771405
+ Elapsed time:   0:00:30
+ End time:       0:02:41
+ Time to end:    0:02:11
+ Time per integration (ns):    19.043424928069189
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 284 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3061279748760430
+ Elapsed time:   0:00:30
+ End time:       0:02:41
+ Time to end:    0:02:10
+ Time per integration (ns):    18.551700626552023
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 285 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3030287406810286
+ Elapsed time:   0:00:30
+ End time:       0:02:41
+ Time to end:    0:02:10
+ Time per integration (ns):    18.686290513090270
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 286 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3045822857098965
+ Elapsed time:   0:00:30
+ End time:       0:02:41
+ Time to end:    0:02:10
+ Time per integration (ns):    18.822069660157592
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 287 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3083299012683949
+ Elapsed time:   0:00:30
+ End time:       0:02:41
+ Time to end:    0:02:10
+ Time per integration (ns):    18.498806945987500
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 288 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3137783224413477
+ Elapsed time:   0:00:31
+ End time:       0:02:41
+ Time to end:    0:02:10
+ Time per integration (ns):    18.771550356778658
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 289 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3051535268803716
+ Elapsed time:   0:00:31
+ End time:       0:02:41
+ Time to end:    0:02:10
+ Time per integration (ns):    18.886228846712051
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 290 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3033145764143546
+ Elapsed time:   0:00:31
+ End time:       0:02:41
+ Time to end:    0:02:10
+ Time per integration (ns):    18.536507003061036
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 291 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3049486014696965
+ Elapsed time:   0:00:31
+ End time:       0:02:41
+ Time to end:    0:02:10
+ Time per integration (ns):    18.762727051215808
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 292 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3086666608039172
+ Elapsed time:   0:00:31
+ End time:       0:02:41
+ Time to end:    0:02:10
+ Time per integration (ns):    18.900324484738082
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 293 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3041439735716416
+ Elapsed time:   0:00:31
+ End time:       0:02:41
+ Time to end:    0:02:10
+ Time per integration (ns):    18.317109576471989
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 294 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3026900470258513
+ Elapsed time:   0:00:31
+ End time:       0:02:41
+ Time to end:    0:02:09
+ Time per integration (ns):    18.269150195516414
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 295 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3079681126388305
+ Elapsed time:   0:00:31
+ End time:       0:02:41
+ Time to end:    0:02:09
+ Time per integration (ns):    18.656981615846089
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 296 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3069489781499732
+ Elapsed time:   0:00:31
+ End time:       0:02:41
+ Time to end:    0:02:09
+ Time per integration (ns):    18.696574708361887
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 297 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3065298545238773
+ Elapsed time:   0:00:31
+ End time:       0:02:41
+ Time to end:    0:02:09
+ Time per integration (ns):    18.455204735132956
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 298 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3053035908317954
+ Elapsed time:   0:00:32
+ End time:       0:02:41
+ Time to end:    0:02:09
+ Time per integration (ns):    17.817895154877988
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 299 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3057848022056318
+ Elapsed time:   0:00:32
+ End time:       0:02:41
+ Time to end:    0:02:09
+ Time per integration (ns):    17.289833136456803
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 300 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3058715820564226
+ Elapsed time:   0:00:32
+ End time:       0:02:41
+ Time to end:    0:02:09
+ Time per integration (ns):    17.945812487973832
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 301 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3026025952487610
+ Elapsed time:   0:00:32
+ End time:       0:02:41
+ Time to end:    0:02:09
+ Time per integration (ns):    18.169381068297032
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 302 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3080054568211750
+ Elapsed time:   0:00:32
+ End time:       0:02:41
+ Time to end:    0:02:08
+ Time per integration (ns):    18.796497321638540
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 303 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3123280990795048
+ Elapsed time:   0:00:32
+ End time:       0:02:41
+ Time to end:    0:02:08
+ Time per integration (ns):    18.953040593085912
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 304 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3043993033584991
+ Elapsed time:   0:00:32
+ End time:       0:02:41
+ Time to end:    0:02:08
+ Time per integration (ns):    18.835043733721641
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 305 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3103267386988848
+ Elapsed time:   0:00:32
+ End time:       0:02:41
+ Time to end:    0:02:08
+ Time per integration (ns):    17.643311330830862
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 306 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3053537503411239
+ Elapsed time:   0:00:32
+ End time:       0:02:41
+ Time to end:    0:02:08
+ Time per integration (ns):    18.848630699195191
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 307 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3058011720621050
+ Elapsed time:   0:00:33
+ End time:       0:02:41
+ Time to end:    0:02:08
+ Time per integration (ns):    18.624076383677906
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 308 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3098744364149093
+ Elapsed time:   0:00:33
+ End time:       0:02:41
+ Time to end:    0:02:08
+ Time per integration (ns):    19.063778332565732
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 309 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3044390417849616
+ Elapsed time:   0:00:33
+ End time:       0:02:41
+ Time to end:    0:02:08
+ Time per integration (ns):    18.818431031709018
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 310 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3048829395693802
+ Elapsed time:   0:00:33
+ End time:       0:02:41
+ Time to end:    0:02:08
+ Time per integration (ns):    18.734749588796774
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 311 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3075539759326973
+ Elapsed time:   0:00:33
+ End time:       0:02:41
+ Time to end:    0:02:08
+ Time per integration (ns):    18.642262495956572
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 312 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3120911808916016
+ Elapsed time:   0:00:33
+ End time:       0:02:41
+ Time to end:    0:02:07
+ Time per integration (ns):    18.442260208943097
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 313 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3068388311538921
+ Elapsed time:   0:00:33
+ End time:       0:02:41
+ Time to end:    0:02:07
+ Time per integration (ns):    18.439590847614330
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 314 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3078189170086909
+ Elapsed time:   0:00:33
+ End time:       0:02:41
+ Time to end:    0:02:07
+ Time per integration (ns):    18.413178250599369
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 315 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3103632190303889
+ Elapsed time:   0:00:33
+ End time:       0:02:41
+ Time to end:    0:02:07
+ Time per integration (ns):    19.123163419839685
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 316 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3094938422355840
+ Elapsed time:   0:00:34
+ End time:       0:02:41
+ Time to end:    0:02:07
+ Time per integration (ns):    19.032600257012000
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 317 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3059733354754375
+ Elapsed time:   0:00:34
+ End time:       0:02:41
+ Time to end:    0:02:07
+ Time per integration (ns):    18.887980405820279
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 318 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3031817386296516
+ Elapsed time:   0:00:34
+ End time:       0:02:41
+ Time to end:    0:02:07
+ Time per integration (ns):    18.620707664932304
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 319 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3044892417967764
+ Elapsed time:   0:00:34
+ End time:       0:02:41
+ Time to end:    0:02:07
+ Time per integration (ns):    18.517931029537255
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 320 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3112527861051559
+ Elapsed time:   0:00:34
+ End time:       0:02:41
+ Time to end:    0:02:07
+ Time per integration (ns):    18.966602519580512
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 321 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3102428993183548
+ Elapsed time:   0:00:34
+ End time:       0:02:41
+ Time to end:    0:02:07
+ Time per integration (ns):    18.803785720393794
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 322 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3023000699381753
+ Elapsed time:   0:00:34
+ End time:       0:02:41
+ Time to end:    0:02:06
+ Time per integration (ns):    18.607777914171319
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 323 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3052632258780441
+ Elapsed time:   0:00:34
+ End time:       0:02:41
+ Time to end:    0:02:06
+ Time per integration (ns):    18.647877542438277
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 324 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3179926935995609
+ Elapsed time:   0:00:34
+ End time:       0:02:41
+ Time to end:    0:02:06
+ Time per integration (ns):    17.505879329612718
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 325 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3050306261983817
+ Elapsed time:   0:00:35
+ End time:       0:02:41
+ Time to end:    0:02:06
+ Time per integration (ns):    18.988943256458587
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 326 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3068554820020943
+ Elapsed time:   0:00:35
+ End time:       0:02:41
+ Time to end:    0:02:06
+ Time per integration (ns):    19.031144559278147
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 327 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3019916632257136
+ Elapsed time:   0:00:35
+ End time:       0:02:41
+ Time to end:    0:02:06
+ Time per integration (ns):    18.818996391345372
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 328 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3089586725528415
+ Elapsed time:   0:00:35
+ End time:       0:02:41
+ Time to end:    0:02:06
+ Time per integration (ns):    18.795515955416025
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 329 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3065583668578054
+ Elapsed time:   0:00:35
+ End time:       0:02:41
+ Time to end:    0:02:06
+ Time per integration (ns):    18.824030526988238
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 330 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3087883609230100
+ Elapsed time:   0:00:35
+ End time:       0:02:41
+ Time to end:    0:02:06
+ Time per integration (ns):    18.801392979135340
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 331 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3033976257323234
+ Elapsed time:   0:00:35
+ End time:       0:02:41
+ Time to end:    0:02:06
+ Time per integration (ns):    18.692951373619419
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 332 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3096233498218275
+ Elapsed time:   0:00:35
+ End time:       0:02:41
+ Time to end:    0:02:05
+ Time per integration (ns):    19.174496533036226
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 333 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3064529473800564
+ Elapsed time:   0:00:35
+ End time:       0:02:41
+ Time to end:    0:02:05
+ Time per integration (ns):    18.526495631854708
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 334 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3099820126527630
+ Elapsed time:   0:00:36
+ End time:       0:02:41
+ Time to end:    0:02:05
+ Time per integration (ns):    18.205770751096313
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 335 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3102837373364129
+ Elapsed time:   0:00:36
+ End time:       0:02:41
+ Time to end:    0:02:05
+ Time per integration (ns):    19.058602659296778
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 336 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3069958733589628
+ Elapsed time:   0:00:36
+ End time:       0:02:41
+ Time to end:    0:02:05
+ Time per integration (ns):    18.557385161463475
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 337 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3021848081835590
+ Elapsed time:   0:00:36
+ End time:       0:02:41
+ Time to end:    0:02:05
+ Time per integration (ns):    17.626124216300138
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 338 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3115222038292862
+ Elapsed time:   0:00:36
+ End time:       0:02:41
+ Time to end:    0:02:05
+ Time per integration (ns):    17.303972004444088
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 339 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3087867708044960
+ Elapsed time:   0:00:36
+ End time:       0:02:41
+ Time to end:    0:02:05
+ Time per integration (ns):    17.331761502216295
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 340 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3104895337953022
+ Elapsed time:   0:00:36
+ End time:       0:02:41
+ Time to end:    0:02:05
+ Time per integration (ns):    17.597294880766889
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 341 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3059635173060122
+ Elapsed time:   0:00:36
+ End time:       0:02:41
+ Time to end:    0:02:04
+ Time per integration (ns):    18.526069679250540
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 342 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3053397586793600
+ Elapsed time:   0:00:36
+ End time:       0:02:41
+ Time to end:    0:02:04
+ Time per integration (ns):    18.843567986454357
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 343 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3043028386836992
+ Elapsed time:   0:00:36
+ End time:       0:02:41
+ Time to end:    0:02:04
+ Time per integration (ns):    19.000381441603729
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 344 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3093473106931635
+ Elapsed time:   0:00:37
+ End time:       0:02:41
+ Time to end:    0:02:04
+ Time per integration (ns):    19.188051545027381
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 345 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3108005056198428
+ Elapsed time:   0:00:37
+ End time:       0:02:41
+ Time to end:    0:02:04
+ Time per integration (ns):    19.070959016424066
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 346 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3118322824382305
+ Elapsed time:   0:00:37
+ End time:       0:02:41
+ Time to end:    0:02:04
+ Time per integration (ns):    19.212165271196582
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 347 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3128971583587310
+ Elapsed time:   0:00:37
+ End time:       0:02:41
+ Time to end:    0:02:04
+ Time per integration (ns):    18.873688091029901
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 348 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3100812053190194
+ Elapsed time:   0:00:37
+ End time:       0:02:41
+ Time to end:    0:02:04
+ Time per integration (ns):    18.820176347981711
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 349 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3120315576886683
+ Elapsed time:   0:00:37
+ End time:       0:02:41
+ Time to end:    0:02:04
+ Time per integration (ns):    18.932984609183887
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 350 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3092944082442577
+ Elapsed time:   0:00:37
+ End time:       0:02:41
+ Time to end:    0:02:04
+ Time per integration (ns):    18.759597590580643
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 351 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3066215544959474
+ Elapsed time:   0:00:37
+ End time:       0:02:41
+ Time to end:    0:02:03
+ Time per integration (ns):    18.912993864948721
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 352 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3040317732399231
+ Elapsed time:   0:00:37
+ End time:       0:02:41
+ Time to end:    0:02:03
+ Time per integration (ns):    17.679062678975313
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 353 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3089499309206767
+ Elapsed time:   0:00:38
+ End time:       0:02:41
+ Time to end:    0:02:03
+ Time per integration (ns):    18.691025362045760
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 354 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3083786529490464
+ Elapsed time:   0:00:38
+ End time:       0:02:41
+ Time to end:    0:02:03
+ Time per integration (ns):    18.773016811328219
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 355 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3023852891200094
+ Elapsed time:   0:00:38
+ End time:       0:02:41
+ Time to end:    0:02:03
+ Time per integration (ns):    18.530290187993145
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 356 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3055612746127265
+ Elapsed time:   0:00:38
+ End time:       0:02:41
+ Time to end:    0:02:03
+ Time per integration (ns):    19.029175617484956
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 357 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3036514975513100
+ Elapsed time:   0:00:38
+ End time:       0:02:41
+ Time to end:    0:02:03
+ Time per integration (ns):    18.908810542048734
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 358 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3073507744465112
+ Elapsed time:   0:00:38
+ End time:       0:02:41
+ Time to end:    0:02:03
+ Time per integration (ns):    18.706570231406271
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 359 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3086137276164380
+ Elapsed time:   0:00:38
+ End time:       0:02:41
+ Time to end:    0:02:03
+ Time per integration (ns):    18.426919294533640
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 360 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3144768543423369
+ Elapsed time:   0:00:38
+ End time:       0:02:41
+ Time to end:    0:02:02
+ Time per integration (ns):    19.051602586849143
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 361 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3034434784304547
+ Elapsed time:   0:00:38
+ End time:       0:02:41
+ Time to end:    0:02:02
+ Time per integration (ns):    18.496581490696254
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 362 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3094445805041073
+ Elapsed time:   0:00:39
+ End time:       0:02:41
+ Time to end:    0:02:02
+ Time per integration (ns):    19.137070732201529
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 363 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3068262773052046
+ Elapsed time:   0:00:39
+ End time:       0:02:41
+ Time to end:    0:02:02
+ Time per integration (ns):    18.536457334525434
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 364 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3071931100651073
+ Elapsed time:   0:00:39
+ End time:       0:02:41
+ Time to end:    0:02:02
+ Time per integration (ns):    17.450096149440576
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 365 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2983531874630296
+ Elapsed time:   0:00:39
+ End time:       0:02:41
+ Time to end:    0:02:02
+ Time per integration (ns):    18.665218794668032
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 366 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3037568847909404
+ Elapsed time:   0:00:39
+ End time:       0:02:41
+ Time to end:    0:02:02
+ Time per integration (ns):    18.610914528950314
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 367 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3072163957524714
+ Elapsed time:   0:00:39
+ End time:       0:02:41
+ Time to end:    0:02:02
+ Time per integration (ns):    18.378848079505957
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 368 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3093638213666718
+ Elapsed time:   0:00:39
+ End time:       0:02:41
+ Time to end:    0:02:02
+ Time per integration (ns):    18.627723968765963
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 369 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3064655439762318
+ Elapsed time:   0:00:39
+ End time:       0:02:41
+ Time to end:    0:02:02
+ Time per integration (ns):    18.782697620311943
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 370 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3090000113338791
+ Elapsed time:   0:00:39
+ End time:       0:02:41
+ Time to end:    0:02:01
+ Time per integration (ns):    18.770477513392816
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 371 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3082602801234080
+ Elapsed time:   0:00:40
+ End time:       0:02:41
+ Time to end:    0:02:01
+ Time per integration (ns):    17.521735730892406
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 372 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3074103024762034
+ Elapsed time:   0:00:40
+ End time:       0:02:41
+ Time to end:    0:02:01
+ Time per integration (ns):    18.783946137657072
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 373 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3096671915099596
+ Elapsed time:   0:00:40
+ End time:       0:02:41
+ Time to end:    0:02:01
+ Time per integration (ns):    19.224605438592391
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 374 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3116974204491647
+ Elapsed time:   0:00:40
+ End time:       0:02:41
+ Time to end:    0:02:01
+ Time per integration (ns):    19.137355704182781
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 375 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3032215192691867
+ Elapsed time:   0:00:40
+ End time:       0:02:41
+ Time to end:    0:02:01
+ Time per integration (ns):    18.579170486165218
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 376 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3062863375522977
+ Elapsed time:   0:00:40
+ End time:       0:02:41
+ Time to end:    0:02:01
+ Time per integration (ns):    18.762149451106758
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 377 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3090881210718628
+ Elapsed time:   0:00:40
+ End time:       0:02:41
+ Time to end:    0:02:01
+ Time per integration (ns):    18.879158613411242
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 378 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3055071890719463
+ Elapsed time:   0:00:40
+ End time:       0:02:41
+ Time to end:    0:02:01
+ Time per integration (ns):    18.883697877677946
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 379 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3144981285024837
+ Elapsed time:   0:00:40
+ End time:       0:02:41
+ Time to end:    0:02:00
+ Time per integration (ns):    19.015828743404906
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 380 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3132386100280873
+ Elapsed time:   0:00:41
+ End time:       0:02:41
+ Time to end:    0:02:00
+ Time per integration (ns):    18.884844876649208
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 381 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3060046338082680
+ Elapsed time:   0:00:41
+ End time:       0:02:41
+ Time to end:    0:02:00
+ Time per integration (ns):    18.385599692804515
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 382 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3064888151283156
+ Elapsed time:   0:00:41
+ End time:       0:02:41
+ Time to end:    0:02:00
+ Time per integration (ns):    18.695578164035943
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 383 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3069853276642907
+ Elapsed time:   0:00:41
+ End time:       0:02:41
+ Time to end:    0:02:00
+ Time per integration (ns):    18.472443283111623
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 384 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3064460853994284
+ Elapsed time:   0:00:41
+ End time:       0:02:41
+ Time to end:    0:02:00
+ Time per integration (ns):    18.506063322110272
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 385 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3042292431889397
+ Elapsed time:   0:00:41
+ End time:       0:02:41
+ Time to end:    0:02:00
+ Time per integration (ns):    18.648156135765397
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 386 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3118267308868587
+ Elapsed time:   0:00:41
+ End time:       0:02:41
+ Time to end:    0:02:00
+ Time per integration (ns):    18.515848159030490
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 387 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.2999526502439096
+ Elapsed time:   0:00:41
+ End time:       0:02:41
+ Time to end:    0:02:00
+ Time per integration (ns):    18.636691657144521
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 388 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3088085313532616
+ Elapsed time:   0:00:41
+ End time:       0:02:41
+ Time to end:    0:02:00
+ Time per integration (ns):    18.600740571099202
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 389 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3095176862900579
+ Elapsed time:   0:00:41
+ End time:       0:02:41
+ Time to end:    0:01:59
+ Time per integration (ns):    18.833307307110896
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 390 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3122792619444057
+ Elapsed time:   0:00:42
+ End time:       0:02:41
+ Time to end:    0:01:59
+ Time per integration (ns):    18.836717690022653
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 391 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3097846315485786
+ Elapsed time:   0:00:42
+ End time:       0:02:41
+ Time to end:    0:01:59
+ Time per integration (ns):    18.640172700197148
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 392 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3042511832771801
+ Elapsed time:   0:00:42
+ End time:       0:02:41
+ Time to end:    0:01:59
+ Time per integration (ns):    18.863804099686838
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 393 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3126176136667507
+ Elapsed time:   0:00:42
+ End time:       0:02:41
+ Time to end:    0:01:59
+ Time per integration (ns):    18.385055522241334
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 394 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3108297778163582
+ Elapsed time:   0:00:42
+ End time:       0:02:41
+ Time to end:    0:01:59
+ Time per integration (ns):    18.533050271479738
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 395 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3111094147920865
+ Elapsed time:   0:00:42
+ End time:       0:02:41
+ Time to end:    0:01:59
+ Time per integration (ns):    18.940247473469576
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 396 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3155529554368113
+ Elapsed time:   0:00:42
+ End time:       0:02:41
+ Time to end:    0:01:59
+ Time per integration (ns):    18.785181448773656
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 397 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3060232264046123
+ Elapsed time:   0:00:42
+ End time:       0:02:41
+ Time to end:    0:01:59
+ Time per integration (ns):    18.830776041086938
+ <((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  >
+
+ Iteration: 398 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3042921117527582
+ Elapsed time:   0:00:42
+ End time:       0:02:41
+ Time to end:    0:01:58
+ Time per integration (ns):    18.738444090335239
+ ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  
+
+ Iteration: 399 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3054950761846091
+ Elapsed time:   0:00:43
+ End time:       0:02:41
+ Time to end:    0:01:58
+ Time per integration (ns):    17.959121669181012
+  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*> 
+
+ Iteration: 400 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3083450538849095
+ Elapsed time:   0:00:43
+ End time:       0:02:41
+ Time to end:    0:01:58
+ Time per integration (ns):    17.341076392672178
+   ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>
+
+ Iteration: 401 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3106364260677736
+ Elapsed time:   0:00:43
+ End time:       0:02:41
+ Time to end:    0:01:58
+ Time per integration (ns):    18.699773755848611
+ >  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*
+
+ Iteration: 402 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3036030843308102
+ Elapsed time:   0:00:43
+ End time:       0:02:41
+ Time to end:    0:01:58
+ Time per integration (ns):    18.791452557196830
+ *>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((
+
+ Iteration: 403 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3125585639741566
+ Elapsed time:   0:00:43
+ End time:       0:02:41
+ Time to end:    0:01:58
+ Time per integration (ns):    18.742455678875285
+ (*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(((
+
+ Iteration: 404 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3071781109412561
+ Elapsed time:   0:00:43
+ End time:       0:02:41
+ Time to end:    0:01:58
+ Time per integration (ns):    18.855082575120424
+ ((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((
+
+ Iteration: 405 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3100229012109181
+ Elapsed time:   0:00:43
+ End time:       0:02:41
+ Time to end:    0:01:58
+ Time per integration (ns):    18.584872717114223
+ (((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><(
+
+ Iteration: 406 of 1500
+ Inactive iterations
+ Cell hit rate:   0.97560975609756095
+ keff:    1.3129427782021199
+ Elapsed time:   0:00:43
+ End time:       0:02:41
+ Time to end:    0:01:58
+ Time per integration (ns):    18.697524873671917
+ ((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><((((*>  ><
+
+ Iteration: 407 of 1500
+ Inactive iterations
