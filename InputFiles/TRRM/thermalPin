@@ -34,15 +34,15 @@ powerMap {type multiMap;
             zax { type spaceMap; axis z; grid lin; min -200.0; max 200.0; N 20;}
 }
 
-coupling {
-	receiveFile ;
-	sendFile ;
-	updateFreq ;
-	maxIt ;
-	tally ;
-	fieldPaths ;
-	fieldNames ;
-}
+!coupling {
+!	receiveFile ;
+!	sendFile ;
+!	updateFreq ;
+!	maxIt ;
+!	tally ;
+!	fieldPaths ;
+!	fieldNames ;
+!}
 
 
 geometry {
@@ -128,17 +128,17 @@ materials {
    
     fuel {
       temp (600 800 1000);
-      coldFile ../UO2Low;
-      medFile ../UO2Med;
-      hotFile ../UO2High;
+      coldFile UO2Low;
+      medFile UO2Med;
+      hotFile UO2High;
       composition { }
    }
 
     coolant {
       temp (500 600 700);
-      coldFile ../moderLow;
-      medFile ../moderMed;
-      hotFile ../moderHigh;
+      coldFile moderLow;
+      medFile moderMed;
+      hotFile moderHigh;
       composition { }
    }
 
