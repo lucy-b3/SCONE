@@ -10,6 +10,9 @@ module pieceConstantFieldFactory_func
   use pieceConstantField_inter, only : pieceConstantField
   use cartesianField_class,     only : cartesianField
 
+  ! Geometry
+  use geometryReg_mod,          only : gr_addField => addField
+
   implicit none
   private
 

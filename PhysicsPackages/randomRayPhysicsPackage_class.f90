@@ -20,6 +20,11 @@ module randomRayPhysicsPackage_class
                                              gr_fieldIdx => fieldIdx, gr_fieldPtr => fieldPtr
   use geometryFactory_func,           only : new_geometry
 
+  ! Fields
+  use field_inter,                    only : field
+  use pieceConstantField_inter,       only : pieceConstantField, pieceConstantField_CptrCast
+  use fieldFactory_func,              only : new_field
+
   ! Nuclear Data
   use nuclearDataReg_mod,             only : ndReg_init         => init, &
                                              ndReg_getMatNames  => getMatNames, &
@@ -36,6 +41,7 @@ module randomRayPhysicsPackage_class
   ! Tally map for fission rate
   use tallyMap_inter,                 only : tallyMap
   use tallyMapFactory_func,           only : new_tallyMap
+  use tallyAdmin_class,               only : tallyAdmin
 
   ! Random ray specific modules
   use dataRR_class,                   only : dataRR
@@ -44,6 +50,7 @@ module randomRayPhysicsPackage_class
 
   ! Random ray - or a standard particle
   use particle_class,                 only : ray => particle
+  use particleDungeon_class,          only : particleDungeon
 
   ! Coupling
   use couplingAdmin_class,            only : couplingAdmin
@@ -90,6 +97,7 @@ module randomRayPhysicsPackage_class
   !!
   !!     geometry {<Geometry Definition>}
   !!     nuclearData {<Nuclear data definition>}
+  !!     tally {<Tally definition>}
   !!   }
   !!
   !! Private Members
@@ -119,6 +127,8 @@ module randomRayPhysicsPackage_class
   !!   keff        -> Estimated value of keff
   !!   keffScore   -> Vector holding cumulative keff score and keff^2 score
   !!
+  !!   tally       -> Tally admin for outputting results
+  !!
   !!   intersectionsTotal -> Total number of ray traces for the calculation
   !!
   !! Interface:
@@ -135,6 +145,7 @@ module randomRayPhysicsPackage_class
     class(baseMgNeutronDatabase), pointer :: mgData      => null()
     integer(shortInt)                     :: nG          = 0
     integer(shortInt)                     :: nCells      = 0
+    type(tallyAdmin),pointer              :: tally       => null()
 
     ! Settings
     real(defReal)      :: termination = ZERO
@@ -330,17 +341,27 @@ contains
     call graphDict % get(graphType,'type')
     if (graphType /= 'extended') call fatalError(Here,&
             'Geometry graph type must be "extended" for random ray calculations.')
+
+    ! Initialise tally Admin
+    if (dict % isPresent('tally')) then
+      tempDict => dict % getDictPtr('tally')
+      allocate(self % tally)
+      call self % tally % init(tempDict)
+    end if
     
     ! Check whether there is an initial temperature map
-    ! If so, read and initialise the map to be used
-    self % mapTemp = self % geom % mapTemperature()
-    !if (dict % isPresent('temperature')) then
-    !  self % mapTemp = .true.
-    !  !tempDict => dict % getDictPtr('tempMap')
-    !  !call new_tallyMap(self % tempMap, tempDict)
-    !else
-    !  self % mapTemp = .false.
-    !end if
+    ! If present, build temperature field
+    if (dict % isPresent('temperature')) then
+      tempDict => dict % getDictPtr('temperature')
+      call new_field(tempDict, nameTemperature)
+      self % mapTemp = .true.
+      print *, "TEMPERATURE FIELD MADE"
+    end if
+
+    if (dict % isPresent('density')) then
+      tempDict => dict % getDictPtr('density')
+      call new_field(tempDict, nameDensity)
+    end if
 
     ! Check if the calculation is coupled
     if (dict % isPresent('coupling')) then
@@ -436,6 +457,7 @@ contains
     integer(longInt), save                        :: ints
     integer(longInt)                              :: intersections
     class(arraysRR), pointer                      :: arrayPtr
+    type(particleDungeon)      :: dummyDungeon            
     !$omp threadprivate(pRNG, r, ints)
 
     ! Reset and start timer
@@ -460,6 +482,8 @@ contains
         itInac = itInac + 1
       end if
       it = itInac + itAct
+
+      print *, "Iteration number: " // numToChar(it)
       
       ONE_KEFF = ONE / self % keff
       call arrayPtr % updateSource(ONE_KEFF, it)
@@ -506,6 +530,15 @@ contains
       if (isActive) then
         self % keffScore(1) = self % keffScore(1) + self % keff
         self % keffScore(2) = self % keffScore(2) + self % keff * self % keff
+      end if
+
+      ! Accumulate flux scores and tally results
+      if (isActive) then
+        call arrayPtr % accumulateFluxScores()
+        if (associated(self % tally)) then
+          call arrayPtr % tallyResults(self % tally)
+          call self % tally % reportCycleEnd(dummyDungeon)
+        end if
       end if
 
       ! Accumulate flux scores
@@ -557,6 +590,7 @@ contains
                 trim(numToChar(transport_T*10**9/(self % nG * intersections)))
       end if
       
+      print *, "About to start coupling"
       ! Perform coupling operations
       call self % couplingInfo % couple(i)
 
@@ -622,6 +656,14 @@ contains
     call out % startBlock(name)
     call out % printResult(self % keffScore(1), self % keffScore(2), name)
     call out % endBlock()
+
+    ! Print tally
+    if (associated(self % tally)) then
+      name = 'tally'
+      call out % startBlock(name)
+      call self % tally % print(out)
+      call out % endBlock()
+    end if
 
     outPtr => out
     ! Send fission rates to map output
@@ -711,6 +753,10 @@ contains
       call self % fluxMap % kill()
       deallocate(self % fluxMap)
     end if
+    if (associated(self % tally)) then
+      call self % tally % kill()
+      self % tally => null()
+    end if    
 
   end subroutine kill
 

@@ -14,12 +14,12 @@ printFlux 1 ;
 
 power 60000; !60kW per pin
 
-fissionMap {type multiMap;
-            maps (xax yax zax);
-            xax { type spaceMap; axis x; grid lin; min -0.63; max 0.63; N 1;}
-            yax { type spaceMap; axis y; grid lin; min -0.63; max 0.63; N 1;}
-            zax { type spaceMap; axis z; grid lin; min -200.0; max 200.0; N 20;}
-}
+!fissionMap {type multiMap;
+!            maps (xax yax zax);
+!            xax { type spaceMap; axis x; grid lin; min -0.63; max 0.63; N 1;}
+!            yax { type spaceMap; axis y; grid lin; min -0.63; max 0.63; N 1;}
+!            zax { type spaceMap; axis z; grid lin; min -200.0; max 200.0; N 20;}
+!}
 fluxMap {type multiMap;
             maps (xax yax zax);
             xax { type spaceMap; axis x; grid lin; min -0.63; max 0.63; N 1;}
@@ -34,14 +34,49 @@ powerMap {type multiMap;
             zax { type spaceMap; axis z; grid lin; min -200.0; max 200.0; N 20;}
 }
 
+!tally {
+!	 fissionMap {type rayClerk;
+!              map {type multiMap;
+!             maps (xax yax zax);
+!      xax { type spaceMap; axis x; grid lin; min -0.63; max 0.63; N 1;}
+!             yax { type spaceMap; axis y; grid lin; min -0.63; max 0.63; N 1;}
+!             zax { type spaceMap; axis z; grid lin; min -200.0; max 200.0; N 20;}
+!             }
+!        response (fiss);
+!        fiss { type macroResponse; MT -6; }
+!        }
+!
+
 coupling {
-	receiveFile commIn;
-	sendFile commOut;
-	updateFreq 5;
-	maxIt 10;
-	!tally ;
-	!fieldPaths ;
-	!fieldNames ;
+        receiveFile commIn;
+        sendFile commOut;
+        outputFile outputF;
+        updateFreq 1;
+        maxIt 50;
+
+        tally {
+            fissionMap {
+                type rayClerk;
+                map {
+                    type multiMap;
+                    maps (xax yax zax);
+
+                    xax { type spaceMap; axis x; grid lin; min -0.63; max 0.63; N 1;}
+                    yax { type spaceMap; axis y; grid lin; min -0.63; max 0.63; N 1;}
+                    zax { type spaceMap; axis z; grid lin; min -200.0; max 200.0; N 20;}
+                }
+
+                response (fiss);
+
+                fiss {
+                    type macroResponse;
+                    MT -6;
+                }
+            }
+        }
+
+        fieldPaths (../tempFile);
+        fieldNames (temperature);
 }
 
 

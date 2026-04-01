@@ -45,11 +45,6 @@ powerMap {type multiMap;
 !}
 
 
-geometry {
-    type geometryStd;
-    boundary (1 1 1 1 0 0);
-    graph {type extended;}
-
 temperature {type cartesianField;
              origin  (0 0 0);
              shape   (1 1 20);
@@ -59,6 +54,11 @@ temperature {type cartesianField;
              coolant ( 569 570 572 574 576 578 581 584 586 589 592 594 597 600 602 604 606 608 609 610 );
              default -1.0;
 }
+
+geometry {
+    type geometryStd;
+    boundary (1 1 1 1 0 0);
+    graph {type extended;}
 
     surfaces {
           squareBound        { id 3; type box; origin (0.0 0.0 0.0); halfwidth (0.63 0.63 200.0);}
@@ -95,29 +95,6 @@ temperature {type cartesianField;
     }
     }
 }
-
-
-!viz {
-!  myVTK {
-!    type vtk;
-!    what uniqueID;
-!    corner (-32.13 -32.13 -1.0);
-!    width (64.26 64.26 2.0);
-!    vox (2000 2000 1);
-!  }
-!  bmp1 {
-!    type bmp;
-!    output myGeometry;
-!    what uniqueID; ! Could also be material
-!    centre (0.0 0.0 0.0);
-!    !width (25.0 25.0); ! This is optional - SCONE should do the whole geometry by default, but you can zoom in by using this
-!    axis z; ! This is the perpendicular axis, so you'll get an xy plot
-!    res (1500 1500); !Resolution in x and y. Can be tuned to taste.
-!  }
-!}
-
-
-
 nuclearData {
   handles { 
     mg { type baseMgNeutronDatabase; PN P0;} 

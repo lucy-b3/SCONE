@@ -15,10 +15,15 @@ module arraysRR_class
   use coord_class,                    only : coordList
   use geometryStd_class,              only : geometryStd
 
+  use cartesianField_class,           only : cartesianField
+  use geometryReg_mod,                only : gr_geomPtr  => geomPtr, gr_geomIdx  => geomIdx, &
+                                             gr_fieldIdx => fieldIdx, gr_fieldPtr => fieldPtr
+
   ! Visualisation
   use tallyMap_inter,                 only : tallyMap
   use visualiser_class,               only : visualiser
   use particle_class,                 only : particle, particleState
+  use tallyAdmin_class,               only : tallyAdmin
   
   ! For locks
   use omp_lib
@@ -51,7 +56,7 @@ module arraysRR_class
   !!                     in results [nG * nCells, 2]
   !!
   !!   source      -> Array of sources [nG * nCells]
-  !!   fixedSource -> Array of fixed sources [nG * nCells]
+  !!   fixedSource -> Array of fixed sources [nG * nCell]
   !!   sourceIdx   -> Array of material indices containing fixed sources
   !!
   !!   volumeTracks  -> Array of sum of track lengths for computing volumes [nCells]
@@ -78,6 +83,7 @@ module arraysRR_class
     integer(shortInt)                     :: simulationType = 0
     
     logical(defBool)                      :: feedback     = .false. 
+    class(cartesianField), pointer        :: tempField    => null()
     
     ! Flux arrays
     real(defFlt), dimension(:), allocatable    :: scalarFlux
@@ -121,6 +127,7 @@ module arraysRR_class
     procedure :: getPowerScore
     procedure :: getPowerSD
     procedure :: getNG
+    procedure :: getVolume
     procedure :: getCellPos
     procedure :: hasHit
     procedure :: getCellHitRate
@@ -145,6 +152,9 @@ module arraysRR_class
     procedure :: finaliseFluxScores
     procedure :: calculateKeff
     procedure :: calculatePower
+
+    ! Tally results for use with MC tally machinery
+    procedure :: tallyResults    
 
     ! Output procedures
     procedure :: outputMap
@@ -193,6 +203,7 @@ contains
     logical(defBool), intent(in)                        :: mapTemp
     class(dictionary), pointer, intent(inout), optional :: dictFS
     integer(shortInt)                                   :: i
+    class(field), pointer                     :: fieldclass(field), pointer    :: field
     character(100), parameter :: Here = 'init (arraysRR_class.f90)'
 
     call self % XSData % init(db, doKinetics, ani, loud, mapTemp)
@@ -202,6 +213,10 @@ contains
     self % nCells      = self % geom % numberOfCells() 
 
     self % feedback = mapTemp
+    if (mapTemp) then
+      field => gr_fieldPtr(gr_fieldIdx('temperature')) ! Need to generalise
+      self % tempField => cartesianField_TptrCast(field)
+    end if
     
     self % lengthPerIt = lengthPerIt
     self % rho = real(rho, defFlt)
@@ -478,10 +493,12 @@ contains
   !!
   !! Return cell position given cell ID
   !!
-  function getCellPos(self, cIdx, g) result(x)
+  !function getCellPos(self, cIdx, g) result(x)
+
+  function getCellPos(self, cIdx) result(x)
     class(arraysRR), intent(in)   :: self
     integer(shortInt), intent(in) :: cIdx
-    integer(shortInt), intent(in) :: g
+    !integer(shortInt), intent(in) :: g
     real(defReal), dimension(3)   :: x
 
     x = self % cellPos(1:3, cIdx)
@@ -611,6 +628,18 @@ contains
   end function getNG
 
   !!
+  !! Return volume given cell ID
+  !!
+  elemental function getVolume(self, cIdx) result(vol)
+    class(arraysRR), intent(in)   :: self
+    integer(shortInt), intent(in) :: cIdx
+    real(defReal)                 :: vol
+
+    vol = self % volume(cIdx)
+
+  end function getVolume  
+
+  !!
   !! Set the OMP lock in a given cell
   !!
   subroutine setLock(self, cIdx) 
@@ -704,7 +733,8 @@ contains
       call s % coords % init(pos, dir)
       s % coords % matIdx = matIdx
       if (self % feedback) then
-        temp = self % geom % getTemperature(s % coords)
+        !temp = self % geom % getTemperature(s % coords)
+        temp = self % tempField % at(s % coords)
         !if (temp < 0.0) then
           !print *, temp
           !print *, pos
@@ -829,7 +859,8 @@ contains
       call s % coords % init(pos, dir)
       s % coords % matIdx = matIdx
       if (self % feedback) then
-        temp = self % geom % getTemperature(s % coords)
+        !temp = self % geom % getTemperature(s % coords)
+        temp = self % tempField % at(s % coords)
       end if
 
 
@@ -940,7 +971,8 @@ contains
         temp = self % XSData % getTemperature(matIdx,2)
         !print *, temp
       else
-        temp = self % geom % getTemperature(s % coords)
+        !temp = self % geom % getTemperature(s % coords)
+        temp = self % tempField % at(s % coords)
       end if
       !if (temp < 0.0) then
         !print *, temp
@@ -1102,7 +1134,8 @@ contains
     call s % coords % init(pos, dir)
     s % coords % matIdx = matIdx
     if (self % feedback) then
-      temp = self % geom % getTemperature(s % coords)
+      !temp = self % geom % getTemperature(s % coords)
+      temp = self % tempField % at(s % coords)
       !if (temp < 0.0) then
         !print *, temp
         !print *, pos
@@ -1241,6 +1274,57 @@ contains
 
     !print *, self % powerScores(1,:)
   end subroutine accumulateFluxScores
+
+  !!
+  !! Tallies flux-related results, using an input tallyAdmin.
+  !! Allows for use of MC tally machinery with RR, although limited
+  !! to relatively simple estimators.
+  !!
+  !! Loops over all phase space points, contributing each to tallies.
+  !!
+  !! Assumes the cycle will be ended afterwards.
+  !!
+  subroutine tallyResults(self, tally)
+    class(arraysRR), intent(in)                :: self
+    type(tallyAdmin), pointer, intent(inout)   :: tally
+    type(particle), save                       :: p
+    real(defReal), save                        :: vol
+    real(defReal), dimension(3), save          :: pos
+    integer(shortInt), save                    :: g, matIdx
+    real(defFlt), dimension(:), pointer, save :: fluxVec
+    integer(shortInt)                          :: i
+    !$omp threadprivate(p, vol, pos, g, matIdx, fluxVec)
+
+    !$omp parallel
+    call p % build([-INFINITY, -INFINITY, -INFINITY], [ONE, ZERO, ZERO], 1, ZERO, ZERO)
+    !$omp end parallel
+
+    !$omp parallel do
+    do i = 1, self % nCells
+
+      vol = self % getVolume(i)
+      pos = self % getCellPos(i)
+      call p % teleport(pos)
+
+      call self % getFluxPointer(i, fluxVec)
+      matIdx = self % geom % geom % graph % getMatFromUID(i) 
+      p % coords % matIdx = matIdx 
+
+      do g = 1, self % nG
+
+        ! The weight should be flux * V, which, for a single score in a tally
+        ! will produce SigmaX * flux * V or volume-integrated reaction rate.
+        p % w = fluxVec(g) * vol
+        p % G = g
+
+        call tally % reportInColl(p, .false.)
+
+      end do
+
+    end do
+    !$omp end parallel do
+
+  end subroutine tallyResults
   
   !!
   !! Finalise flux scores for stats
@@ -1341,7 +1425,8 @@ contains
      
       !i = map % map(s) 
       if (self % feedback) then
-        temp = self % geom % getTemperature(s % coords)
+        !temp = self % geom % getTemperature(s % coords)
+        temp = self % tempField % at(s % coords)
         !if (temp < 0.0) then
           !print *, temp
           !print *, pos
