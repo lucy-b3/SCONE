@@ -326,6 +326,8 @@ contains
     class(cartesianField), intent(inout) :: self
     
     call self % killSuper()
+    if(allocated(self % matIdxs)) deallocate(self % matIdxs)
+    if(allocated(self % val)) deallocate(self % val)
 
     self % pitch = ZERO
     self % sizeN = 0

@@ -11,6 +11,7 @@ module rayHandling_func
   use coord_class,                    only : coordList
   use geometry_inter,                 only : distCache
   use geometryStd_class,              only : geometryStd
+  use pieceConstantField_inter,       only : pieceConstantField
 
   ! Random ray modules
   use arraysRR_class,                 only : arraysRR
@@ -180,6 +181,7 @@ contains
     logical(defBool), intent(in)                          :: mapTemp
     class(dataRR), pointer                                :: XSData
     class(geometryStd), pointer                           :: geom
+    class(pieceConstantField), pointer                    :: tempField
     integer(shortInt)                                     :: matIdx, g, cIdx, event, matIdx0
     real(defReal)                                         :: totalLength, length
     logical(defBool)                                      :: activeRay, hitVacuum
@@ -192,6 +194,9 @@ contains
     
     XSData => arrays % getDataPointer()
     geom => arrays % getGeomPointer()
+    if (mapTemp) then
+      tempField => arrays % getTempPointer()
+    end if
 
     ! Set initial angular flux to angle average of cell source
     cIdx = r % coords % uniqueID
@@ -204,7 +209,8 @@ contains
     ! TODO: Use a more robust criterion, as for branching later
     if (matIdx <= XSData % getNMat()) then
       if (mapTemp) then
-        temp = geom % getTemperature(coords)
+        !temp = geom % getTemperature(coords)
+        temp = tempField % at(coords)
       end if
 
       do g = 1, nG
@@ -265,7 +271,8 @@ contains
       ! Standard route
       if (matIdx <= XSData % getNMat()) then
         if (mapTemp) then
-          temp = geom % getTemperature(coords)
+          !temp = geom % getTemperature(coords)
+          temp = tempField % at(coords)
         end if
         if ((matIdx < 1) .or. (matIdx > XSData % getNMat())) then
           print *, "matIdx = " // numToChar(matIdx) // " in rayHandling"

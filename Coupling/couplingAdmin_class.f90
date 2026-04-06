@@ -204,26 +204,17 @@ contains
     class(couplingAdmin), intent(inout) :: self
     integer(shortInt), intent(in)       :: it
 
-    print *, "Made it to coupling"
-
     if (.not. self % doCoupling()) return
-    print *, "doCoupling true"
     if (.not. self % doUpdate(it)) return
-    print *, "doUpdate true"
 
     call self % outputTallies()
     call self % tally % resetMemory()
     
     if (it < self % maxIt) then
-      print *, "not at maxIt"
       call self % signalIterationOver()
-      print *, "signal over"
       call self % waitForSignal()
-      print *, "waited for signal"
       call self % updateFields()
-      print *, "fields updated"
     else
-      print *, "at maxIt"
       call self % signalCalculationOver()
       self % isCoupled = .false.
     end if
@@ -278,8 +269,6 @@ contains
     class(field), pointer            :: ptr
     character(100), parameter :: Here = 'updateFields (couplingAdmin_class.f90)'
 
-    print *, "made it to update fields"
-
     ! Allocate dict once before using it
     if (.not.allocated(dict)) then
         allocate(dict)
@@ -287,10 +276,7 @@ contains
 
     do i = 1, size(self % fieldPaths)
       !print *, dict
-      print *, self % fieldPaths(i)
       call fileToDict(dict, self % fieldPaths(i))
-
-      print *, "file to dict completed"
 
       ! Obtain the pointer to the corresponding field.
       ! Reinitialise the field from the dictionary.
@@ -305,16 +291,10 @@ contains
           call fatalError(Here, 'Unrecognised field type requested')
       end select
 
-      print *, fieldName
-
       ptr => gr_fieldPtr(gr_fieldIdx(fieldName))
 
-      print *, "field pointer made"
-
       call ptr % kill()
-      print *, "field killed"
       call ptr % init(dict)
-      print *, "field made"
 
     end do
 
@@ -327,7 +307,6 @@ contains
     class(couplingAdmin), intent(in) :: self
     integer(shortInt)                :: unit
     
-    print *, "Making commOut"
     open(newunit=unit, file=self % commFileOut, status="replace", action="write")
     write(unit, '(A)') CONTINUE_SIGNAL
     close(unit)

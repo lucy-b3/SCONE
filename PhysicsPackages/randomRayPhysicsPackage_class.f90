@@ -355,7 +355,6 @@ contains
       tempDict => dict % getDictPtr('temperature')
       call new_field(tempDict, nameTemperature)
       self % mapTemp = .true.
-      print *, "TEMPERATURE FIELD MADE"
     end if
 
     if (dict % isPresent('density')) then
@@ -412,6 +411,7 @@ contains
     ! Store number of cells in geometry for convenience
     self % nCells = self % geom % numberOfCells()
 
+    !print *, "Initialising arrays"
     ! Initialise RR arrays and nuclear data
     call self % arrays % init(self % mgData, self % geom, &
             self % pop * (self % termination - self % dead), self % rho, lin, ani, .false., self % loud, self % mapTemp)
@@ -590,7 +590,6 @@ contains
                 trim(numToChar(transport_T*10**9/(self % nG * intersections)))
       end if
       
-      print *, "About to start coupling"
       ! Perform coupling operations
       call self % couplingInfo % couple(i)
 

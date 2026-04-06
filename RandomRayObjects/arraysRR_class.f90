@@ -15,7 +15,9 @@ module arraysRR_class
   use coord_class,                    only : coordList
   use geometryStd_class,              only : geometryStd
 
+  use field_inter,                    only : field
   use cartesianField_class,           only : cartesianField
+  use pieceConstantField_inter,       only : pieceConstantField, pieceConstantField_CptrCast
   use geometryReg_mod,                only : gr_geomPtr  => geomPtr, gr_geomIdx  => geomIdx, &
                                              gr_fieldIdx => fieldIdx, gr_fieldPtr => fieldPtr
 
@@ -83,7 +85,7 @@ module arraysRR_class
     integer(shortInt)                     :: simulationType = 0
     
     logical(defBool)                      :: feedback     = .false. 
-    class(cartesianField), pointer        :: tempField    => null()
+    class(pieceConstantField), pointer        :: tempField    => null()
     
     ! Flux arrays
     real(defFlt), dimension(:), allocatable    :: scalarFlux
@@ -118,6 +120,7 @@ module arraysRR_class
     ! Access procedures
     procedure :: getDataPointer
     procedure :: getGeomPointer
+    procedure :: getTempPointer
     procedure :: getSourcePointer
     procedure :: getFluxPointer
     procedure :: getSource
@@ -203,7 +206,7 @@ contains
     logical(defBool), intent(in)                        :: mapTemp
     class(dictionary), pointer, intent(inout), optional :: dictFS
     integer(shortInt)                                   :: i
-    class(field), pointer                     :: fieldclass(field), pointer    :: field
+    class(field), pointer                               :: field
     character(100), parameter :: Here = 'init (arraysRR_class.f90)'
 
     call self % XSData % init(db, doKinetics, ani, loud, mapTemp)
@@ -213,9 +216,10 @@ contains
     self % nCells      = self % geom % numberOfCells() 
 
     self % feedback = mapTemp
-    if (mapTemp) then
-      field => gr_fieldPtr(gr_fieldIdx('temperature')) ! Need to generalise
-      self % tempField => cartesianField_TptrCast(field)
+    if (self % feedback) then
+      print *, "Making field pointer"
+      field => gr_fieldPtr(gr_fieldIdx(nameTemperature)) ! Need to generalise
+      self % tempField => pieceConstantField_CptrCast(field)
     end if
     
     self % lengthPerIt = lengthPerIt
@@ -395,6 +399,18 @@ contains
     geomPtr => self % geom
 
   end function getGeomPointer
+
+  !!
+  !! Return a pointer to the geometry object
+  !!
+  function getTempPointer(self) result(tempPtr)
+    class(arraysRR), intent(in), target :: self
+    class(pieceConstantField), pointer         :: tempPtr
+
+    tempPtr => self % tempField
+
+  end function getTempPointer
+  
   
   !!
   !! Return a pointer to the source vector for a given cell
