@@ -191,6 +191,7 @@ contains
 
     ! Add the score
     thread_idx = ompGetThreadNum() + 1
+    !print *, thread_idx
     self % parallelBins(idx, thread_idx) = &
             self % parallelBins(idx, thread_idx) + score
 

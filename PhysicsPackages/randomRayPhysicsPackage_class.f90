@@ -417,6 +417,10 @@ contains
             self % pop * (self % termination - self % dead), self % rho, lin, ani, .false., self % loud, self % mapTemp)
 
     !print *, "End TRRM init"
+    ! Attach a tally admin for coupling
+    if (self % couplingInfo % doCoupling()) then
+      call self % couplingInfo % attachTally(self % tally)
+    end if
     
   end subroutine init
 
@@ -483,8 +487,6 @@ contains
       end if
       it = itInac + itAct
 
-      print *, "Iteration number: " // numToChar(it)
-      
       ONE_KEFF = ONE / self % keff
       call arrayPtr % updateSource(ONE_KEFF, it)
 
@@ -533,12 +535,17 @@ contains
       end if
 
       ! Accumulate flux scores and tally results
-      if (isActive) then
-        call arrayPtr % accumulateFluxScores()
-        if (associated(self % tally)) then
-          call arrayPtr % tallyResults(self % tally)
-          call self % tally % reportCycleEnd(dummyDungeon)
-        end if
+      !if (isActive) then
+        !call arrayPtr % accumulateFluxScores()
+        !if (associated(self % tally)) then
+          !call arrayPtr % tallyResults(self % tally)
+          !call self % tally % reportCycleEnd(dummyDungeon)
+          !end if
+      !end if
+
+      if (associated(self % tally)) then
+        call arrayPtr % tallyResults(self % tally)
+        call self % tally % reportCycleEnd(dummyDungeon)
       end if
 
       ! Accumulate flux scores
@@ -591,7 +598,7 @@ contains
       end if
       
       ! Perform coupling operations
-      call self % couplingInfo % couple(i)
+      call self % couplingInfo % couple(it)
 
     end do
 

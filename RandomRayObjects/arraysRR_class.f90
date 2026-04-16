@@ -1331,6 +1331,9 @@ contains
         ! The weight should be flux * V, which, for a single score in a tally
         ! will produce SigmaX * flux * V or volume-integrated reaction rate.
         p % w = fluxVec(g) * vol
+
+        !print *, (fluxVec(g) * vol)
+
         p % G = g
 
         call tally % reportInColl(p, .false.)

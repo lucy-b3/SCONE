@@ -254,6 +254,10 @@ contains
     integer(shortInt), intent(in)    :: it
     logical(defBool)                 :: update
 
+    !print *, it
+    !print *, self % updateFreq
+    !print *, mod(it, self % updateFreq)
+
     update = mod(it, self % updateFreq) == 0
 
   end function doUpdate
@@ -320,7 +324,6 @@ contains
     class(couplingAdmin), intent(in) :: self
     integer(shortInt)                :: unit
 
-    print *, "Making commOut"
     open(newunit=unit, file=self % commFileOut, status="replace", action="write")
     write(unit, '(A)') END_SIGNAL
     close(unit)
@@ -343,8 +346,10 @@ contains
       !call execute_command_line("pwd")
       ! Check for the presence of a signal file
       inquire(file=self % commFileIn, exist=exists)
+      !print *, exists
 
       if (exists) then
+        !print *, "FOUND COMMIN"
         ! Read and delete the communication file
         open(newunit=unit, file=self % commFileIn, status="old")
 
@@ -352,6 +357,7 @@ contains
 
         ! Check whether to continue iteration or end coupling
         if (trim(adjustl(line)) == END_SIGNAL) then
+          !print *, "End coupling signal received"
           self % isCoupled = .false.
         elseif (trim(adjustl(line)) /= CONTINUE_SIGNAL) then
           call fatalError(Here, 'Unrecognised signal: '//trim(adjustl(line)))
