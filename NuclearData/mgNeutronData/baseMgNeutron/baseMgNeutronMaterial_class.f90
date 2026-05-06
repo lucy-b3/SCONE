@@ -443,7 +443,6 @@ contains
   !!   stage. The following scatterKey are supported:
   !!     -> P0
   !!     -> P1
-  !! NEW INIT FROM PAUL
   subroutine init(self, dict, scatterKey)
     class(baseMgNeutronMaterial), intent(inout) :: self
     class(dictionary),target, intent(in)        :: dict
@@ -458,8 +457,11 @@ contains
     ! CHECK FOR hotFile and coldFile
     ! ERROR IF ONLY ONE IS PRESENT
     ! OTHERWISE SKIP TEMPERATURE STUFF
+    print *, "MADE IT TO BASEMG MATERIAL INIT"
 
     if (dict % isPresent('hotFile')) then
+
+      print *, "HOTFILE PRESENT"
 
       call dict % get(path,'hotFile')
       call fileToDict(tempDict, path)
@@ -511,6 +513,7 @@ contains
       ! GET REGULAR xsFile using pathToDict
       call dict % get(path,'xsFile')
       call fileToDict(tempDict, path)
+      print *, "MADE IT PASSED FILETODICT"
 
       ! Read number of groups
       call tempDict % get(nG, 'numberOfGroups')
