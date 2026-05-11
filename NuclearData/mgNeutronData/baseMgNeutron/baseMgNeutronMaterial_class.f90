@@ -457,7 +457,6 @@ contains
     ! CHECK FOR hotFile and coldFile
     ! ERROR IF ONLY ONE IS PRESENT
     ! OTHERWISE SKIP TEMPERATURE STUFF
-    print *, "MADE IT TO BASEMG MATERIAL INIT"
 
     if (dict % isPresent('hotFile')) then
 
@@ -513,7 +512,6 @@ contains
       ! GET REGULAR xsFile using pathToDict
       call dict % get(path,'xsFile')
       call fileToDict(tempDict, path)
-      print *, "MADE IT PASSED FILETODICT"
 
       ! Read number of groups
       call tempDict % get(nG, 'numberOfGroups')

@@ -342,14 +342,14 @@ contains
     character(100), parameter :: Here ='waitForSignal (couplingAdmin_class.f90)'
 
     do
-      !print *, "Looking for:", trim(self % commFileIn)
-      !call execute_command_line("pwd")
+      print *, "Looking for:", trim(self % commFileIn)
+      call execute_command_line("pwd")
       ! Check for the presence of a signal file
       inquire(file=self % commFileIn, exist=exists)
-      !print *, exists
+      print *, exists
 
       if (exists) then
-        !print *, "FOUND COMMIN"
+        print *, "FOUND COMMIN"
         ! Read and delete the communication file
         open(newunit=unit, file=self % commFileIn, status="old")
 

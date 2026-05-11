@@ -252,6 +252,7 @@ contains
     character(100), parameter :: Here = 'getMacroXSs_byP (mgNeutronMateerial_inter.f90)'
 
     if (.not. p % isMG) call fatalError(Here, 'CE particle was given to MG data')
+    if (.not. associated(p % pRNG)) call fatalError(Here, 'p%pRNG is not associated')
 
     ! Store p % matIdx() in a dedicated variable to avoid compilation errors with gfortran >= 13.2
     matIdx = p % matIdx()

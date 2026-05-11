@@ -1,8 +1,8 @@
 type randomRayPhysicsPackage; 
 
 pop      1750; 
-active   10;  
-inactive 10; 
+active   100;  
+inactive 100; 
 dead     20;  
 termination 220;  
 plot 1;
