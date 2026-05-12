@@ -194,8 +194,10 @@ contains
             self % matRR(m) % chi(g) = real(mat % getChi(g, rand),defFlt)
             ! Include scattering multiplicity
             do g1 = 1, self % nG
-              self % matRR(m) % sigmaS(((g - 1) * self % nG + (g1 - 1)) * self % nT + t)  = &
-                      real(mat % getScatterXS(g1, g, rand, t) * mat % getProd(g1, g, rand, t) , defFlt)
+              !self % matRR(m) % sigmaS(((g - 1) * self % nG + (g1 - 1)) * self % nT + t)  = &
+                      !real(mat % getScatterXS(g1, g, rand, t) * mat % getProd(g1, g, rand, t) , defFlt)
+              self % matRR(m) % sigmaS(((g1 - 1) * self % nG + (g - 1)) * self % nT + t) = &
+                      real(mat % getScatterXS(g1, g, rand, t) * mat % getProd(g1, g, rand, t), defFlt)
               !print *, "scattering stored"
               !print *, self % matRR(m) % sigmaS(((g - 1) * self % nG + (g1 - 1)) * self % nT + t)
             end do
@@ -644,7 +646,7 @@ contains
 
         !$omp simd
         do gIn = 1, self % nG
-          sigS(gIn) = m % sigmaS(self % nG * (gIn - 1) + gOut)
+          sigS(gIn) = m % sigmaS(self % nG * (gOut - 1) + gIn)
         end do
 
       end if
