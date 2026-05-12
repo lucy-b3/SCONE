@@ -1395,9 +1395,7 @@ contains
 
     end do
     !$omp end parallel do
-
-
-
+    
   end subroutine tallyResults
   
   !!
