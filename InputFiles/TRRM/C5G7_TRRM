@@ -5,7 +5,7 @@ active   100;
 inactive 100; 
 dead     20;  
 termination 220;  
-plot 1;
+!plot 1;
 cache 1;
 XSdata   mg; 
 dataType mg;
@@ -234,15 +234,15 @@ latCore
 
 }
 
-viz {
-  myVTK {
-    type vtk;
-    what uniqueID; 
-    corner (-32.13 -32.13 -1.0);
-    width (64.26 64.26 2.0);
-    vox (2000 2000 1);
-  }
-} 
+!viz {
+!  myVTK {
+!    type vtk;
+!    what uniqueID; 
+!    corner (-32.13 -32.13 -1.0);
+!    width (64.26 64.26 2.0);
+!    vox (2000 2000 1);
+!  }
+!} 
 
 
 nuclearData {
