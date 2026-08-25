@@ -158,6 +158,7 @@ contains
       ! Create a dummy RNG togetMacroXSs_byG satisfy the mgDatabase access interface
       call rand % init(1_longInt)
       if (loud) print *,'Initialising random ray nuclear data'
+      !print *, 'starting first material'
       do m = 1, self % nMat
         !print *, 'BEGINNING ' // mm_matName(m)
         matPtr  => db % getMaterial(m)
@@ -213,6 +214,7 @@ contains
       ! Create a dummy RNG togetMacroXSs_byG satisfy the mgDatabase access interface
       call rand % init(1_longInt)
       if (loud) print *,'Initialising random ray nuclear data'
+      !print *, 'no temp found'
       do m = 1, self % nMat
         matPtr  => db % getMaterial(m)
         mat     => baseMgNeutronMaterial_CptrCast(matPtr)
@@ -497,112 +499,189 @@ contains
     nuFiss => self % matRR(mIdx) % nuSigmaF(idx1:idx2)
 
   end subroutine getNuFissPointer
-  
-  !! Return nuFission XS in a given material and group
-  !!
-  function getNuFissXS(self, matIdx, temp) result(nuFiss)
-    class(dataRR), intent(in)     :: self
-    integer(shortInt), intent(in) :: matIdx
-    real(defFlt), optional, intent(in)      :: temp
-    real(defFlt), dimension(self % nG)       :: nuFiss
-    integer(shortInt)             :: mIdx,g, tIdx
 
-    if (matIdx > self % nMat) then
-      mIdx = self % nMat + 1
-    else
-      mIdx = matIdx
-    end if
-
-    associate (m => self % matRR(mIdx))
-      if (present (temp)) then
-        tIdx = 1 + merge(1, 0, (temp >= self % temperatures(mIdx,2) .and. temp <= self % temperatures(mIdx,3)))
-        !$omp simd
-        do g = 1, self % nG
-          nuFiss(g) = m % nuSigmaF((g - 1) * self % nT + tIdx) + &
-                    (((temp-self% temperatures(mIdx, tIdx))/(self % temperatures(mIdx, (tIdx+1))-self % temperatures(mIdx, tIdx))) &
-                    *(m  % nuSigmaF((g- 1) * self % nT + tIdx + 1)  - m % nuSigmaF((g- 1) * self % nT + tIdx)))
-        end do
+  !! Return nuFission XS in a given material and group 
+  !! 
+  function getNuFissXS(self, matIdx, temp) result(nuFiss) 
+    class(dataRR), intent(in)           :: self 
+    integer(shortInt), intent(in)       :: matIdx 
+    real(defFlt), optional, intent(in)  :: temp 
+    real(defFlt), dimension(self % nG)  :: nuFiss 
+    integer(shortInt)                   :: mIdx, g, tIdx 
+ 
+    if (matIdx > self % nMat) then 
+      mIdx = self % nMat + 1 
+    else 
+      mIdx = matIdx 
+    end if 
+ 
+    associate (m => self % matRR(mIdx)) 
+      if (present(temp)) then 
+ 
+        if (temp < self % temperatures(mIdx,1)) then 
+ 
+          !$omp simd
+          do g = 1, self % nG
+            nuFiss(g) = m % nuSigmaF((g - 1) * self % nT + 1)
+          end do
+ 
+        else if (temp > self % temperatures(mIdx,3)) then 
+ 
+          !$omp simd
+          do g = 1, self % nG
+            nuFiss(g) = m % nuSigmaF((g - 1) * self % nT + 3)
+          end do
+ 
+        else
+ 
+          tIdx = 1 + merge(1, 0, temp > self % temperatures(mIdx,2))
+ 
+          !$omp simd
+          do g = 1, self % nG
+            nuFiss(g) = m % nuSigmaF((g - 1) * self % nT + tIdx) + &
+                        ((temp - self % temperatures(mIdx,tIdx)) / &
+                         (self % temperatures(mIdx,tIdx+1) - &
+                          self % temperatures(mIdx,tIdx))) * &
+                        (m % nuSigmaF((g - 1) * self % nT + tIdx+1) - &
+                         m % nuSigmaF((g - 1) * self % nT + tIdx))
+          end do
+ 
+        end if
+ 
       else
+ 
         !$omp simd
         do g = 1, self % nG
           nuFiss(g) = m % nuSigmaF(g)
-        end do 
+        end do
+ 
       end if
     end associate
-
+ 
   end function getNuFissXS
-  
-  !!
-  !! Return fission XS in a given material and group
-  !!
-  function getFissionXS(self, matIdx, temp) result(sigF)
-    class(dataRR), intent(in)     :: self
-    integer(shortInt), intent(in) :: matIdx
-    real(defFlt), optional, intent(in)      :: temp
-    real(defFlt), dimension(self % nG)       :: sigF
-    integer(shortInt)             :: mIdx,g, tIdx
 
-    if (matIdx > self % nMat) then
-      mIdx = self % nMat + 1
-    else
-      mIdx = matIdx
-    end if
-
-    associate (m => self % matRR(mIdx))
-      if (present (temp)) then
-        tIdx = 1 + merge(1, 0, (temp >= self % temperatures(mIdx,2) .and. temp <= self % temperatures(mIdx,3)))
-        !$omp simd
-        do g = 1, self % nG
-          sigF(g) = m % sigmaF((g - 1) * self % nT + tIdx) + &
-                    (((temp-self% temperatures(mIdx, tIdx))/(self % temperatures(mIdx, (tIdx+1))-self % temperatures(mIdx, tIdx))) &
-                    *(m  % sigmaF((g- 1) * self % nT + tIdx +1)  - m % sigmaF((g- 1) * self % nT + tIdx)))
-        end do
+  !! 
+  !! Return fission XS in a given material and group 
+  !! 
+  function getFissionXS(self, matIdx, temp) result(sigF) 
+    class(dataRR), intent(in)           :: self 
+    integer(shortInt), intent(in)       :: matIdx 
+    real(defFlt), optional, intent(in)  :: temp 
+    real(defFlt), dimension(self % nG)  :: sigF 
+    integer(shortInt)                   :: mIdx, g, tIdx 
+ 
+    if (matIdx > self % nMat) then 
+      mIdx = self % nMat + 1 
+    else 
+      mIdx = matIdx 
+    end if 
+ 
+    associate (m => self % matRR(mIdx)) 
+      if (present(temp)) then 
+ 
+        if (temp < self % temperatures(mIdx,1)) then 
+ 
+          !$omp simd
+          do g = 1, self % nG
+            sigF(g) = m % sigmaF((g - 1) * self % nT + 1)
+          end do
+ 
+        else if (temp > self % temperatures(mIdx,3)) then 
+ 
+          !$omp simd
+          do g = 1, self % nG
+            sigF(g) = m % sigmaF((g - 1) * self % nT + 3)
+          end do
+ 
+        else
+ 
+          tIdx = 1 + merge(1, 0, temp > self % temperatures(mIdx,2))
+ 
+          !$omp simd
+          do g = 1, self % nG
+            sigF(g) = m % sigmaF((g - 1) * self % nT + tIdx) + &
+                      ((temp - self % temperatures(mIdx,tIdx)) / &
+                       (self % temperatures(mIdx,tIdx+1) - &
+                        self % temperatures(mIdx,tIdx))) * &
+                      (m % sigmaF((g - 1) * self % nT + tIdx+1) - &
+                       m % sigmaF((g - 1) * self % nT + tIdx))
+          end do
+ 
+        end if
+ 
       else
+ 
         !$omp simd
         do g = 1, self % nG
           sigF(g) = m % sigmaF(g)
         end do
+ 
       end if
     end associate
-    
+ 
   end function getFissionXS
 
-  !! Return total XS in a given material and group
-  !!
-  function getTotalXS(self, matIdx, temp) result(sigT)
-    !print *, sigT
-    class(dataRR), intent(in)     :: self
-    integer(shortInt), intent(in) :: matIdx
-    real(defFlt), optional, intent(in)      :: temp
-    real(defFlt), dimension(self % nG)       :: sigT
-    integer(shortInt)             :: mIdx,g, tIdx
 
-    if (matIdx > self % nMat) then
-      mIdx = self % nMat + 1
-    else
-      mIdx = matIdx
-    end if
+  !! Return total XS in a given material and group 
+  !! 
+  function getTotalXS(self, matIdx, temp) result(sigT) 
+    class(dataRR), intent(in)          :: self 
+    integer(shortInt), intent(in)     :: matIdx 
+    real(defFlt), optional, intent(in) :: temp 
+    real(defFlt), dimension(self % nG) :: sigT 
+    integer(shortInt)                  :: mIdx, g, tIdx 
+ 
+    if (matIdx > self % nMat) then 
+      mIdx = self % nMat + 1 
+    else 
+      mIdx = matIdx 
+    end if 
+ 
+    associate (m => self % matRR(mIdx)) 
+      if (present(temp)) then 
 
-    associate (m => self % matRR(mIdx))
-      if (present (temp)) then
-        tIdx = 1 + merge(1, 0, (temp >= self % temperatures(mIdx,2) .and. temp <= self % temperatures(mIdx,3)))
-        !$omp simd
-        do g = 1, self % nG
-          sigT(g) = m % sigmaT((g - 1) * self % nT + tIdx) + &
-                    (((temp-self% temperatures(mIdx, tIdx))/(self % temperatures(mIdx, (tIdx+1))-self % temperatures(mIdx, tIdx))) &
-                    *(m  % sigmaT((g- 1) * self % nT + (tIdx+1))  - m % sigmaT((g- 1) * self % nT + tIdx)))
-        end do
+        if (temp < self % temperatures(mIdx,1)) then 
+
+          !$omp simd
+          do g = 1, self % nG
+            sigT(g) = m % sigmaT((g - 1) * self % nT + 1)
+          end do
+
+        else if (temp > self % temperatures(mIdx,3)) then 
+
+          !$omp simd
+          do g = 1, self % nG
+            sigT(g) = m % sigmaT((g - 1) * self % nT + 3)
+          end do
+
+        else
+
+          tIdx = 1 + merge(1, 0, temp > self % temperatures(mIdx,2))
+
+          !$omp simd
+          do g = 1, self % nG
+            sigT(g) = m % sigmaT((g - 1) * self % nT + tIdx) + &
+                      ((temp - self % temperatures(mIdx,tIdx)) / &
+                       (self % temperatures(mIdx,tIdx+1) - &
+                        self % temperatures(mIdx,tIdx))) * &
+                      (m % sigmaT((g - 1) * self % nT + tIdx+1) - &
+                       m % sigmaT((g - 1) * self % nT + tIdx))
+          end do
+
+        end if
+
       else
+
         !$omp simd
         do g = 1, self % nG
           sigT(g) = m % sigmaT(g)
         end do
+
       end if
     end associate
 
-
   end function getTotalXS
-  
+
   !!
   !! Return scatter XS in a given material, ingoing group, and outgoing group
   !!
@@ -626,21 +705,43 @@ contains
 
       if (present(temp)) then
 
-        tIdx = 1 + merge(1,0, &
-               (temp >= self % temperatures(mIdx,2) .and. &
-                temp <= self % temperatures(mIdx,3)))
+        if (temp < self % temperatures(mIdx,1)) then
 
-        !$omp simd
-        do gIn = 1, self % nG
+          !$omp simd
+          do gIn = 1, self % nG
+            sigS(gIn) = m % sigmaS(((gIn - 1) * self % nG + (gOut - 1)) * &
+                                   self % nT + 1)
+          end do
 
-          sigS(gIn) = &
-            m % sigmaS(((gIn - 1) * self % nG + (gOut - 1)) * self % nT + tIdx) &
-            + ((temp - self % temperatures(mIdx,tIdx)) &
-            /  (self % temperatures(mIdx,tIdx+1) - self % temperatures(mIdx,tIdx))) &
-            * (m % sigmaS(((gIn - 1) * self % nG + (gOut - 1)) * self % nT + tIdx + 1) &
-            -  m % sigmaS(((gIn - 1) * self % nG + (gOut - 1)) * self % nT + tIdx))
+        else if (temp > self % temperatures(mIdx,3)) then
 
-        end do
+          !$omp simd
+          do gIn = 1, self % nG
+            sigS(gIn) = m % sigmaS(((gIn - 1) * self % nG + (gOut - 1)) * &
+                                   self % nT + 3)
+          end do
+
+        else
+
+          tIdx = 1 + merge(1, 0, temp > self % temperatures(mIdx,2))
+
+          !$omp simd
+          do gIn = 1, self % nG
+
+            sigS(gIn) = &
+              m % sigmaS(((gIn - 1) * self % nG + (gOut - 1)) * &
+                         self % nT + tIdx) &
+              + ((temp - self % temperatures(mIdx,tIdx)) / &
+                 (self % temperatures(mIdx,tIdx+1) - &
+                  self % temperatures(mIdx,tIdx))) &
+              * (m % sigmaS(((gIn - 1) * self % nG + (gOut - 1)) * &
+                             self % nT + tIdx + 1) &
+                 - m % sigmaS(((gIn - 1) * self % nG + (gOut - 1)) * &
+                               self % nT + tIdx))
+
+          end do
+
+        end if
 
       else
 
@@ -654,6 +755,7 @@ contains
     end associate
 
   end function getScatterXS
+  
 
   !!
   !! Return chi in a given material
