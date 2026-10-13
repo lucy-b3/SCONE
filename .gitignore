@@ -10,3 +10,5 @@ build
 # Ignore all hidden files (except gitignore)
 .*
 !/.gitignore
+*.vtk
+*.npy
