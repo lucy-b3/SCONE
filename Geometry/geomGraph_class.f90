@@ -351,6 +351,7 @@ contains
       if (fill > 0) then ! It is material filling
         cells = cells + 1
         self % array(i) % id = cells
+        !print *, fill
         call matSet % add(fill, 1)
 
       end if

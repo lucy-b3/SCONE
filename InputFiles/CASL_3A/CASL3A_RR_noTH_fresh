@@ -1,0 +1,597 @@
+!!
+!! CASL Benchmark 3A
+!! A 3D assembly with detailed spacer grids
+!!
+
+type randomRayPhysicsPackage;
+
+pop      75000;
+active   200;
+inactive  100;
+dead       40;
+termination 440;
+plot 0;
+cache 1;
+XSdata   mg;
+dataType mg;
+outputFile CASL3A;
+!printFlux 1 ;
+lin 0;
+
+power 1.734e7; !60kW per pin, also used in the coupling tally as norm
+
+geometry {
+  type geometryStd;
+  boundary ( 1 1 1 1 0 0);
+  graph {type extended;}
+  
+  surfaces{
+	boundary {id 1; type box; origin (0 0 204.4685); halfwidth (10.71 10.71 259.4685);}
+	!boundary {id 1; type box; origin (0 0 204.4685); halfwidth (10.75 10.75 259.4685);}
+    gridInter {id 2; type zSquareCylinder; origin (0.0 0.0 0.0); halfwidth (0.605488 0.605488 0.0);}
+    gridEnds {id 3; type zSquareCylinder; origin (0.0 0.0 0.0); halfwidth (0.607548 0.607548 0.0);}
+
+    lowerCorePlateBottom {id 101; type zPlane; z0 -5.000;}
+    lowerNozzleBottom {id 102; type zPlane; z0 0.000;}
+    lowerNozzleTop {id 103; type zPlane; z0 6.053;}
+    bottomGuidesTop {id 104; type zPlane; z0 10.281;}
+    bottomPlugsTop {id 105; type zPlane; z0 11.951;}
+    bottomGridTop {id 106; type zPlane; z0 15.817;}
+    grid6Bottom {id 107; type zPlane; z0 73.295;}
+    grid6Top {id 108; type zPlane; z0 77.105;}
+    grid5Bottom {id 109; type zPlane; z0 125.495;}
+    grid5Top {id 110; type zPlane; z0 129.305;}
+    grid4Bottom {id 111; type zPlane; z0 177.695;}
+    grid4Top {id 112; type zPlane; z0 181.505;}
+    grid3Bottom {id 113; type zPlane; z0 229.895;}
+    grid3Top {id 114; type zPlane; z0 233.705;}
+    grid2Bottom {id 115; type zPlane; z0 282.095;}
+    grid2Top {id 116; type zPlane; z0 285.905;}
+    grid1Bottom {id 117; type zPlane; z0 334.295;}
+    grid1Top {id 118; type zPlane; z0 338.105;}
+    fuelTop {id 119; type zPlane; z0 377.711;}
+    topGridBottom {id 120; type zPlane; z0 386.267;}
+    topGridTop {id 121; type zPlane; z0 390.133;}
+    plenumTop {id 122; type zPlane; z0 393.711;}
+    topPlugsTop {id 123; type zPlane; z0 395.381;}
+    upperNozzleBottom {id 124; type zPlane; z0 397.510;}
+    upperNozzleTop {id 125; type zPlane; z0 406.337;}
+    upperPlateTop {id 126; type zPlane; z0 413.937;}
+  
+  }
+  
+  
+  cells{
+    lowerRefl {id 79; type simpleCell; surfaces (-101); filltype uni; universe 700;}
+    lowerPlate {id 80; type simpleCell; surfaces (-102 101); filltype uni; universe 701;}
+    bottomNozzle {id 81; type simpleCell; surfaces (-103 102); filltype uni; universe 702;}
+    bottomGuides {id 82; type simpleCell; surfaces (-104 103); filltype uni; universe 703;}
+    bottomPlugs {id 83; type simpleCell; surfaces (-105 104); filltype uni; universe 704;}
+    bottomGrid {id 84; type simpleCell; surfaces (-106 105); filltype uni; universe 705;}
+    fuel1 {id 85; type simpleCell; surfaces (-107 106); filltype uni; universe 706;}
+    grid6 {id 86; type simpleCell; surfaces (-108 107); filltype uni; universe 707;}
+    fuel2 {id 87; type simpleCell; surfaces (-109 108); filltype uni; universe 708;}
+    grid5 {id 88; type simpleCell; surfaces (-110 109); filltype uni; universe 707;}
+    fuel3 {id 89; type simpleCell; surfaces (-111 110); filltype uni; universe 708;}
+    grid4 {id 90; type simpleCell; surfaces (-112 111); filltype uni; universe 707;}
+    fuel4 {id 91; type simpleCell; surfaces (-113 112); filltype uni; universe 708;}
+    grid3 {id 92; type simpleCell; surfaces (-114 113); filltype uni; universe 707;}
+    fuel5 {id 93; type simpleCell; surfaces (-115 114); filltype uni; universe 708;}
+    grid2 {id 94; type simpleCell; surfaces (-116 115); filltype uni; universe 707;}
+    fuel6 {id 95; type simpleCell; surfaces (-117 116); filltype uni; universe 708;}
+    grid1 {id 96; type simpleCell; surfaces (-118 117); filltype uni; universe 707;}
+    fuel7 {id 97; type simpleCell; surfaces (-119 118); filltype uni; universe 718;}
+    plenum1 {id 98; type simpleCell; surfaces (-120 119); filltype uni; universe 720;}
+    topGrid {id 99; type simpleCell; surfaces (-121 120); filltype uni; universe 719;}
+    plenum2 {id 100; type simpleCell; surfaces (-122 121); filltype uni; universe 725;}
+    topPlugs {id 101; type simpleCell; surfaces (-123 122); filltype uni; universe 721;}
+    topGuides {id 102; type simpleCell; surfaces (-124 123); filltype uni; universe 722;}
+    topNozzle {id 103; type simpleCell; surfaces (-125 124); filltype uni; universe 723;}
+    upperPlate {id 104; type simpleCell; surfaces (-126 125); filltype uni; universe 724;}
+    upperRefl {id 105; type simpleCell; surfaces (126); filltype uni; universe 726;}
+
+	zircGrid {id 4; type simpleCell; surfaces (2); filltype mat; material Zircaloy;}
+    incGrid {id 5; type simpleCell; surfaces (3); filltype mat; material Inconel;}
+    zircWater {id 6; type simpleCell; surfaces (-2); filltype mat; material Water;}
+    incWater {id 7; type simpleCell; surfaces (-3); filltype mat; material Water;}
+	
+	}
+  
+  universes{
+  
+    zircChannel {id 8; type cellUniverse; cells (4 6);}
+    incChannel {id 9; type cellUniverse; cells (5 7);}
+
+    fuelPinIGrid {id 140; type azimPinUniverse; naz 8; radii (0.4096 0.418 0.475 0.0); fills (UO2 Gap Zircaloy u<9>);}
+    fuelPinZGrid {id 141; type azimPinUniverse; naz 8; radii (0.4096 0.418 0.475 0.0); fills (UO2 Gap Zircaloy u<8>);}
+    fuelPinWater {id 142; type azimPinUniverse; naz 8; radii (0.4096 0.418 0.475 0.0); fills (UO2 Gap Zircaloy Water);}
+
+    plugPin {id 20; type azimPinUniverse; naz 8; radii (0.475 0.0); fills (Zircaloy Water);}
+
+    plenumFuelIgrid {id 30; type azimPinUniverse; naz 8; radii (0.418 0.475 0); fills (Gap Zircaloy u<9>);}
+    plenumFuelZGrid {id 31; type azimPinUniverse; naz 8; radii (0.418 0.475 0); fills (Gap Zircaloy u<8>);}
+    plenumFuelWater {id 32; type azimPinUniverse; naz 8; radii (0.418 0.475 0); fills (Gap Zircaloy Water);}
+
+    guideTubeIgrid {id 40; type azimPinUniverse; naz 8; radii (0.561 0.602 0.0); fills (Water Zircaloy u<9>);}
+    guideTubeZgrid {id 41; type azimPinUniverse; naz 8; radii (0.561 0.602 0.0); fills (Water Zircaloy u<8>);}
+    guideTubeWater {id 42; type azimPinUniverse; naz 8; radii (0.561 0.602 0.0); fills (Water Zircaloy Water);}
+
+    instTubeIGrid {id 90; type azimPinUniverse; naz 8; radii (0.561 0.602 0.0); fills (Water Zircaloy u<9>);}
+    instTubeZGrid {id 91; type azimPinUniverse; naz 8; radii (0.561 0.602 0.0); fills (Water Zircaloy u<8>);}
+    instTubeWater {id 92; type azimPinUniverse; naz 8; radii (0.561 0.602 0.0); fills (Water Zircaloy Water);}
+
+    waterIGrid {id 980; type azimPinUniverse; naz 8; radii (0.0); fills (u<9>);}
+    waterZGrid {id 981; type azimPinUniverse; naz 8; radii (0.0); fills (u<8>);}
+    water {id 982; type azimPinUniverse; naz 8; radii (0.0); fills (Water);}
+
+    corePlatePin {id 100; type azimPinUniverse; naz 8; radii (0.0); fills (CorePlates);}
+    TopNozzlePin {id 110; type azimPinUniverse; naz 8; radii (0.0); fills (TopNozzle);}
+    BottomNozzlePin {id 120; type azimPinUniverse; naz 8; radii (0.0); fills (BottomNozzle);}
+	
+	reflector {
+      id 600;
+      type latUniverse;
+      pitch (1.26 1.26 0);
+      padMat Water;
+      shape (17 17 0);
+      map (
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      );
+    }
+	
+    corePlate {
+      id 610;
+      type latUniverse;
+      pitch (1.26 1.26 0);
+      padMat Water;
+      shape (17 17 0);
+      map (
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
+      );
+    }
+	
+    topNozzles {
+      id 620;
+      type latUniverse;
+      pitch (1.26 1.26 0);
+      padMat Water;
+      shape (17 17 0);
+      map (
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110 110
+      );
+    }
+	
+    bottomNozzles {
+      id 630;
+      type latUniverse;
+      pitch (1.26 1.26 0);
+      padMat Water;
+      shape (17 17 0);
+      map (
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120 120
+      );
+    }
+	
+    fuelPlenumIGrid {
+      id 310;
+      type latUniverse;
+      pitch (1.26 1.26 0);
+      padMat Water;
+      shape (17 17 0);
+      map (
+      30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+      30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+      30 30 30 30 30 40 30 30 40 30 30 40 30 30 30 30 30
+      30 30 30 40 30 30 30 30 30 30 30 30 30 40 30 30 30
+      30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+      30 30 40 30 30 40 30 30 40 30 30 40 30 30 40 30 30
+      30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+      30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+      30 30 40 30 30 40 30 30 90 30 30 40 30 30 40 30 30
+      30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+      30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+      30 30 40 30 30 40 30 30 40 30 30 40 30 30 40 30 30
+      30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+      30 30 30 40 30 30 30 30 30 30 30 30 30 40 30 30 30
+      30 30 30 30 30 40 30 30 40 30 30 40 30 30 30 30 30
+      30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+      30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+      );
+    }
+
+    fuelPlenumZGrid {
+      id 311;
+      type latUniverse;
+      pitch (1.26 1.26 0);
+      padMat Water;
+      shape (17 17 0);
+      map (
+      31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31
+      31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31
+      31 31 31 31 31 41 31 31 41 31 31 41 31 31 31 31 31
+      31 31 31 41 31 31 31 31 31 31 31 31 31 41 31 31 31
+      31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31
+      31 31 41 31 31 41 31 31 41 31 31 41 31 31 41 31 31
+      31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31
+      31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31
+      31 31 41 31 31 41 31 31 91 31 31 41 31 31 41 31 31
+      31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31
+      31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31
+      31 31 41 31 31 41 31 31 41 31 31 41 31 31 41 31 31
+      31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31
+      31 31 31 41 31 31 31 31 31 31 31 31 31 41 31 31 31
+      31 31 31 31 31 41 31 31 41 31 31 41 31 31 31 31 31
+      31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31
+      31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31
+      );
+    }
+	
+    fuelPlenumWater {
+      id 312;
+      type latUniverse;
+      pitch (1.26 1.26 0);
+      padMat Water;
+      shape (17 17 0);
+      map (
+      32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32
+      32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32
+      32 32 32 32 32 42 32 32 42 32 32 42 32 32 32 32 32
+      32 32 32 42 32 32 32 32 32 32 32 32 32 42 32 32 32
+      32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32
+      32 32 42 32 32 42 32 32 42 32 32 42 32 32 42 32 32
+      32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32
+      32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32
+      32 32 42 32 32 42 32 32 92 32 32 42 32 32 42 32 32
+      32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32
+      32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32
+      32 32 42 32 32 42 32 32 42 32 32 42 32 32 42 32 32
+      32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32
+      32 32 32 42 32 32 32 32 32 32 32 32 32 42 32 32 32
+      32 32 32 32 32 42 32 32 42 32 32 42 32 32 32 32 32
+      32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32
+      32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32
+      );
+    }
+	
+	
+    spaceBelowNozzles {
+      id 320;
+      type latUniverse;
+      pitch (1.26 1.26 0);
+      padMat Water;
+      shape (17 17 0);
+      map (
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 42  982 982 42  982 982 42  982 982 982 982 982
+      982 982 982 42  982 982 982 982 982 982 982 982 982 42  982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 42  982 982 42  982 982 42  982 982 42  982 982 42  982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 42  982 982 42  982 982 42  982 982 42  982 982 42  982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 42  982 982 42  982 982 42  982 982 42  982 982 42  982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 42  982 982 982 982 982 982 982 982 982 42  982 982 982
+      982 982 982 982 982 42  982 982 42  982 982 42  982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982 982
+      );
+    }
+    
+    topPlugs {
+      id 350;
+      type latUniverse;
+      pitch (1.26 1.26 0);
+      padMat Water;
+      shape (17 17 0);
+      map (
+      20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
+      20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
+      20 20 20 20 20 42 20 20 42 20 20 42 20 20 20 20 20
+      20 20 20 42 20 20 20 20 20 20 20 20 20 42 20 20 20
+      20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
+      20 20 42 20 20 42 20 20 42 20 20 42 20 20 42 20 20
+      20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
+      20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
+      20 20 42 20 20 42 20 20 92 20 20 42 20 20 42 20 20
+      20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
+      20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
+      20 20 42 20 20 42 20 20 42 20 20 42 20 20 42 20 20
+      20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
+      20 20 20 42 20 20 20 20 20 20 20 20 20 42 20 20 20
+      20 20 20 20 20 42 20 20 42 20 20 42 20 20 20 20 20
+      20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
+      20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
+      );
+    }
+
+    // Fuel assemblies
+    fuelIGrid {
+      id 400;
+      type latUniverse;
+      pitch (1.26 1.26 0);
+      padMat Water;
+      shape (17 17 0);
+      map (
+      140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140
+      140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140
+      140 140 140 140 140  40 140 140  40 140 140  40 140 140 140 140 140
+      140 140 140  40 140 140 140 140 140 140 140 140 140  40 140 140 140
+      140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140
+      140 140  40 140 140  40 140 140  40 140 140  40 140 140  40 140 140
+      140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140
+      140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140
+      140 140  40 140 140  40 140 140  90 140 140  40 140 140  40 140 140
+      140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 
+      140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 
+      140 140  40 140 140  40 140 140  40 140 140  40 140 140  40 140 140 
+      140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 
+      140 140 140  40 140 140 140 140 140 140 140 140 140  40 140 140 140 
+      140 140 140 140 140  40 140 140  40 140 140  40 140 140 140 140 140 
+      140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 
+      140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 140 
+      );
+    }
+	
+    // Fuel assemblies
+    fuelZGrid {
+      id 401;
+      type latUniverse;
+      pitch (1.26 1.26 0);
+      padMat Water;
+      shape (17 17 0);
+      map (
+      141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141
+      141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141
+      141 141 141 141 141  41 141 141  41 141 141  41 141 141 141 141 141
+      141 141 141  41 141 141 141 141 141 141 141 141 141  41 141 141 141
+      141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141
+      141 141  41 141 141  41 141 141  41 141 141  41 141 141  41 141 141
+      141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141
+      141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141
+      141 141  41 141 141  41 141 141  91 141 141  41 141 141  41 141 141
+      141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 
+      141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 
+      141 141  41 141 141  41 141 141  41 141 141  41 141 141  41 141 141 
+      141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 
+      141 141 141  41 141 141 141 141 141 141 141 141 141  41 141 141 141 
+      141 141 141 141 141  41 141 141  41 141 141  41 141 141 141 141 141 
+      141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 
+      141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 141 
+      );
+    }
+	
+    // Fuel assemblies
+    fuelWater {
+      id 402;
+      type latUniverse;
+      pitch (1.26 1.26 0);
+      padMat Water;
+      shape (17 17 0);
+      map (
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142
+      142 142 142 142 142  42 142 142  42 142 142  42 142 142 142 142 142
+      142 142 142  42 142 142 142 142 142 142 142 142 142  42 142 142 142
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142
+      142 142  42 142 142  42 142 142  42 142 142  42 142 142  42 142 142
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142
+      142 142  42 142 142  42 142 142  92 142 142  42 142 142  42 142 142
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 
+      142 142  42 142 142  42 142 142  42 142 142  42 142 142  42 142 142 
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 
+      142 142 142  42 142 142 142 142 142 142 142 142 142  42 142 142 142 
+      142 142 142 142 142  42 142 142  42 142 142  42 142 142 142 142 142 
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 
+      );
+    }
+	
+    stackLowerRefl {id 700; type latUniverse; pitch (21.42 21.42 5.0); padMat Water; shape (1 1 10); map (600 600 600 600 600 600 600 600 600 600);}
+	stackLowerPlate {id 701; type latUniverse; pitch (21.42 21.42 5.0); padMat Water; shape (1 1 1); map (610);}
+    stackBottomNozzle {id 702; type latUniverse; pitch (21.42 21.42 6.053); padMat Water; shape (1 1 1); map (630);}
+    stackBottomGuides {id 703; type latUniverse; pitch (21.42 21.42 4.228); padMat Water; shape (1 1 1); map (320);}
+    stackBottomPlugs {id 704; type latUniverse; pitch (21.42 21.42 1.67); padMat Water; shape (1 1 1); map (350);}
+    stackBottomGrid {id 705; type latUniverse; pitch (21.42 21.42 3.866); padMat Water; shape (1 1 1); map (400);}
+
+    stackFuel1 {
+      id 706;
+      type latUniverse;
+      pitch (21.42 21.42 5.7478);
+      padMat Water;
+      shape (1 1 10);
+      map (402 402 402 402 402 402 402 402 402 402);
+    }
+	
+	stackFuelMain {
+      id 708;
+      type latUniverse;
+      pitch (21.42 21.42 4.839);
+      padMat Water;
+      shape (1 1 10);
+      map (402 402 402 402 402 402 402 402 402 402);
+    }
+	
+	stackFuel7 {
+      id 718;
+      type latUniverse;
+      pitch (21.42 21.42 4.95075);
+      padMat Water;
+      shape (1 1 8);
+      map (402 402 402 402 402 402 402 402);
+    }
+
+    stackGrid {id 707; type latUniverse; pitch (21.42 21.42 3.81); padMat Water; shape (1 1 1); map (401);}
+
+    stackTopGrid {
+      id 719;
+      type latUniverse;
+      pitch (21.42 21.42 3.866);
+      padMat Water;
+      shape (1 1 1);
+      map (310);
+    }
+
+    stackPlenum {
+      id 720;
+      type latUniverse;
+      pitch (21.42 21.42 8.556);
+      padMat Water;
+      shape (1 1 1);
+      map (312);
+    }
+
+    stackPlenum2 {
+      id 725;
+      type latUniverse;
+      pitch (21.42 21.42 3.578);
+      padMat Water;
+      shape (1 1 1);
+      map (312);
+    }
+
+    stackTopPlugs {id 721; type latUniverse; pitch (21.42 21.42 1.67); padMat Water; shape (1 1 1); map (350);}
+    stackTopGuides {id 722; type latUniverse; pitch (21.42 21.42 2.129); padMat Water; shape (1 1 1); map (320);}
+    stackTopNozzle {id 723; type latUniverse; pitch (21.42 21.42 8.827); padMat Water; shape (1 1 1); map (620);}
+    stackUpperPlate {id 724; type latUniverse; pitch (21.42 21.42 7.6); padMat Water; shape (1 1 1); map (610);}
+	stackUpperRefl { id 726; type latUniverse; pitch (21.42 21.42 5.0); padMat Water; shape (1 1 10); map (600 600 600 600 600 600 600 600 600 600);}
+
+    assembly1 {
+      id 111;
+      type cellUniverse;
+	  checkOverlap 1;
+      cells (79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105);
+    }
+
+    root {id 1; type rootUniverse; border 1; fill u<111>;}
+  }
+  
+}
+
+
+nuclearData {
+  handles {
+    mg { type baseMgNeutronDatabase; PN P0;}
+  }
+
+  materials {
+
+    Zircaloy {
+	  temp 293;
+      xsFile ./CASL3A_all_mats_xs/Zircaloy;
+      composition { }
+    }
+
+    Inconel {
+	  temp 293;
+      xsFile ./CASL3A_all_mats_xs/Inconel;
+      composition { }
+    } 	
+    
+    Water {
+	  temp 293;
+      xsFile ./pin_nominal_xs/Water;
+      composition { }
+    }
+    
+    UO2 {
+	  temp 293;
+      xsFile ./pin_nominal_xs/UO2;
+      composition { }
+    }
+
+    Gap {
+	  temp 293;
+      xsFile ./pin_nominal_xs/Gap;
+      composition { }
+    }
+    
+    TopNozzle {
+	  temp 293;
+      xsFile ./CASL3A_all_mats_xs/TopNozzle;
+      composition { }
+    }
+    
+    BottomNozzle {
+	  temp 293;
+      xsFile ./CASL3A_all_mats_xs/BottomNozzle;
+      composition { }
+    }
+    
+    CorePlates {
+	  temp 293;
+      xsFile ./CASL3A_all_mats_xs/CorePlates;
+      composition { }
+    }
+    
+}
+}

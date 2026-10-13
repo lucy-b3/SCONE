@@ -88,6 +88,12 @@ module arraysRR_class
     
     logical(defBool)                      :: feedback     = .false. 
     class(pieceConstantField), pointer        :: tempField    => null()
+
+    integer(shortInt)           :: volPolicy   = hybrid !simAverage
+    integer(shortInt)           :: missPolicy  = hybrid !srcPolicy
+    logical(defBool)            :: set2D       = .false. ! Stabilises LS in 2D problems
+
+    real(defReal)               :: totalVolume = ONE
     
     ! Flux arrays
     real(defFlt), dimension(:), allocatable    :: scalarFlux
@@ -104,14 +110,42 @@ module arraysRR_class
 
     ! Geometry arrays
     real(defReal), dimension(:), allocatable     :: volumeTracks
+    real(defReal), dimension(:), allocatable     :: allVolumeTracks
     real(defReal), dimension(:), allocatable     :: lengthSquared
     real(defReal), dimension(:), allocatable     :: volume
     integer(shortInt), dimension(:), allocatable :: cellHit
+    integer(longInt), dimension(:), allocatable  :: cellTotalHit
     logical(defBool), dimension(:), allocatable  :: cellFound
     real(defReal), dimension(:,:), allocatable   :: cellPos
-    
+
+    ! Linear source arrays
+    real(defFlt), dimension(:), allocatable   :: scalarX
+    real(defFlt), dimension(:), allocatable   :: scalarY
+    real(defFlt), dimension(:), allocatable   :: scalarZ
+    real(defFlt), dimension(:), allocatable   :: prevX
+    real(defFlt), dimension(:), allocatable   :: prevY
+    real(defFlt), dimension(:), allocatable   :: prevZ
+    real(defFlt), dimension(:), allocatable    :: sourceX
+    real(defFlt), dimension(:), allocatable    :: sourceY
+    real(defFlt), dimension(:), allocatable    :: sourceZ
+    real(defFlt), dimension(:), allocatable    :: fixedX
+    real(defFlt), dimension(:), allocatable    :: fixedY
+    real(defFlt), dimension(:), allocatable    :: fixedZ
+    real(defReal), dimension(:), allocatable   :: momMat
+    real(defReal), dimension(:), allocatable   :: momTracks
+    real(defReal), dimension(:), allocatable   :: centroid
+    real(defReal), dimension(:), allocatable   :: centroidTracks
+
+    real(defReal), dimension(:,:), allocatable :: xScores
+    real(defReal), dimension(:,:), allocatable :: yScores
+    real(defReal), dimension(:,:), allocatable :: zScores
+
     ! OMP locks
     integer(kind=omp_lock_kind), dimension(:), allocatable :: locks
+    
+    ! Other data
+    real(defReal)     :: averageHit = ZERO
+    integer(shortInt) :: iterations = 0
 
   contains
     
@@ -126,6 +160,7 @@ module arraysRR_class
     procedure :: getSourcePointer
     procedure :: getFluxPointer
     procedure :: getSource
+    procedure :: getFixedSource
     procedure :: getPrevFlux
     procedure :: getFluxScore
     procedure :: getFluxSD
@@ -138,12 +173,27 @@ module arraysRR_class
     procedure :: getCellHitRate
     procedure :: getSimulationType
     procedure :: found
+    procedure :: wasFound
+    procedure :: wasHit
+
+    procedure :: hasFixedSource
+    procedure :: getFluxAtAPoint
+
+    procedure :: getFluxXYZPointers
+    procedure :: getSourceXYZPointers
+    procedure :: getCentroid
+    procedure :: getMomentMatrix
+    procedure :: getFluxMoments
+    procedure :: getFluxMomentSDs
 
     ! Change individual elements of the type
     ! Predominantly for use in the transport sweep
     procedure :: incrementVolume
     procedure :: incrementLengthSquared
+    procedure :: incrementCentroid
+    procedure :: incrementMoments
     procedure :: hitCell
+    procedure :: getAverageHitRate
     procedure :: wipeCellHits
     procedure :: newFound
     procedure :: setLock
@@ -157,6 +207,7 @@ module arraysRR_class
     procedure :: finaliseFluxScores
     procedure :: calculateKeff
     procedure :: calculatePower
+    procedure :: zeroPrevFlux
 
     ! Tally results for use with MC tally machinery
     procedure :: tallyResults    
@@ -182,8 +233,15 @@ module arraysRR_class
     procedure, private :: sourceUpdateKernelLinIso
     procedure, private :: sourceUpdateKernelLIFA
     procedure, private :: sourceUpdateKernelFlatAni
+
+    procedure, private :: accumulateFluxScoresFlat
+    procedure, private :: accumulateFluxScoresLinear
+
+    procedure, private :: finaliseFluxScoresFlat
+    procedure, private :: finaliseFluxScoresLinear
     
     procedure, private :: calculateKeffKernel
+    procedure, private :: invertMatrix
 
   end type arraysRR
 
@@ -195,19 +253,22 @@ contains
   !! The object is fed sizes and requirements by the physics package.
   !! This will allocate the necessary arrays
   !!
-  subroutine init(self, db, geom, lengthPerIt, rho, lin, ani, doKinetics, loud, mapTemp, dictFS)
+  subroutine init(self, db, geom, lengthPerIt, rho, lin, ani, doKinetics, loud, mapTemp, dictFS, volPolicy, missPolicy, set2D)
     class(arraysRR), intent(inout)                      :: self
     class(baseMgNeutronDatabase), pointer, intent(in)   :: db
     class(geometryStd), pointer, intent(in)             :: geom
     real(defReal), intent(in)                           :: lengthPerIt
     real(defReal), intent(in)                           :: rho
     logical(defBool), intent(in)                        :: lin
-    integer(shortInt), intent(in)                       :: ani
+    integer(shortInt), intent(inout)                       :: ani
     logical(defBool), intent(in)                        :: doKinetics
     logical(defBool), intent(in)                        :: loud
     logical(defBool), intent(in)                        :: mapTemp
     class(dictionary), pointer, intent(inout), optional :: dictFS
+    integer(shortInt), intent(in), optional             :: volPolicy, missPolicy
+    logical(defBool), intent(in), optional              :: set2D
     integer(shortInt)                                   :: i
+    real(defReal), dimension(6)                         :: bb
     class(field), pointer                               :: field
     character(100), parameter :: Here = 'init (arraysRR_class.f90)'
 
@@ -226,7 +287,30 @@ contains
     
     self % lengthPerIt = lengthPerIt
     self % rho = real(rho, defFlt)
-    
+
+    if (present(volPolicy)) then
+      self % volPolicy = volPolicy
+    else
+      self % volPolicy = simAverage
+    end if
+    if (present(missPolicy)) then
+      self % missPolicy = missPolicy
+    else
+      self % missPolicy = srcPolicy
+    end if
+
+    if (present(set2D)) then
+      self % set2D = set2D
+    else
+      self % set2D = .false.
+    end if
+
+    ! Assume bounding box of the geometry is filled (and a box)
+    ! Can this be relaxed in future?
+    bb = self % geom % bounds()
+    self % totalVolume = (bb(4) - bb(1)) * (bb(5) - bb(2)) * (bb(6) - bb(3))
+
+    ani = 0
     ! Set simulation type
     if (.not. lin .and. ani == 0) then
       self % simulationType = flatIso
@@ -248,8 +332,10 @@ contains
     allocate(self % source(self % nG * self % nCells))
     allocate(self % volumeTracks(self % nCells))
     allocate(self % lengthSquared(self % nCells))
+    allocate(self % allVolumeTracks(self % nCells))
     allocate(self % volume(self % nCells))
     allocate(self % cellHit(self % nCells))
+    allocate(self % cellTotalHit(self % nCells))
     allocate(self % cellFound(self % nCells))
     allocate(self % cellPos(3, self % nCells))
     
@@ -263,6 +349,7 @@ contains
     self % lengthSquared = ZERO
     self % volume        = ZERO
     self % cellHit       = 0
+    self % cellTotalHit  = 0
     self % cellFound     = .false.
     self % cellPos       = -INFINITY
 
@@ -274,7 +361,39 @@ contains
 
     ! TODO: allocate linear and anisotropic components, if present
     if (lin) then
-
+      allocate(self % scalarX(self % nCells * self % nG))
+      allocate(self % scalarY(self % nCells * self % nG))
+      allocate(self % scalarZ(self % nCells * self % nG))
+      allocate(self % prevX(self % nCells * self % nG))
+      allocate(self % prevY(self % nCells * self % nG))
+      allocate(self % prevZ(self % nCells * self % nG))
+      allocate(self % sourceX(self % nCells * self % nG))
+      allocate(self % sourceY(self % nCells * self % nG))
+      allocate(self % sourceZ(self % nCells * self % nG))
+      allocate(self % momMat(self % nCells * matSize))
+      allocate(self % momTracks(self % nCells * matSize))
+      allocate(self % centroid(self % nCells * nDim))
+      allocate(self % centroidTracks(self % nCells * nDim))
+      allocate(self % xScores(2, self % nG * self % nCells))
+      allocate(self % yScores(2, self % nG * self % nCells))
+      allocate(self % zScores(2, self % nG * self % nCells))
+      
+      self % scalarX        = ZERO
+      self % scalarY        = ZERO
+      self % scalarZ        = ZERO
+      self % prevX          = ZERO
+      self % prevY          = ZERO
+      self % prevZ          = ZERO
+      self % sourceX        = 0.0_defFlt
+      self % sourceY        = 0.0_defFlt
+      self % sourceZ        = 0.0_defFlt
+      self % momMat         = ZERO
+      self % momTracks      = ZERO
+      self % centroid       = ZERO
+      self % centroidTracks = ZERO
+      self % xScores        = ZERO
+      self % yScores        = ZERO
+      self % zScores        = ZERO
     end if
 
     if (ani > 0) then
@@ -290,6 +409,123 @@ contains
     end do
 
   end subroutine init
+
+  !!
+  !! Overwrite the active length
+  !!
+  subroutine setActiveLength(self, lengthPerIt)
+    class(arraysRR), intent(inout) :: self
+    real(defReal), intent(in)      :: lengthPerIt
+
+    self % lengthPerIt = lengthPerIt
+
+  end subroutine setActiveLength
+
+  !!
+  !! Initialise the adjoint source and update nuclear data.
+  !! For now, assumes the adjoint is for global variance reduction.
+  !!
+  subroutine initAdjoint(self)
+    class(arraysRR), intent(inout)         :: self
+    integer(shortInt)                      :: cIdx
+    logical(defBool)                       :: doLinear
+    integer(shortInt), save                :: i, g
+    real(defFlt), dimension(matSize), save :: invM
+    real(defFlt), save                     :: xMom, yMom, zMom
+    !$omp threadprivate(i, g, invM, xMom, yMom, zMom)
+
+    doLinear = .false.
+    invM = 0.0_defFlt
+
+    call self % xsData % setAdjointXS()
+
+    if (.not. allocated(self % fixedSource)) then
+      allocate(self % fixedSource(size(self % scalarFlux)))
+    end if
+    self % fixedSource = 0.0_defFlt
+
+    if ((self % simulationType == linearIso) .or. &
+            (self % simulationType == linearAni)) then
+      doLinear = .true.
+      if (.not. allocated(self % fixedX)) then
+        allocate(self % fixedX(size(self % scalarFlux)))
+        allocate(self % fixedY(size(self % scalarFlux)))
+        allocate(self % fixedZ(size(self % scalarFlux)))
+      end if
+      self % fixedX = 0.0_defFlt
+      self % fixedY = 0.0_defFlt
+      self % fixedZ = 0.0_defFlt
+    end if
+
+    ! Create fixed source from the flux scores
+    ! Presently assumes the response of interest is global flux
+    !$omp parallel do
+    do cIdx = 1, self % nCells
+
+      if (.not. self % wasFound(cIdx)) cycle
+      if (doLinear) invM = self % invertMatrix(cIdx)
+
+      do g = 1, self % nG
+
+        i = (cIdx - 1) * self % nG + g
+
+        ! Check for inordinately small flux values.
+        ! Note, these can have arbitrarily low magnitude.
+        ! Maybe should be something more robust.
+        if (self % fluxScores(1, i) == ZERO) cycle
+        self % fixedSource(i) = real(ONE / self % fluxScores(1, i), defFlt)
+
+        ! Linear source treatment relies on performing a Taylor expansion
+        ! of q' = 1/phi = 1/(phi_0 + <gradPhi , (r - r0)>)
+        ! = 1/phi_0 - 1/phi^2_0 * <gradPhi , (r - r0)>
+        if (doLinear .and. (self % fixedSource(i) > 0)) then
+          self % fixedX(i) = invM(xx) * xMom + invM(xy) * yMom + invM(xz) * zMom
+          self % fixedY(i) = invM(xy) * xMom + invM(yy) * yMom + invM(yz) * zMom
+          self % fixedZ(i) = invM(xz) * xMom + invM(yz) * yMom + invM(zz) * zMom
+
+          self % fixedX(i) = -self % fixedX(i) * self % fixedSource(i) ** 2
+          self % fixedY(i) = -self % fixedY(i) * self % fixedSource(i) ** 2
+          self % fixedZ(i) = -self % fixedZ(i) * self % fixedSource(i) ** 2
+
+        end if
+
+      end do
+
+    end do
+    !$omp end parallel do
+
+    ! Reinitialise arrays to be used during transport
+    self % scalarFlux      = ZERO
+    self % prevFlux        = ZERO
+    self % fluxScores      = ZERO
+    self % source          = 0.0_defFlt
+
+    ! Ideally we would have a way of reusing the volume estimators
+    ! No compact ideas at the moment, so these will simply be reinitialised
+    self % volumeTracks    = ZERO
+    self % allVolumeTracks = ZERO
+    self % volume          = ZERO
+
+    if (doLinear) then
+      self % scalarX        = ZERO
+      self % scalarY        = ZERO
+      self % scalarZ        = ZERO
+      self % prevX          = ZERO
+      self % prevY          = ZERO
+      self % prevZ          = ZERO
+      self % sourceX        = 0.0_defFlt
+      self % sourceY        = 0.0_defFlt
+      self % sourceZ        = 0.0_defFlt
+      self % momMat         = ZERO
+      self % momTracks      = ZERO
+      self % centroid       = ZERO
+      self % centroidTracks = ZERO
+      self % xScores        = ZERO
+      self % yScores        = ZERO
+      self % zScores        = ZERO
+    end if
+
+  end subroutine initAdjoint
   
   !!
   !! Initialises fixed sources to be used in the simulation.
@@ -379,6 +615,25 @@ contains
     fluxVec => self % scalarFlux(baseIdx1:baseIdx2)
 
   end subroutine getFluxPointer
+
+  !!
+  !! Return a pointer to the flux spatial moment vectors for a given cell
+  !!
+  subroutine getFluxXYZPointers(self, cIdx, xVec, yVec, zVec)
+    class(arraysRR), intent(in), target               :: self
+    integer(shortInt), intent(in)                     :: cIdx
+    real(defFlt), dimension(:), pointer, intent(out) :: xVec
+    real(defFlt), dimension(:), pointer, intent(out) :: yVec
+    real(defFlt), dimension(:), pointer, intent(out) :: zVec
+    integer(shortInt)                                 :: baseIdx1, baseIdx2
+
+    baseIdx1 = self % nG * (cIdx - 1) + 1
+    baseIdx2 = self % nG * cIdx
+    xVec => self % scalarX(baseIdx1:baseIdx2)
+    yVec => self % scalarY(baseIdx1:baseIdx2)
+    zVec => self % scalarZ(baseIdx1:baseIdx2)
+
+  end subroutine getFluxXYZPointers
   
   !!
   !! Return a pointer to the nuclear data object
@@ -428,6 +683,25 @@ contains
     sourceVec => self % source(baseIdx1:baseIdx2)
 
   end subroutine getSourcePointer
+
+  !!
+  !! Return pointers to the source gradient vectors for a given cell
+  !!
+  subroutine getSourceXYZPointers(self, cIdx, xVec, yVec, zVec)
+    class(arraysRR), intent(in), target              :: self
+    integer(shortInt), intent(in)                    :: cIdx
+    real(defFlt), dimension(:), pointer, intent(out) :: xVec
+    real(defFlt), dimension(:), pointer, intent(out) :: yVec
+    real(defFlt), dimension(:), pointer, intent(out) :: zVec
+    integer(shortInt)                                :: baseIdx1, baseIdx2
+
+    baseIdx1 = self % nG * (cIdx - 1) + 1
+    baseIdx2 = self % nG * cIdx
+    xVec => self % sourceX(baseIdx1:baseIdx2)
+    yVec => self % sourceY(baseIdx1:baseIdx2)
+    zVec => self % sourceZ(baseIdx1:baseIdx2)
+
+  end subroutine getSourceXYZPointers
   
   !!
   !! Return source value given cell and group
@@ -441,6 +715,23 @@ contains
     src = self % source(self % nG * (cIdx - 1) + g)
 
   end function getSource
+
+  !!
+  !! Return fixed source value given cell and group
+  !!
+  elemental function getFixedSource(self, cIdx, g) result(src)
+    class(arraysRR), intent(in)   :: self
+    integer(shortInt), intent(in) :: cIdx
+    integer(shortInt), intent(in) :: g
+    real(defFlt)                  :: src
+
+    if (allocated(self % fixedSource)) then
+      src = self % fixedSource(self % nG * (cIdx - 1) + g)
+    else
+      src = 0.0_defFlt
+    end if
+
+  end function getFixedSource
   
   !!
   !! Return previous flux value given cell and group
@@ -483,6 +774,41 @@ contains
   end function getFluxSD
 
   !!
+  !! Return final flux moment values given cell and group
+  !!
+  pure function getFluxMoments(self, cIdx, g) result(flux)
+    class(arraysRR), intent(in)   :: self
+    integer(shortInt), intent(in) :: cIdx
+    integer(shortInt), intent(in) :: g
+    real(defReal), dimension(3)   :: flux
+    integer(shortInt)             :: idx
+
+    idx = self % nG * (cIdx - 1) + g
+    flux(1) = self % xScores(1, idx)
+    flux(2) = self % yScores(1, idx)
+    flux(3) = self % zScores(1, idx)
+
+  end function getFluxMoments
+
+  !!
+  !! Return final flux moment standard deviations given cell and group
+  !! Will return square of moment scores if called before finaliseFluxScores
+  !!
+  pure function getFluxMomentSDs(self, cIdx, g) result(fluxSD)
+    class(arraysRR), intent(in)   :: self
+    integer(shortInt), intent(in) :: cIdx
+    integer(shortInt), intent(in) :: g
+    real(defReal), dimension(3)   :: fluxSD
+    integer(shortInt)             :: idx
+
+    idx = self % nG * (cIdx - 1) + g
+    fluxSD(1) = self % xScores(2, idx)
+    fluxSD(2) = self % yScores(2, idx)
+    fluxSD(3) = self % zScores(2, idx)
+
+  end function getFluxMomentSDs
+
+  !!
   !! Return final power value given cell
   !!
   function getPowerScore(self, cIdx) result(power)
@@ -522,6 +848,36 @@ contains
     x = self % cellPos(1:3, cIdx)
 
   end function getCellPos
+
+  !!
+  !! Return cell centroid given cell ID
+  !!
+  pure function getCentroid(self, cIdx) result(cent)
+    class(arraysRR), intent(in)    :: self
+    integer(shortInt), intent(in)  :: cIdx
+    real(defReal), dimension(nDim) :: cent
+    integer(shortInt)              :: idx0, idx1
+
+    idx0 = nDim * (cIdx - 1) + 1
+    idx1 = nDim * cIdx
+    cent = self % centroid(idx0:idx1)
+
+  end function getCentroid
+
+  !!
+  !! Return moment matrix given cell ID
+  !!
+  pure function getMomentMatrix(self, cIdx) result(mat)
+    class(arraysRR), intent(in)       :: self
+    integer(shortInt), intent(in)     :: cIdx
+    real(defReal), dimension(matSize) :: mat
+    integer(shortInt)              :: idx0, idx1
+
+    idx0 = matSize * (cIdx - 1) + 1
+    idx1 = matSize * cIdx
+    mat = self % momMat(idx0:idx1)
+
+  end function getMomentMatrix
   
   !!
   !! Return the simulation type
@@ -559,7 +915,40 @@ contains
     self % lengthSquared(cIdx) = self % lengthSquared(cIdx) + length * length
   
   end subroutine incrementLengthSquared
+
+  !!
+  !! Increment the local centroid estimate in cell cIdx.
+  !! rL is the tracklength-weighted centroid
+  !! Assumes this is being called inside a lock for thread privacy.
+  !!
+  subroutine incrementCentroid(self, cIdx, rL)
+    class(arraysRR), intent(inout)             :: self
+    integer(shortInt), intent(in)              :: cIdx
+    real(defReal), dimension(nDim), intent(in) :: rL
+    integer(shortInt)                          :: idx0, idx1
+
+    idx0 = nDim * (cIdx - 1) + 1
+    idx1 = nDim * cIdx
+    self % centroidTracks(idx0:idx1) = self % centroidTracks(idx0:idx1) + rL
+
+  end subroutine incrementCentroid
   
+  !!
+  !! Increment the local moment matrix estimate in cell cIdx.
+  !! mat is the tracklength-weighted matrix
+  !! Assumes this is being called inside a lock for thread privacy.
+  !!
+  subroutine incrementMoments(self, cIdx, mat)
+    class(arraysRR), intent(inout)                :: self
+    integer(shortInt), intent(in)                 :: cIdx
+    real(defReal), dimension(matSize), intent(in) :: mat
+    integer(shortInt)                             :: idx0, idx1
+
+    idx0 = matSize * (cIdx - 1) + 1
+    idx1 = matSize * cIdx
+    self % momTracks(idx0:idx1) = self % momTracks(idx0:idx1) + mat
+
+  end subroutine incrementMoments
   
   !!
   !! Check if a cell has been hit
@@ -572,6 +961,30 @@ contains
     hit = self % cellHit(cIdx)
   
   end function hasHit
+
+  !!
+  !! Check if a cell has been hit
+  !!
+  elemental function wasHit(self, cIdx) result (hit)
+    class(arraysRR), intent(in)   :: self
+    integer(shortInt), intent(in) :: cIdx
+    logical(defBool)              :: hit
+
+    hit = (self % cellHit(cIdx) == 1)
+
+  end function wasHit
+
+  !!
+  !! Has a cell ever been found?
+  !!
+  elemental function wasFound(self, cIdx) result(found)
+    class(arraysRR), intent(in)   :: self
+    integer(shortInt), intent(in) :: cIdx
+    logical(defBool)              :: found
+
+    found = (self % cellTotalHit(cIdx) > 0)
+
+  end function wasFound
   
   !!
   !! Hit a cell 
@@ -581,21 +994,51 @@ contains
     integer(shortInt), intent(in)  :: cIdx
     
     self % cellHit(cIdx) = 1
+    self % cellTotalHit(cIdx) = self % cellTotalHit(cIdx) + 1
   
   end subroutine hitCell
 
   !!
   !! Return the cell hit rate for the given iteration
   !!
-  function getCellHitRate(self) result(hitRate)
-    class(arraysRR), intent(in)  :: self
-    integer(shortInt)            :: totalHit
+  function getCellHitRate(self, it) result(hitRate)
+    class(arraysRR), intent(inout) :: self
+    integer(shortInt), intent(in)  :: it
+    integer(shortInt)            :: totalHit, realCells
     real(defReal)                :: hitRate
 
+    !totalHit = sum(self % cellHit)
+    !hitRate  = real(totalHit, defReal) / self % nCells
+    ! Reset averages after iteration 20
+    if (it == 21) then
+      self % averageHit = ZERO
+      self % iterations = 0
+    end if
+
     totalHit = sum(self % cellHit)
-    hitRate  = real(totalHit, defReal) / self % nCells
+    if (it > 20) then
+      realCells = count(self % cellTotalHit > 0)
+    else
+      realCells = self % nCells
+    end if
+    hitRate = real(totalHit,defReal) / realCells
+
+    self % averageHit = self % averageHit + hitRate
+    self % iterations = self % iterations + 1
+    
 
   end function getCellHitRate
+
+  !!
+  !! Return the simulation average cell hit rate
+  !!
+  function getAverageHitRate(self) result(hitRate)
+    class(arraysRR), intent(in)   :: self
+    real(defReal)                 :: hitRate
+
+    hitRate = self % averageHit / self % iterations
+
+  end function getAverageHitRate
 
   !! 
   !! Wipe cell hits
@@ -646,6 +1089,26 @@ contains
   end function getNG
 
   !!
+  !! Check if a cell has an inhomogeneous source
+  !!
+  elemental function hasFixedSource(self, cIdx) result (hasSrc)
+    class(arraysRR), intent(in)   :: self
+    integer(shortInt), intent(in) :: cIdx
+    logical(defBool)              :: hasSrc
+    integer(shortInt)             :: idx1, idx2
+
+    if (allocated(self % fixedSource)) then
+      idx1 = self % nG * (cIdx - 1) + 1
+      idx2 = self % nG * cIdx
+      ! Take an absolute value in case of (possibly desirable?) negative sources
+      hasSrc = any(abs(self % fixedSource(idx1:idx2)) > 0.0_defFlt)
+    else
+      hasSrc = .false.
+    end if
+
+  end function hasFixedSource
+
+  !!
   !! Return volume given cell ID
   !!
   elemental function getVolume(self, cIdx) result(vol)
@@ -694,6 +1157,8 @@ contains
     select case(self % simulationType)
       case(flatIso)
         call self % normaliseFluxAndVolumeFlatIso(it)
+      case(linearIso)
+        call self % normaliseFluxAndVolumeLinIso(it)
       case default
         call fatalError(Here,'Unsupported simulation type requested')
     end select
@@ -705,54 +1170,222 @@ contains
   !! the flux by the neutron source
   !!
   subroutine normaliseFluxAndVolumeFlatIso(self, it)
+    class(arraysRR), intent(inout)            :: self
+    integer(shortInt), intent(in)             :: it
+    real(defReal)                             :: norm, normIt
+    real(defReal), save                       :: vol, volAve, volNaive, D
+    real(defFlt), save                        :: sigGG, tot, temp
+    real(defFlt), dimension(self % nG)        :: total, scatterVec
+    type(particle), save                      :: s
+    integer(shortInt), save                   :: g, matIdx, idx, baseIdx
+    integer(shortInt)                         :: cIdx
+    logical(defBool), save                    :: hit, isSrc, smallCell
+    real(defReal)                             :: pos(3), dir(3)
+    character(100), parameter :: Here = 'normaliseFluxAndVolumeFlatIso (arraysRR_class.f90)'
+    !$omp threadprivate(vol, idx, g, matIdx, baseIdx, sigGG, D, hit, isSrc, volAve, volNaive, tot, smallCell, temp, s)
 
-    class(arraysRR), intent(inout) :: self
-    integer(shortInt), intent(in)  :: it
+    norm = ONE / self % lengthPerIt
+    normIt = ONE / (self % lengthPerIt * it)
+    
+    !$omp parallel do private(total, scatterVec, pos, dir) 
+    cellLoop: do cIdx = 1, self % nCells
+      matIdx = self % geom % geom % graph % getMatFromUID(cIdx) 
 
-    real(defReal)                  :: norm, normVol
-    real(defReal), save            :: vol
+      if (matIdx > self % XSData % getNMat()) then
+         baseIdx = self % nG * (cIdx - 1)
+         do g = 1, self % nG
+           idx = baseIdx + g
+           self % scalarFlux(idx) = 0.0_defFlt
+         end do
+         cycle
+      end if
+     
+      if (matIdx < 1 .or. matIdx > self % XSData % getNMat()) then
+        print *, "BAD MATIDX"
+        print *, "cIdx      =", cIdx
+        print *, "matIdx    =", matIdx
+        print *, "nMat      =", self % XSData % getNMat()
+        print *, "cellPos   =", self % cellPos(:,cIdx)
+        print *, "cellHit   =", self % cellTotalHit(cIdx)
+        !call fatalError(Here,'Invalid material index before getTotalXS')
+      end if
 
-    real(defFlt), save             :: sigGG, D, norm_V
-    real(defFlt), dimension(self % nG):: totalXS, scatterVec
+      hit = self % wasHit(cIdx)
+      isSrc = self % hasFixedSource(cIdx)
 
-    type(particle), save           :: s
+      ! Is the cell hit frequently?
+      !smallCell = (real(self % cellTotalHit(cIdx) / it, defReal) < 1.5)
+      smallCell = (real(self % cellTotalHit(cIdx), defReal) / real(it, defReal) < 1.5_defReal)
+      
+      !! Compute various volume types
+      ! Actual integral volume
+      self % allVolumeTracks(cIdx) = self % allVolumeTracks(cIdx) + self % volumeTracks(cIdx)
+      self % volume(cIdx) = self % allVolumeTracks(cIdx) * normIt
+      volAve = self % volume(cIdx)
+      ! Cycle-wise volume
+      volNaive = self % volumeTracks(cIdx) * norm
 
-    integer(shortInt), save        :: g, matIdx, idx
-    real(defFlt), save             :: temp
+      ! Decide volume to use
+      select case(self % volPolicy)
+        case(simAverage)
+          vol = volAve
+        case(naive)
+          vol = volNaive
+        case(hybrid)
+          if (isSrc) then
+            vol = volNaive
+          else
+            vol = volAve
+          end if
+        case default
+          call fatalError(Here,'Unsupported volume handling requested')
+      end select
 
-    integer(shortInt)              :: cIdx
-    real(defReal)                  :: pos(3), dir(3)
+      if (smallCell) vol = volNaive
+      
+      ! Reset cycle-wise estimator
+      self % volumeTracks(cIdx) = ZERO
+            
+      !call self % XSData % getTotalPointer(matIdx, total)
+      ! Fudge particle state to search tally map
+      pos = self % cellPos(:,cIdx)
+      dir = [0.5,0.5,0.5]
 
-    !$omp threadprivate(temp, vol, norm_V, idx, g, matIdx, sigGG, D, s)
+      call s % coords % init(pos, dir)
+      s % coords % matIdx = matIdx
 
-    norm    = ONE / self % lengthPerIt
+      !print *, "FEEDBACK"
+      !print *, self % feedback
+
+      if (self % feedback) then
+
+        print *, self % feedback
+        print *, "Feedback present"
+        temp = self % tempField % at(s % coords)
+
+        total = self % XSData % getTotalXS(matIdx, temp)
+
+      else
+
+        total = self % XSData % getTotalXS(matIdx)
+
+      end if
+            
+      groupLoop: do g = 1, self % nG
+
+        idx = self % nG * (cIdx - 1) + g
+        tot = total(g)
+
+        ! Route for non-void materials
+        if (matIdx <= self % XSData % getNMat() .and. tot > 0) then
+          if (hit) then
+     
+            ! Can hit a cell but with a tiny volume, such that 
+            ! things break a bit - would rather remove this arbitrary
+            ! check in future
+            if (vol < volume_tolerance) then
+              self % scalarFlux(idx) = ZERO
+              cycle groupLoop
+            end if
+
+            self % scalarFlux(idx) = self % scalarFlux(idx) * norm 
+            self % scalarFlux(idx) = self % scalarFlux(idx) / (vol * tot)
+
+            ! Presumes non-zero total XS
+            !sigGG = self % XSData % getScatterXS(matIdx, g, g)
+            if (self % feedback) then
+              scatterVec = self % XSData % getScatterXS(matIdx, g, temp)
+            else
+              scatterVec = self % XSData % getScatterXS(matIdx, g)
+            end if
+
+            sigGG = scatterVec(g)
+
+            if ((sigGG < 0) .and. (total(g) > 0)) then
+              D = -real(self % rho * sigGG / tot, defReal)
+            else
+              D = ZERO
+            end if
+
+            self % scalarFlux(idx) =  (self % scalarFlux(idx) + self % source(idx) / tot &
+                  + D * self % prevFlux(idx) ) / (1 + D)
+
+          else
+            
+            ! Decide flux treatment to use on missing a cell
+            select case(self % missPolicy)
+              case(srcPolicy)
+                self % scalarFlux(idx) = self % source(idx) / tot
+              case(prevPolicy)
+                self % scalarFlux(idx) = self % prevFlux(idx)
+              case(hybrid)
+                if (isSrc) then
+                  self % scalarFlux(idx) = self % prevFlux(idx)
+                else
+                  self % scalarFlux(idx) = self % source(idx) / tot
+                end if
+              case default
+                call fatalError(Here,'Unsupported miss handling requested')
+            end select
+
+          end if
+        
+        ! Alternatively, handle unidentified/void regions
+        else
+          
+          if (vol < volume_tolerance) then
+            self % scalarFlux(idx) = ZERO
+            cycle groupLoop
+          end if
+
+          if (hit) then
+            self % scalarFlux(idx) = self % scalarFlux(idx) * norm / vol
+          else
+            self % scalarFlux(idx) = self % prevFlux(idx)
+          end if
+        end if
+
+      end do groupLoop
+
+    end do cellLoop
+    !$omp end parallel do
+
+  end subroutine normaliseFluxAndVolumeFlatIso
+
+  !!
+  !! Normalise flux and volume by total track length and increments
+  !! the flux by the neutron source for linear isotropic sources
+  !!
+  subroutine normaliseFluxAndVolumeLinIso(self, it)
+    class(arraysRR), intent(inout)            :: self
+    integer(shortInt), intent(in)             :: it
+    real(defReal)                             :: norm, normVol
+    real(defReal), save                       :: vol, invVol, volNaive, volAve, norm_V
+    real(defFlt), save                        :: D, sigGG, temp
+    type(particle), save                      :: s
+    real(defFlt), allocatable, dimension(:), save  :: total
+    real(defFlt), allocatable, dimension(:), save        :: scatterVec
+    integer(shortInt)                         :: cIdx
+    integer(shortInt), save                   :: g, matIdx, idx, dIdx, mIdx
+    logical(defBool), save                    :: hit, isSrc, smallCell
+    real(defReal)                             :: pos(3), dir(3)
+    character(100), parameter :: Here = 'normaliseFluxAndVolumeLinearIso (arraysRR_class.f90)'
+    !$omp threadprivate(s, total, temp, vol, idx, mIdx, dIdx, g, matIdx, invVol, norm_V, D, sigGG, hit, isSrc, &
+    !$omp volNaive, volAve, smallCell, scatterVec)
+
+    norm = ONE / self % lengthPerIt
     normVol = ONE / (self % lengthPerIt * it)
+    
+    !$omp parallel
+    if (.not. allocated(total)) allocate(total(self % nG))
+    if (.not. allocated(scatterVec)) allocate(scatterVec(self % nG))
+    !$omp end parallel
 
-    !!$omp parallel do
-    !$omp parallel do private(totalXS, scatterVec, pos, dir)
+    !$omp parallel do schedule(static)
     do cIdx = 1, self % nCells
-
-      matIdx = self % geom % geom % graph % getMatFromUID(cIdx)
-
-      ! Update volume due to additional rays
-      self % volume(cIdx) = self % volumeTracks(cIdx) * normVol
-      vol = self % volume(cIdx)
-
-      ! Save effort by skipping normalisation if volume is too small
-      if (vol < volume_tolerance) then
-        do g = 1, self % nG
-          idx = self % nG * (cIdx - 1) + g
-          self % scalarFlux(idx) = 0.0_defFlt
-        end do
-        cycle
-      end if
-
-      norm_V = real(norm / vol, defFlt)
-
-      if ((matIdx < 1) .or. (matIdx > self % XSData % getNMat())) then
-        print *, cIdx
-        print *, "matIdx = " // numToChar(matIdx) // " in normaliseFlux"
-      end if
+      matIdx =  self % geom % geom % graph % getMatFromUID(cIdx)
+      dIdx = (cIdx - 1) * nDim
+      mIdx = (cIdx - 1) * matSize
 
       ! Fudge particle state to search tally map
       pos = self % cellPos(:,cIdx)
@@ -764,71 +1397,212 @@ contains
       if (self % feedback) then
         temp = self % tempField % at(s % coords)
 
-        totalXS = self % XSData % getTotalXS(matIdx, temp)
+        total = self % XSData % getTotalXS(matIdx, temp)
 
       else
 
-        totalXS = self % XSData % getTotalXS(matIdx)
+        total = self % XSData % getTotalXS(matIdx)
 
       end if
 
-      do g = 1, self % nG
+      hit = self % wasHit(cIdx)
+      isSrc = self % hasFixedSource(cIdx)
+      ! Is the cell hit frequently?
+      !smallCell = (real(self % cellTotalHit(cIdx) / it, defReal) < 1.5)
+      smallCell = (real(self % cellTotalHit(cIdx), defReal) / real(it, defReal) < 1.5_defReal)
+
+      ! Compute various volume types
+      ! Actual integral volume
+      self % allVolumeTracks(cIdx) = self % allVolumeTracks(cIdx) + &
+              self % volumeTracks(cIdx)
+      self % volume(cIdx) = self % allVolumeTracks(cIdx) * normVol
+      volAve = self % volume(cIdx)
+      ! Iteration-wise volume
+      volNaive = self % volumeTracks(cIdx) * norm
+      
+      ! Decide volume to use
+      select case(self % volPolicy)
+        case(naive)
+          vol = volNaive
+          norm_V = ONE / self % volumeTracks(cIdx)
+        case(simAverage)
+          vol = volAve
+          norm_V = it / self % allVolumeTracks(cIdx)
+        case(hybrid)
+          if (isSrc) then
+            vol = volNaive
+            norm_V = ONE / self % volumeTracks(cIdx)
+          else
+            vol = volAve
+            norm_V = it / self % allVolumeTracks(cIdx)
+          end if
+        case default
+          call fatalError(Here,'Unsupported volume handling requested')
+      end select
+
+      if (smallCell) then
+        vol = volNaive
+        norm_V = ONE / self % volumeTracks(cIdx)
+      end if
+      
+      ! Reset cycle-wise estimator
+      self % volumeTracks(cIdx) = ZERO
+       
+      ! Update geometric information provided volume has been visited
+      if (self % allVolumeTracks(cIdx) > ZERO) then
+      
+        invVol = ONE / self % allVolumeTracks(cIdx)
+        
+        ! Update centroids
+        self % centroid(dIdx + x) =  self % centroidTracks(dIdx + x) * invVol
+        self % centroid(dIdx + y) =  self % centroidTracks(dIdx + y) * invVol
+        self % centroid(dIdx + z) =  self % centroidTracks(dIdx + z) * invVol
+      
+        ! Update spatial moments
+        self % momMat(mIdx + xx) = self % momTracks(mIdx + xx) * invVol
+        self % momMat(mIdx + xy) = self % momTracks(mIdx + xy) * invVol
+        self % momMat(mIdx + xz) = self % momTracks(mIdx + xz) * invVol
+        self % momMat(mIdx + yy) = self % momTracks(mIdx + yy) * invVol
+        self % momMat(mIdx + yz) = self % momTracks(mIdx + yz) * invVol
+        self % momMat(mIdx + zz) = self % momTracks(mIdx + zz) * invVol
+
+      end if
+
+      !call self % XSData % getTotalPointer(matIdx, total)
+
+      groupLoop: do g = 1, self % nG
 
         idx = self % nG * (cIdx - 1) + g
+        
+        if (matIdx <= self % XSData % getNMat() .and. total(g) > 0) then
+          if (hit) then
 
-        self % scalarFlux(idx) = self % scalarFlux(idx) * norm_V
+            ! Can hit a cell but with a tiny volume, such that 
+            ! things break a bit - would rather remove this arbitrary
+            ! check in future
+            if (vol < volume_tolerance) then
+              self % scalarFlux(idx) = ZERO
+              self % scalarX(idx) = ZERO
+              self % scalarY(idx) = ZERO
+              self % scalarZ(idx) = ZERO
+              cycle groupLoop
+            end if
+      
+            self % scalarFlux(idx) = self % scalarFlux(idx) * norm_V / total(g)
+            self % scalarX(idx) = self % scalarX(idx) * norm_V / total(g)
+            self % scalarY(idx) = self % scalarY(idx) * norm_V / total(g)
+            self % scalarZ(idx) = self % scalarZ(idx) * norm_V / total(g)
+          
+            ! Apply the standard MoC post-sweep treatment and
+            ! stabilisation for negative XSs
+            ! Presumes non-zero total XS
+            !sigGG = self % XSData % getScatterXS(matIdx, g, g)
 
-        ! Apply standard MoC post-sweep treatment
-        if ((matIdx <= self % XSData % getNMat()) .and. (totalXS(g) > 0)) then
+            if (self % feedback) then
+              scatterVec = self % XSData % getScatterXS(matIdx, g, temp)
+            else
+              scatterVec = self % XSData % getScatterXS(matIdx, g)
+            end if
 
-          self % scalarFlux(idx) = self % scalarFlux(idx) / totalXS(g)
+            sigGG = scatterVec(g)
 
-          if (self % feedback) then
-            scatterVec = self % XSData % getScatterXS(matIdx, g, temp)
+            if (sigGG < 0) then
+              D = -self % rho * sigGG / total(g)
+            else
+              D = 0.0_defFlt
+            end if
+           
+            self % scalarFlux(idx) =  (self % scalarFlux(idx) + self % source(idx)/total(g) &
+                  + D * self % prevFlux(idx) ) / (1 + D)
+
           else
-            scatterVec = self % XSData % getScatterXS(matIdx, g)
+            ! Decide flux treatment to use
+            associate(mat => self % momMat((mIdx + 1):(mIdx + matSize)))
+            select case(self % missPolicy)
+              ! Note: this is policy to use the source, not policy for hitting a fixed source
+              case(srcPolicy)
+                self % scalarFlux(idx) = self % source(idx) / total(g)
+                ! OPENMC SETS MOMENTS TO ZERO
+                !self % scalarX(idx) = 0.0_defFlt
+                !self % scalarY(idx) = 0.0_defFlt
+                !self % scalarZ(idx) = 0.0_defFlt
+                ! Need to multiply source gradients by moment matrix
+                self % scalarX(idx) = real(mat(xx) *self % sourceX(idx) + &
+                        mat(xy) * self % sourceY(idx) + mat(xz) * self % sourceZ(idx),defFlt)/ total(g)
+                self % scalarY(idx) = real(mat(xy) *self % sourceX(idx) + &
+                        mat(yy) * self % sourceY(idx) + mat(yz) * self % sourceZ(idx),defFlt)/ total(g)
+                self % scalarZ(idx) = real(mat(xz) *self % sourceX(idx) + &
+                        mat(yz) * self % sourceY(idx) + mat(zz) * self % sourceZ(idx),defFlt)/ total(g)
+              case(prevPolicy)
+                self % scalarFlux(idx) = self % prevFlux(idx)
+                self % scalarX(idx) = self % prevX(idx)
+                self % scalarY(idx) = self % prevY(idx)
+                self % scalarZ(idx) = self % prevZ(idx)
+              case(hybrid)
+                if (isSrc) then
+                  self % scalarFlux(idx) = self % prevFlux(idx)
+                  self % scalarX(idx) = self % prevX(idx)
+                  self % scalarY(idx) = self % prevY(idx)
+                  self % scalarZ(idx) = self % prevZ(idx)
+                else
+                  self % scalarFlux(idx) = self % source(idx) / total(g)
+                  ! OPENMC SETS MOMENTS TO ZERO
+                  !self % scalarX(idx) = 0.0_defFlt
+                  !self % scalarY(idx) = 0.0_defFlt
+                  !self % scalarZ(idx) = 0.0_defFlt
+                  ! Need to multiply source gradients by moment matrix
+                  self % scalarX(idx) = real(mat(xx) *self % sourceX(idx) + &
+                        mat(xy) * self % sourceY(idx) + mat(xz) * self % sourceZ(idx),defFlt)/ total(g)
+                  self % scalarY(idx) = real(mat(xy) *self % sourceX(idx) + &
+                        mat(yy) * self % sourceY(idx) + mat(yz) * self % sourceZ(idx),defFlt)/ total(g)
+                  self % scalarZ(idx) = real(mat(xz) *self % sourceX(idx) + &
+                        mat(yz) * self % sourceY(idx) + mat(zz) * self % sourceZ(idx),defFlt)/ total(g)
+                end if
+              case default
+                call fatalError(Here,'Unsupported miss handling requested')
+            end select
+            end associate
           end if
-
-          sigGG = scatterVec(g)
-
-          ! Stabilisation for negative XSs
-          if (sigGG < 0.0_defFlt) then
-            D = -self % rho * sigGG / totalXS(g)
-          else
-            D = 0.0_defFlt
-          end if
-
-          self % scalarFlux(idx) = &
-            ( self % scalarFlux(idx) &
-            + self % source(idx) / totalXS(g) &
-            + D * self % prevFlux(idx) ) / (1.0_defFlt + D)
 
         else
 
-          ! Handle unidentified/void regions
-          self % scalarFlux(idx) = self % scalarFlux(idx) + &
-            real(self % source(idx) * self % lengthSquared(cIdx) * norm &
-            / (2 * vol), defFlt)
+          ! Apply void treatment
+          if (vol < volume_tolerance) then
+            self % scalarFlux(idx) = ZERO
+            self % scalarX(idx) = ZERO
+            self % scalarY(idx) = ZERO
+            self % scalarZ(idx) = ZERO
+            cycle groupLoop
+          end if
+
+          if (hit) then
+            self % scalarFlux(idx) = self % scalarFlux(idx) * norm / vol
+            self % scalarX(idx) = ZERO
+            self % scalarY(idx) = ZERO
+            self % scalarZ(idx) = ZERO
+          else
+            self % scalarFlux(idx) = self % prevFlux(idx)
+            self % scalarX(idx) = ZERO
+            self % scalarY(idx) = ZERO
+            self % scalarZ(idx) = ZERO
+          end if
 
         end if
+        
+        ! For stability while still accumulating geometric info
+        if (it < 10) then
+          self % scalarX(idx) = ZERO
+          self % scalarY(idx) = ZERO
+          self % scalarZ(idx) = ZERO
+        end if
 
-      end do
+      end do groupLoop
 
     end do
     !$omp end parallel do
 
-  end subroutine normaliseFluxAndVolumeFlatIso
-
-
-  !!
-  !! Normalise flux and volume by total track length and increments
-  !! the flux by the neutron source for linear isotropic sources
-  !!
-  subroutine normaliseFluxAndVolumeLinIso(self, it)
-    class(arraysRR), intent(inout)            :: self
-    integer(shortInt), intent(in)             :: it
-
   end subroutine normaliseFluxAndVolumeLinIso
+
   
   !!
   !! Normalise flux and volume by total track length and increments
@@ -959,6 +1733,12 @@ contains
           call self % sourceUpdateKernelFlatIso(cIdx, ONE_K, it)
         end do
         !$omp end parallel do
+      case(linearIso)
+        !$omp parallel do 
+        do cIdx = 1, self % nCells
+          call self % sourceUpdateKernelLinIso(cIdx, ONE_K, it)
+        end do
+        !$omp end parallel do
       case default
         call fatalError(Here,'Unsupported simulation type requested')
     end select
@@ -1071,10 +1851,146 @@ contains
   !! Kernel to update sources given a cell index for linear sources
   !! with isotropic scattering
   !!
-  subroutine sourceUpdateKernelLinIso(self, cIdx, ONE_KEFF)
-    class(arraysRR), target, intent(inout)   :: self
-    integer(shortInt), intent(in)            :: cIdx
-    real(defFlt), intent(in)                 :: ONE_KEFF
+  subroutine sourceUpdateKernelLinIso(self, cIdx, ONE_KEFF, it)
+    class(arraysRR), target, intent(inout)  :: self
+    integer(shortInt), intent(in)           :: cIdx
+    real(defFlt), intent(in)                :: ONE_KEFF
+    integer(shortInt), intent(in)           :: it
+    real(defFlt)                            :: scatter, xScatter, yScatter, zScatter, &
+                                               fission, xFission, yFission, zFission, &
+                                               xSource, ySource, zSource, temp
+    type(particle)                          :: s
+    real(defFlt), dimension(matSize)        :: invM
+    real(defFlt), dimension(self % nG)      :: fluxFlt, xFlt, yFlt, zFlt
+    real(defFlt), dimension(self % nG)              :: nuFission, chi, scatterXS, scatterVec
+    integer(shortInt)                       :: matIdx, g, gIn, baseIdx, idx, sIdx1, sIdx2
+    real(defReal)                           :: pos(3), dir(3)
+
+    ! Invert moment matrix
+    invM = self % invertMatrix(cIdx)
+    
+    ! Identify material
+    matIdx = self % geom % geom % graph % getMatFromUID(cIdx)
+    
+    ! Guard against void cells
+    if (matIdx > self % XSData % getNMat()) then
+      baseIdx = self % nG * (cIdx - 1)
+      do g = 1, self % nG
+        idx = baseIdx + g
+        self % source(idx) = 0.0_defFlt
+        if (allocated(self % fixedSource)) then
+          self % source(idx) = self % source(idx) + self % fixedSource(idx)
+        end if
+        self % sourceX(idx) = 0.0_defFlt
+        self % sourceY(idx) = 0.0_defFlt
+        self % sourceZ(idx) = 0.0_defFlt
+      end do
+      return
+    end if
+
+    ! Fudge a particle state to search tally map
+    pos = self % cellPos(:,cIdx)
+    dir = [0.5,0.5,0.5]
+    call s % coords % init(pos, dir)
+    s % coords % matIdx = matIdx
+    if (self % feedback) then
+      if (it == 1) then
+        temp = self % XSData % getTemperature(matIdx,2)
+      else
+        temp = self % tempField % at(s % coords)
+      end if
+    end if
+     
+    ! Calculate fission source
+    fission = 0.0_defFlt
+    if (self % feedback) then
+      nuFission = self % XSData % getNuFissXS(matIdx, temp)
+    else
+      nuFission = self % XSData % getNuFissXS(matIdx)
+    end if
+
+    ! Obtain XSs
+    !call self % XSData % getProdPointers(matIdx, nuFission, scatterXS, chi)
+
+    baseIdx = self % nG * (cIdx - 1)
+    fluxFlt  = real(self % prevFlux((baseIdx + 1):(baseIdx + self % nG)), defFlt)
+    xFlt = real(self % prevX((baseIdx + 1):(baseIdx + self % nG)), defFlt)
+    yFlt = real(self % prevY((baseIdx + 1):(baseIdx + self % nG)), defFlt)
+    zFlt = real(self % prevZ((baseIdx + 1):(baseIdx + self % nG)), defFlt)
+    
+    ! Calculate fission source
+    fission = 0.0_defFlt
+    xFission = 0.0_defFlt
+    yFission = 0.0_defFlt
+    zFission = 0.0_defFlt
+
+    !$omp simd reduction(+:fission, xFission, yFission, zFission)
+    do gIn = 1, self % nG
+      fission = fission + fluxFlt(gIn) * nuFission(gIn)
+      xFission = xFission + xFlt(gIn) * nuFission(gIn)
+      yFission = yFission + yFlt(gIn) * nuFission(gIn)
+      zFission = zFission + zFlt(gIn) * nuFission(gIn)
+    end do
+    fission = fission * ONE_KEFF
+    xFission = xFission * ONE_KEFF
+    yFission = yFission * ONE_KEFF
+    zFission = zFission * ONE_KEFF
+
+    !call self % XSData % getTotalPointer(matIdx, total)
+    do g = 1, self % nG
+
+      sIdx1 = self % nG * (g - 1) + 1
+      sIdx2 = self % nG * g
+      !scatterVec => scatterXS(sIdx1:sIdx2)
+
+      if (self % feedback) then
+        scatterVec = self % XSData % getScatterXS(matIdx, g, temp)
+      else
+        scatterVec = self % XSData % getScatterXS(matIdx, g)
+      end if
+
+      chi = self % XSData % getChi(matIdx, g)
+
+      ! Calculate scattering source
+      scatter = 0.0_defFlt
+      xScatter = 0.0_defFlt
+      yScatter = 0.0_defFlt
+      zScatter = 0.0_defFlt
+      !$omp simd reduction(+:scatter, xScatter, yScatter, zScatter)
+      do gIn = 1, self % nG
+        scatter = scatter + fluxFlt(gIn) * scatterVec(gIn)
+        xScatter = xScatter + xFlt(gIn) * scatterVec(gIn)
+        yScatter = yScatter + yFlt(gIn) * scatterVec(gIn)
+        zScatter = zScatter + zFlt(gIn) * scatterVec(gIn)
+      end do
+
+      ! Output index
+      idx = baseIdx + g
+
+      self % source(idx) = chi(g) * fission + scatter
+      if (allocated(self % fixedSource)) then
+        self % source(idx) = self % source(idx) + self % fixedSource(idx)
+      end if
+      
+      xSource = chi(g) * xFission + xScatter
+      ySource = chi(g) * yFission + yScatter
+      zSource = chi(g) * zFission + zScatter
+      
+      if (allocated(self % fixedX)) then
+        xSource = xSource + self % fixedX(idx)
+        ySource = ySource + self % fixedY(idx)
+        zSource = zSource + self % fixedZ(idx)
+      end if
+      
+      ! Calculate source gradients by inverting the moment matrix
+      self % sourceX(idx) = invM(xx) * xSource + &
+              invM(xy) * ySource + invM(xz) * zSource
+      self % sourceY(idx) = invM(xy) * xSource + &
+              invM(yy) * ySource + invM(yz) * zSource
+      self % sourceZ(idx) = invM(xz) * xSource + &
+           invM(yz) * ySource + invM(zz) * zSource
+      
+    end do
 
   end subroutine sourceUpdateKernelLinIso
   
@@ -1100,6 +2016,93 @@ contains
 
   end subroutine sourceUpdateKernelLIFA
   
+  !!
+  !! Inverts the spatial moment matrix for use in linear source calculations.
+  !!
+  function invertMatrix(self, cIdx) result(invM)
+    class(arraysRR), target, intent(in) :: self
+    integer(shortInt), intent(in)       :: cIdx
+    real(defFlt), dimension(matSize)    :: invM
+    integer(shortInt)                   :: condX, condY, condZ, inversionTest
+    real(defReal)                       :: det
+    real(defFlt)                        :: one_det
+
+    associate(momVec => self % momMat(((cIdx - 1) * matSize + 1):(cIdx * matSize)))
+
+    ! Pre-invert the moment matrix
+    ! Need to check for poor conditioning by evaluating the
+    ! diagonal elements of the matrix
+    condX = 0
+    condY = 0
+    condZ = 0
+
+    ! Trying out simpler matrix test
+    if (momVec(xx) > condition_tolerance) condX = 1
+    if (momVec(yy) > condition_tolerance) condY = 1
+    if (momVec(zz) > condition_tolerance) condZ = 1
+    ! Significantly stabilises 2D linear source problems. Z moments can vary wildly.
+    if (self % set2D) condZ = 0
+
+    ! Map conditions to test variable
+    inversionTest = condX * 4 + condY * 2 + condZ
+    invM = 0.0_defFlt
+
+    select case(inversionTest)
+    case(invertXYZ)
+      det = momVec(xx) * (momVec(yy) * momVec(zz) - momVec(yz) * momVec(yz)) &
+            - momVec(yy) * momVec(xz) * momVec(xz) &
+            - momVec(zz) * momVec(xy) * momVec(xy) &
+            + 2 * momVec(xy) * momVec(xz) * momVec(yz)
+      invM(xx) = real(momVec(yy) * momVec(zz) - momVec(yz) * momVec(yz),defFlt)
+      invM(xy) = real(momVec(xz) * momVec(yz) - momVec(xy) * momVec(zz),defFlt)
+      invM(xz) = real(momVec(xy) * momVec(yz) - momVec(yy) * momVec(xz),defFlt)
+      invM(yy) = real(momVec(xx) * momVec(zz) - momVec(xz) * momVec(xz),defFlt)
+      invM(yz) = real(momVec(xy) * momVec(xz) - momVec(xx) * momVec(yz),defFlt)
+      invM(zz) = real(momVec(xx) * momVec(yy) - momVec(xy) * momVec(xy),defFlt)
+
+    case(invertYZ)
+      det = momVec(yy) * momVec(zz) - momVec(yz) * momVec(yz)
+      invM(yy) = real(momVec(zz),defFlt)
+      invM(yz) = real(-momVec(yz),defFlt)
+      invM(zz) = real(momVec(yy),defFlt)
+
+    case(invertXY)
+      det = momVec(xx) * momVec(yy) - momVec(xy) * momVec(xy)
+      invM(xx) = real(momVec(yy),defFlt)
+      invM(xy) = real(-momVec(xy),defFlt)
+      invM(yy) = real(momVec(xx),defFlt)
+
+    case(invertXZ)
+      det = momVec(xx) * momVec(zz) - momVec(xz) * momVec(xz)
+      invM(xx) = real(momVec(zz),defFlt)
+      invM(xz) = real(-momVec(xz),defFlt)
+      invM(zz) = real(momVec(xx),defFlt)
+
+    case(invertX)
+      det = momVec(xx)
+      invM(xx) = 1.0_defFlt
+
+    case(invertY)
+      det = momVec(yy)
+      invM(yy) = 1.0_defFlt
+
+    case(invertZ)
+      det = momVec(zz)
+      invM(zz) = 1.0_defFlt
+
+    case default
+      det = ONE
+    end select
+
+    one_det = real(ONE/det, defFlt)
+    invM = invM * one_det
+
+    ! Check for zero determinant
+    if (abs(det) < det_tolerance) invM = 0.0_defFlt
+
+    end associate
+
+  end function invertMatrix
   
   !! 
   !! Calculate keff
@@ -1112,6 +2115,7 @@ contains
     integer(shortInt)                     :: cIdx
     real(defReal)                         :: fissTotal, prevFissTotal
     real(defReal), save                   :: fissLocal, prevFissLocal
+    character(100), parameter             :: Here = 'calculateKeff (arraysRR_class.f90)'
     !$omp threadprivate (fissLocal, prevFissLocal)
 
     fissTotal     = ZERO
@@ -1124,7 +2128,12 @@ contains
     end do 
     !$omp end parallel do
 
+    !print *, fissTotal
+    !print *, prevFissTotal
+    
     k1 = k0 * fissTotal / prevFissTotal 
+    if ((k1 <= 0) .or. (k1 > 5)) call fatalError(Here, 'Unphysical keff: '//numToChar(k1))
+    if (k1 /= k1) call fatalError(Here, 'NaN keff')
 
   end function calculateKeff
   
@@ -1132,27 +2141,17 @@ contains
   !! Calculate keff for a single cell
   !!
   subroutine calculateKeffKernel(self, cIdx, fissionRate, prevFissionRate)
-
     class(arraysRR), target, intent(in)  :: self
-
     integer(shortInt), intent(in)        :: cIdx
-
     real(defReal), intent(out)           :: fissionRate
     real(defReal), intent(out)           :: prevFissionRate
-
     real(defReal)                        :: vol
-
     type(particle)                       :: s
-
     integer(shortInt)                    :: g, matIdx
-
     real(defFlt)                         :: temp
-
     real(defFlt), dimension(self % nG)   :: nuSigmaF
-
     real(defFlt), dimension(:), pointer  :: flux
     real(defFlt), dimension(:), pointer  :: prevFlux
-
     real(defReal)                        :: pos(3), dir(3)
 
     vol = self % volume(cIdx)
@@ -1216,6 +2215,21 @@ contains
   end subroutine calculateKeffKernel 
 
   !!
+  !! Zero the previous-step flux
+  !!
+  subroutine zeroPrevFlux(self)
+    class(arraysRR), intent(inout) :: self
+    character(100), parameter      :: Here = 'zeroPrevFlux (arraysRR_class.f90)'
+
+    if (allocated(self % prevFlux)) then
+      self % prevFlux = ZERO
+    else
+      call fatalError(Here,'prevFlux has not been initialised')
+    end if
+
+  end subroutine zeroPrevFlux
+
+  !!
   !! Reset fluxes
   !!
   subroutine resetFluxes(self)
@@ -1225,6 +2239,8 @@ contains
     select case(self % simulationType)
       case(flatIso)
         call self % resetFluxesFlatIso()
+      case(linearIso)
+        call self % resetFluxesLinIso()
       case default
         call fatalError(Here,'Unsupported simulation type requested')
     end select
@@ -1259,6 +2275,27 @@ contains
     do idx = 1, size(self % scalarFlux)
       self % prevFlux(idx) = self % scalarFlux(idx)
       self % scalarFlux(idx) = 0.0_defFlt
+    end do
+    !$omp end parallel do
+
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % scalarFlux)
+      self % prevX(idx) = self % scalarX(idx)
+      self % scalarX(idx) = ZERO
+    end do
+    !$omp end parallel do
+
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % scalarFlux)
+      self % prevY(idx) = self % scalarY(idx)
+      self % scalarY(idx) = ZERO
+    end do
+    !$omp end parallel do
+
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % scalarFlux)
+      self % prevZ(idx) = self % scalarZ(idx)
+      self % scalarZ(idx) = ZERO
     end do
     !$omp end parallel do
 
@@ -1306,15 +2343,17 @@ contains
     class(arraysRR), intent(inout) :: self
     real(defReal), save            :: flux, pow
     integer(shortInt)              :: idx
+    character(100), parameter      :: Here = 'accumulateFluxScores (arraysRR_class.f90)'
     !$omp threadprivate(flux, pow)
 
-    !$omp parallel do schedule(static)
-    do idx = 1, size(self % scalarFlux)
-      flux = real(self % scalarFlux(idx),defReal)
-      self % fluxScores(1, idx) = self % fluxScores(1, idx) + flux
-      self % fluxScores(2, idx) = self % fluxScores(2, idx) + flux * flux
-    end do
-    !$omp end parallel do
+    select case(self % simulationType)
+      case(flatIso, flatAni)
+        call self % accumulateFluxScoresFlat()
+      case(linearIso, linearAni)
+        call self % accumulateFluxScoresLinear()
+      case default
+        call fatalError(Here,'Unsupported simulation type requested')
+    end select
 
     !$omp parallel do schedule(static)
     do idx = 1, size(self % power)
@@ -1326,7 +2365,71 @@ contains
     !$omp end parallel do
 
     !print *, self % powerScores(1,:)
+
   end subroutine accumulateFluxScores
+
+  !!
+  !! Accumulate flux scores for stats
+  !!
+  subroutine accumulateFluxScoresFlat(self)
+    class(arraysRR), intent(inout) :: self
+    real(defReal), save            :: flux
+    integer(shortInt)              :: idx
+    !$omp threadprivate(flux)
+
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % scalarFlux)
+      flux = self % scalarFlux(idx)
+      self % fluxScores(1, idx) = self % fluxScores(1, idx) + flux
+      self % fluxScores(2, idx) = self % fluxScores(2, idx) + flux * flux
+    end do
+    !$omp end parallel do
+
+  end subroutine accumulateFluxScoresFlat
+ 
+  !!
+  !! Accumulate flux scores for stats
+  !! Includes linear components
+  !!
+  subroutine accumulateFluxScoresLinear(self)
+    class(arraysRR), intent(inout) :: self
+    real(defReal), save            :: flux
+    integer(shortInt)              :: idx
+    !$omp threadprivate(flux)
+
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % scalarFlux)
+      flux = self % scalarFlux(idx)
+      self % fluxScores(1, idx) = self % fluxScores(1, idx) + flux
+      self % fluxScores(2, idx) = self % fluxScores(2, idx) + flux * flux
+    end do
+    !$omp end parallel do
+    
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % scalarFlux)
+      flux = self % scalarX(idx)
+      self % xScores(1, idx) = self % xScores(1, idx) + flux
+      self % xScores(2, idx) = self % xScores(2, idx) + flux * flux
+    end do
+    !$omp end parallel do
+    
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % scalarFlux)
+      flux = self % scalarY(idx)
+      self % yScores(1, idx) = self % yScores(1, idx) + flux
+      self % yScores(2, idx) = self % yScores(2, idx) + flux * flux
+    end do
+    !$omp end parallel do
+    
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % scalarFlux)
+      flux = self % scalarZ(idx)
+      self % zScores(1, idx) = self % zScores(1, idx) + flux
+      self % zScores(2, idx) = self % zScores(2, idx) + flux * flux
+    end do
+    !$omp end parallel do
+
+  end subroutine accumulateFluxScoresLinear
 
   !!
   !! Tallies flux-related results, using an input tallyAdmin.
@@ -1406,6 +2509,16 @@ contains
     integer(shortInt), intent(in)  :: it
     integer(shortInt)              :: idx
     real(defReal)                  :: N1, Nm1
+    character(100), parameter      :: Here = 'finaliseFluxScores (arraysRR_class.f90)'
+
+    select case(self % simulationType)
+      case(flatIso, flatAni)
+        call self % finaliseFluxScoresFlat(it)
+      case(linearIso, linearAni)
+        call self % finaliseFluxScoresLinear(it)
+      case default
+        call fatalError(Here,'Unsupported simulation type requested')
+    end select
 
     if (it /= 1) then
       Nm1 = 1.0_defReal/(it - 1)
@@ -1413,20 +2526,6 @@ contains
       Nm1 = 1.0_defReal
     end if
     N1 = 1.0_defReal/it
-
-    !$omp parallel do schedule(static)
-    do idx = 1, size(self % scalarFlux)
-      self % fluxScores(1, idx) = self % fluxScores(1, idx) * N1
-      self % fluxScores(2, idx) = self % fluxScores(2, idx) * N1
-      self % fluxScores(2, idx) = Nm1 * (self % fluxScores(2, idx) - &
-            self % fluxScores(1, idx) * self % fluxScores(1, idx)) 
-      if (self % fluxScores(2, idx) <= ZERO) then
-        self % fluxScores(2, idx) = ZERO
-      else
-        self % fluxScores(2, idx) = sqrt(self % fluxScores(2, idx))
-      end if
-    end do
-    !$omp end parallel do
 
     !Finalise powers
     !$omp parallel do schedule(static)
@@ -1444,6 +2543,101 @@ contains
     !$omp end parallel do
 
   end subroutine finaliseFluxScores
+
+  !!
+  !! Finalise flux scores for stats
+  !!
+  subroutine finaliseFluxScoresFlat(self,it)
+    class(arraysRR), intent(inout) :: self
+    integer(shortInt), intent(in)  :: it
+    integer(shortInt)              :: idx
+    real(defReal)                  :: N1, Nm1
+
+    if (it /= 1) then
+      Nm1 = 1.0_defReal/(it - 1)
+    else
+      Nm1 = 1.0_defReal
+    end if
+    N1 = 1.0_defReal/it
+
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % scalarFlux)
+      self % fluxScores(1, idx) = self % fluxScores(1, idx) * N1
+      self % fluxScores(2, idx) = self % fluxScores(2, idx) * N1
+      self % fluxScores(2, idx) = Nm1 * (self % fluxScores(2, idx) - &
+            self % fluxScores(1, idx) * self % fluxScores(1, idx))
+      if (self % fluxScores(2, idx) <= ZERO) then
+        self % fluxScores(2, idx) = ZERO
+      else
+        self % fluxScores(2, idx) = sqrt(self % fluxScores(2, idx))
+      end if
+    end do
+    !$omp end parallel do
+
+  end subroutine finaliseFluxScoresFlat
+
+  !!
+  !! Finalise flux scores for stats
+  !! Includes linear components
+  !!
+  subroutine finaliseFluxScoresLinear(self,it)
+    class(arraysRR), intent(inout) :: self
+    integer(shortInt), intent(in)  :: it
+    integer(shortInt)              :: idx
+    real(defReal)                  :: N1, Nm1
+
+    if (it /= 1) then
+      Nm1 = 1.0_defReal/(it - 1)
+    else
+      Nm1 = 1.0_defReal
+    end if
+    N1 = 1.0_defReal/it
+
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % scalarFlux)
+      self % fluxScores(1, idx) = self % fluxScores(1, idx) * N1
+      self % fluxScores(2, idx) = self % fluxScores(2, idx) * N1
+      self % fluxScores(2, idx) = Nm1 * (self % fluxScores(2, idx) - &
+            self % fluxScores(1, idx) * self % fluxScores(1, idx))
+      if (self % fluxScores(2, idx) <= ZERO) then
+        self % fluxScores(2, idx) = ZERO
+      else
+        self % fluxScores(2, idx) = sqrt(self % fluxScores(2, idx))
+      end if
+
+      self % xScores(1, idx) = self % xScores(1, idx) * N1
+      self % xScores(2, idx) = self % xScores(2, idx) * N1
+      self % xScores(2, idx) = Nm1 * (self % xScores(2, idx) - &
+            self % xScores(1, idx) * self % xScores(1, idx))
+      if (self % xScores(2, idx) <= ZERO) then
+        self % xScores(2, idx) = ZERO
+      else
+        self % xScores(2, idx) = sqrt(self % xScores(2, idx))
+      end if
+
+      self % yScores(1, idx) = self % yScores(1, idx) * N1
+      self % yScores(2, idx) = self % yScores(2, idx) * N1
+      self % yScores(2, idx) = Nm1 * (self % yScores(2, idx) - &
+            self % yScores(1, idx) * self % yScores(1, idx))
+      if (self % yScores(2, idx) <= ZERO) then
+        self % yScores(2, idx) = ZERO
+      else
+        self % yScores(2, idx) = sqrt(self % yScores(2, idx))
+      end if
+
+      self % zScores(1, idx) = self % zScores(1, idx) * N1
+      self % zScores(2, idx) = self % zScores(2, idx) * N1
+      self % zScores(2, idx) = Nm1 * (self % zScores(2, idx) - &
+            self % zScores(1, idx) * self % zScores(1, idx))
+      if (self % zScores(2, idx) <= ZERO) then
+        self % zScores(2, idx) = ZERO
+      else
+        self % zScores(2, idx) = sqrt(self % zScores(2, idx))
+      end if
+    end do
+    !$omp end parallel do
+
+  end subroutine finaliseFluxScoresLinear
   
   !!
   !! Outputs integral flux or fission rate when
@@ -1659,6 +2853,64 @@ contains
     call viz % finaliseVTK
 
   end subroutine outputToVTK
+
+  !!
+  !! Returns the flux vector at a point in space
+  !!
+  subroutine getFluxAtAPoint(self, r, flux, fluxSD)
+    class(arraysRR), intent(in)                      :: self
+    real(defReal), dimension(3), intent(in)          :: r
+    real(defReal), dimension(self % nG), intent(out) :: flux
+    real(defReal), dimension(self % nG), intent(out) :: fluxSD
+    integer(shortInt)                                :: g, matIdx, cIdx, i
+    real(defReal), dimension(3)                      :: mom, momSD, centroid, fluxGrad
+    real(defFlt), dimension(matSize)                 :: invM
+
+    ! Identify cell at the given point
+    call self % geom % whatIsAt(matIdx, cIdx, r)
+
+    if (cIdx > 0) then
+      do g = 1, self % nG
+
+        flux(g) = self % getFluxScore(cIdx, g)
+        fluxSD(g) = self % getFluxSD(cIdx, g)
+
+        ! Include linear moments if available
+        if ((self % simulationType == linearIso) .or. &
+                (self % simulationType == linearAni)) then
+
+          fluxSD(g) = fluxSD(g) * fluxSD(g)
+
+          mom = self % getFluxMoments(cIdx, g)
+          momSD = self % getFluxMomentSDs(cIdx, g)
+          centroid = self % getCentroid(cIdx)
+          invM = self % invertMatrix(cIdx)
+
+          ! Get flux gradients
+          fluxGrad(x) = real(invM(xx) * mom(x) + invM(xy) * mom(y) + invM(xz) * mom(z), defReal)
+          fluxGrad(y) = real(invM(xy) * mom(x) + invM(yy) * mom(y) + invM(yz) * mom(z), defReal)
+          fluxGrad(z) = real(invM(xz) * mom(x) + invM(yz) * mom(y) + invM(zz) * mom(z), defReal)
+
+          ! Note this will not correctly estimate uncertainty as moments are covariant
+          do i = 1, 3
+            flux(g) = flux(g) + fluxGrad(i) * (r(i) - centroid(i))
+            ! Not sure exactly how to propagate uncertainties - need to do some maths
+            fluxSD(g) = fluxSD(g) + momSD(i)**2 * (r(i) - centroid(i))**2
+          end do
+
+          if (fluxSD(g) > ZERO) fluxSD(g) = sqrt(fluxSD(g))
+
+        end if
+
+      end do
+
+    else
+      print *,'WARNING: No cell found at position '//numToChar(r)
+      flux = -ONE
+      fluxSD = -ONE
+    end if
+
+  end subroutine getFluxAtAPoint
   
   !!
   !! Return to uninitialised state
@@ -1680,6 +2932,7 @@ contains
     if(allocated(self % lengthSquared)) deallocate(self % lengthSquared)
     if(allocated(self % volume)) deallocate(self % volume)
     if(allocated(self % cellHit)) deallocate(self % cellHit)
+    if(allocated(self % cellTotalHit)) deallocate(self % cellTotalHit)
     if(allocated(self % cellFound)) deallocate(self % cellFound)
     if(allocated(self % cellPos)) deallocate(self % cellPos)
     

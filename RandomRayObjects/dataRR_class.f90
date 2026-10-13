@@ -71,6 +71,7 @@ module dataRR_class
   contains
     
     procedure :: init
+    procedure :: setAdjointXS
     procedure :: kill
 
     ! TODO: add an XS update procedure, e.g., given multiphysics
@@ -211,6 +212,8 @@ contains
       
 
     else
+
+      self % nT = 1
       ! Create a dummy RNG togetMacroXSs_byG satisfy the mgDatabase access interface
       call rand % init(1_longInt)
       if (loud) print *,'Initialising random ray nuclear data'
@@ -274,6 +277,46 @@ contains
     end if
 
   end subroutine init
+
+  !!
+  !! Change cross sections for adjoints simulations:
+  !! - swap chi and nuSigmaF
+  !! - transpose scattering matrices
+  !!
+  subroutine setAdjointXS(self)
+    class(dataRR), intent(inout)            :: self
+    integer(shortInt)                       :: g, g1, m
+    real(defFlt), dimension(:), allocatable :: buffer
+    character(100), parameter :: Here = 'setAdjointXS (dataRR_class.f90)'
+
+    if (self % nT > 1) then
+      call fatalError(Here,'Adjoint not supported for coupled problems')
+    end if
+
+    allocate(buffer(self % nG))
+    do m = 1, self % nMat
+      allocate(buffer(self % nG))
+      buffer = self % matRR(m) % chi
+      self % matRR(m) % chi = self % matRR(m) % nuSigmaF
+      self % matRR(m) % nuSigmaF = self % matRR(m) % chi
+    end do
+    deallocate(buffer)
+
+    ! Transpose scattering matrix
+    allocate(buffer(self % nG * self % nG))
+    do m = 1, self % nMat
+      buffer = self % matRR(m) % sigmaS
+        do g = 1, self % nG
+          do g1 = 1, self % nG
+            self % matRR(m) % sigmaS(self % nG * (g1 - 1) + g)  =  buffer(self % nG * (g - 1) + g1)
+        end do
+      end do
+    end do
+
+
+    ! TODO: apply the same treatment to anisotropic scattering matrices
+
+  end subroutine setAdjointXS
 
   !!
   !! Calculate the lower and upper indices for accessing the XS array
@@ -515,6 +558,11 @@ contains
       mIdx = matIdx 
     end if 
  
+    if (matIdx < 1 .or. matIdx > self % nMat) then
+      nuFiss = ZERO
+      return
+    end if
+
     associate (m => self % matRR(mIdx)) 
       if (present(temp)) then 
  
@@ -575,6 +623,11 @@ contains
     else 
       mIdx = matIdx 
     end if 
+
+    if (matIdx < 1 .or. matIdx > self % nMat) then
+      sigF = ZERO
+      return
+    end if
  
     associate (m => self % matRR(mIdx)) 
       if (present(temp)) then 
@@ -632,10 +685,17 @@ contains
     integer(shortInt)                  :: mIdx, g, tIdx 
  
     if (matIdx > self % nMat) then 
+      print *, matIdx
       mIdx = self % nMat + 1 
+      print *, mm_matname(mIdx)
     else 
       mIdx = matIdx 
-    end if 
+    end if
+
+   if (matIdx < 1 .or. matIdx > self % nMat) then
+      sigT = ZERO
+      return
+    end if
  
     associate (m => self % matRR(mIdx)) 
       if (present(temp)) then 
@@ -699,6 +759,11 @@ contains
       mIdx = self % nMat + 1
     else
       mIdx = matIdx
+    end if
+
+    if (matIdx < 1 .or. matIdx > self % nMat) then
+      sigS = ZERO
+      return
     end if
 
     associate (m => self % matRR(mIdx))

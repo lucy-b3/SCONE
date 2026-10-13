@@ -212,7 +212,7 @@ contains
     class(randomRayPhysicsPackage), intent(inout) :: self
     class(dictionary), intent(inout)              :: dict
     logical(defBool), intent(in), optional        :: loud
-    integer(shortInt)                             :: seed_temp, ani
+    integer(shortInt)                             :: seed_temp, ani, volP, missP
     logical(defBool)                              :: lin
     integer(longInt)                              :: seed
     character(10)                                 :: time
@@ -223,6 +223,7 @@ contains
     character(nameLen)                            :: geomName, graphType, nucData
     class(geometry), pointer                      :: geom
     type(outputFile)                              :: test_out
+    logical(defBool)                              :: set2D
     character(100), parameter :: Here = 'init (randomRayPhysicsPackage_class.f90)'
 
     call cpu_time(self % CPU_time_start)
@@ -242,6 +243,9 @@ contains
     call dict % get(self % inactive, 'inactive')
     call dict % getOrDefault(self % power, 'power', ZERO)
     call dict % getOrDefault(self % keff, 'keff', ONE)
+
+    call dict % getOrDefault(volP, 'volPolicy', 1)
+    call dict % getOrDefault(missP, 'missPolicy', 1)
     
     ! Perform distance caching?
     call dict % getOrDefault(self % cache, 'cache', .false.)
@@ -251,6 +255,9 @@ contains
     
     ! Use linear sources?
     call dict % getOrDefault(lin, 'lin', .false.)
+
+    ! Is the problem 2D?
+    call dict % getOrDefault(set2D, '2d', .false.)
     
     ! Use anisotropic scattering?
     call dict % getOrDefault(ani, 'ani', 0)
@@ -414,7 +421,8 @@ contains
     !print *, "Initialising arrays"
     ! Initialise RR arrays and nuclear data
     call self % arrays % init(self % mgData, self % geom, &
-            self % pop * (self % termination - self % dead), self % rho, lin, ani, .false., self % loud, self % mapTemp)
+            self % pop * (self % termination - self % dead), self % rho, lin, ani, .false., self % loud, & 
+            mapTemp = self % mapTemp, volPolicy = volP, missPolicy = missP, set2D = set2D)
 
     !print *, "End TRRM init"
     ! Attach a tally admin for coupling
@@ -552,7 +560,7 @@ contains
       if (isActive) call arrayPtr % accumulateFluxScores()
 
       ! Calculate proportion of cells that were hit
-      hitRate = arrayPtr % getCellHitRate()
+      hitRate = arrayPtr % getCellHitRate(it)
       call arrayPtr % wipeCellHits()
 
       ! Evaluate stopping criterion for active or inactive iterations

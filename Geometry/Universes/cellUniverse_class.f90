@@ -176,6 +176,7 @@ contains
         do while (j >= 1 .and. cells(idx(j)) % visits < keyVisit)
           idx(j + 1) = idx(j)
           j = j - 1
+          if (j == 0) exit
         end do
 
         ! Insert element in correct position

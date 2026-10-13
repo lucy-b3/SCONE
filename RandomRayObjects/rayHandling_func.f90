@@ -16,7 +16,7 @@ module rayHandling_func
   ! Random ray modules
   use arraysRR_class,                 only : arraysRR
   use dataRR_class,                   only : dataRR
-  use mathsRR_func,                   only : F1
+  use mathsRR_func,                   only : expF1, expF1Tau, expG, expG2
 
   ! Random ray - or a standard particle
   use particle_class,                 only : ray => particle
@@ -226,15 +226,15 @@ contains
 
     coords = r % coords
 
-    ! Catch for regions with voids
-    if (matIdx <= XSData % getNMat()) then
-
-      if (mapTemp) then
+    if (mapTemp) then
         temp = tempField % at(coords)
         totalXS = XSData % getTotalXS(matIdx, temp)
       else
         totalXS = XSData % getTotalXS(matIdx)
       end if
+
+    ! Catch for regions with voids
+    if (matIdx <= XSData % getNMat()) then
 
       !!$omp simd
       do g = 1, nG
@@ -262,7 +262,6 @@ contains
 
       ! Get material and cell the ray is moving through
       matIdx = r % coords % matIdx
-
       cIdx = r % coords % uniqueID
 
       coords = r % coords
@@ -309,6 +308,8 @@ contains
         if (mapTemp) then
           temp = tempField % at(coords)
           totalXS = XSData % getTotalXS(matIdx, temp)
+        else 
+          totalXS =  XSData % getTotalXS(matIdx)
         end if
 
         if ((matIdx < 1) .or. (matIdx > XSData % getNMat())) then
@@ -320,7 +321,7 @@ contains
 
           tau(g) = totalXS(g) * lenFlt
 
-          attenuate(g) = lenFlt * F1(tau(g))
+          attenuate(g) = lenFlt * expF1(tau(g))
 
           delta(g) = (totalXS(g) * fluxVec(g) - sourceVec(g)) * attenuate(g)
 
@@ -406,6 +407,295 @@ contains
     real(defReal), intent(in)                             :: termination
     class(arraysRR), pointer, intent(inout)               :: arrays
     logical(defBool), intent(in)                          :: mapTemp
+    class(dataRR), pointer                  :: XSData
+    class(geometryStd), pointer             :: geom
+    type(coordList)                             :: coords
+    integer(shortInt)                       :: matIdx, g, cIdx, event, matIdx0
+    real(defReal)                           :: totalLength, length, len2_12
+    real(defReal), dimension(nDim)          :: mid, r0, rC, mu0, rNorm
+    real(defReal), dimension(matSize)       :: matScore
+    logical(defBool)                        :: activeRay, hitVacuum
+    type(distCache)                         :: cache
+    real(defFlt)                            :: lenFlt, lenFlt2_2, len_2, temp
+    class(pieceConstantField), pointer          :: tempField
+    real(defFlt), dimension(nDim)           :: muFlt, r0NormFlt, rNormFlt
+    real(defFlt), dimension(nG)             :: delta, angular, tau, flatQ, gradQ, &
+                                               F1, F2, angular0, G0, G1, G2, H, &
+                                               xInc, yInc, zInc, inc, totalXS, total
+    real(defFlt), pointer, dimension(:)     :: source, sourceX, sourceY, sourceZ
+    real(defFlt), pointer, dimension(:)    :: scalar, scalarX, scalarY, scalarZ
+    character(100), parameter :: Here = 'transportSweepLinearIso (rayHandling_func.f90)'
+
+    XSData => arrays % getDataPointer()
+    geom => arrays % getGeomPointer()
+    if (mapTemp) then
+      tempField => arrays % getTempPointer()
+    end if
+
+    ! Set initial angular flux to angle average of cell source
+    cIdx = r % coords % uniqueID
+    matIdx  = r % coords % matIdx
+    coords = r % coords
+    !call XSData % getTotalPointer(matIdx, total)
+
+    ! Catch for regions with voids
+    ! Assumes these are defined as 'void'
+    ! TODO: Use a more robust criterion, as for branching later
+    if (matIdx <= XSData % getNMat()) then
+        if (mapTemp) then
+        temp = tempField % at(coords)
+        total = XSData % getTotalXS(matIdx, temp)
+      else
+        total = XSData % getTotalXS(matIdx)
+        if ((any(total < 0)) .or. (any(total > 5))) then
+          print *, "unphysical totalXS"
+        end if 
+      end if
+
+      do g = 1, nG
+        angular(g) = arrays % getSource(cIdx,g) / total(g)
+      end do
+    else
+      do g = 1, nG
+        angular(g) = 0.0_defFlt
+      end do
+    end if
+
+    ints = 0
+    matIdx0 = matIdx
+    totalLength = ZERO
+    activeRay = .false.
+    do while (totalLength < termination)
+
+      ! Get ray entry position and direction for LS calculations
+      r0  = r % rGlobal()
+      mu0 = r % dirGlobal()
+      muFlt = real(mu0,defFlt)
+
+      ! Get material and cell the ray is moving through
+      matIdx  = r % coords % matIdx
+      cIdx    = r % coords % uniqueID
+      coords = r % coords
+      if (matIdx0 /= matIdx) then
+        matIdx0 = matIdx
+        if (matIdx <= XSData % getNMat()) then
+
+          if (mapTemp) then
+            temp = tempField % at(coords)
+            total = XSData % getTotalXS(matIdx, temp)
+          else
+            total = XSData % getTotalXS(matIdx)
+            if ((any(total < 0)) .or. (any(total > 5))) then
+              print *, "unphysical totalXS"
+            end if
+          end if
+
+        end if
+      end if
+
+      ! Set maximum flight distance and ensure ray is active
+      call checkRayLength(totalLength, dead, termination, activeRay, length)
+
+      ! Move ray
+      call moveRay(r, doCache, ints, geom, length, event, cache, hitVacuum)
+      totalLength = totalLength + length
+
+      ! Calculate the track centre
+      rC = r0 + length * HALF * mu0
+
+      ! Set new cell's position
+      if (.not. arrays % wasFound(cIdx)) call arrays % newFound(cIdx, rC)
+
+      ! Compute the track centroid and entry point in local co-ordinates
+      ! Convert to floats for speed
+      ! If region is rarely visited, use ray's halfway point as centroid
+      ! Prevents numerical trouble
+      if (arrays % getVolume(cIdx) > ZERO) then
+        mid = arrays % getCentroid(cIdx)
+        rNorm = rC - mid
+        rNormFlt = real(rNorm,defFlt)
+        r0NormFlt = real(r0 - mid,defFlt)
+      else
+        rNorm = ZERO
+        rNormFlt = 0.0_defFlt
+        r0NormFlt = -real(HALF * mu0 * length,defFlt)
+      end if
+
+      call arrays % getSourcePointer(cIdx, source)
+      call arrays % getSourceXYZPointers(cIdx, sourceX, sourceY, sourceZ)
+
+      ! Calculate source terms
+      !$omp simd aligned(sourceX, sourceY, sourceZ)
+      do g = 1, nG
+        flatQ(g) = rNormFlt(x) * sourceX(g)
+        flatQ(g) = flatQ(g) + rNormFlt(y) * sourceY(g)
+        flatQ(g) = flatQ(g) + rNormFlt(z) * sourceZ(g)
+        flatQ(g) = flatQ(g) + source(g)
+
+        gradQ(g) = muFlt(x) * sourceX(g)
+        gradQ(g) = gradQ(g) + muFlt(y) * sourceY(g)
+        gradQ(g) = gradQ(g) + muFlt(z) * sourceZ(g)
+      end do
+
+      lenFlt = real(length,defFlt)
+      lenFlt2_2 = lenFlt * lenFlt * one_two
+
+      ! Branch for voids etc
+      ! TODO: Should use a better branching criterion. Maybe create it in data?
+      ! Standard route
+      if (matIdx <= XSData % getNMat()) then
+
+        ! Compute exponentials necessary for angular flux update
+        !$omp simd
+        do g = 1, nG
+          tau(g) = total(g) * lenFlt
+        end do
+
+        !$omp simd
+        do g = 1, nG
+          G0(g)  = expG(tau(g))
+        end do
+
+        !$omp simd
+        do g = 1, nG
+          F1(g)  = 1.0_defFlt - tau(g) * G0(g)
+        end do
+
+        !$omp simd
+        do g = 1, nG
+          F2(g)  = 2.0_defFlt * G0(g) - F1(g)
+        end do
+
+        !$omp simd
+        do g = 1, nG
+          delta(g) = (tau(g) * angular(g) - lenFlt * flatQ(g)) * F1(g) &
+                     - gradQ(g) * F2(g) * lenFlt2_2
+        end do
+
+        ! Create an intermediate flux variable for use in LS scores
+        !$omp simd
+        do g = 1, nG
+          angular0(g) = angular(g)
+        end do
+
+        !$omp simd
+        do g = 1, nG
+          angular(g) = angular(g) - delta(g)
+        end do
+
+        ! Accumulate to scalar flux
+        if (activeRay) then
+
+          ! Precompute geometric info to keep it out of the lock
+          len2_12 = length * length * one_twelve
+          matScore(xx) = length * (rNorm(x) * rNorm(x) + mu0(x) * mu0(x) * len2_12)
+          matScore(xy) = length * (rNorm(x) * rNorm(y) + mu0(x) * mu0(y) * len2_12)
+          matScore(xz) = length * (rNorm(x) * rNorm(z) + mu0(x) * mu0(z) * len2_12)
+          matScore(yy) = length * (rNorm(y) * rNorm(y) + mu0(y) * mu0(y) * len2_12)
+          matScore(yz) = length * (rNorm(y) * rNorm(z) + mu0(y) * mu0(z) * len2_12)
+          matScore(zz) = length * (rNorm(z) * rNorm(z) + mu0(z) * mu0(z) * len2_12)
+          rC = rC * length
+
+          ! Compute necessary exponentials outside of the lock
+          ! Follows those in Gunow
+
+          !$omp simd
+          do g = 1, nG
+            H(g) = F1(g) - G0(g)
+          end do
+
+          !$omp simd
+          do g = 1, nG
+            G1(g) = one_two - H(g)
+          end do
+
+          !$omp simd
+          do g = 1, nG
+            G2(g) = expG2(tau(g))
+          end do
+
+          ! Make some more condensed variables to help vectorisation
+          !$omp simd
+          do g = 1, nG
+            G1(g) = G1(g) * flatQ(g) * lenFlt
+            G2(g) = G2(g) * gradQ(g) * lenFlt2_2
+            H(g)  = H(g) * angular0(g) * tau(g)
+            H(g) = (G1(g) + G2(g) + H(g)) * lenFlt
+            flatQ(g) = flatQ(g) * lenFlt + delta(g)
+          end do
+
+          !$omp simd
+          do g = 1, nG
+            xInc(g) = r0NormFlt(x) * flatQ(g) + muFlt(x) * H(g)
+            yInc(g) = r0NormFlt(y) * flatQ(g) + muFlt(y) * H(g)
+            zInc(g) = r0NormFlt(z) * flatQ(g) + muFlt(z) * H(g)
+          end do
+
+          call arrays % setLock(cIdx)
+
+            call arrays % getFluxPointer(cIdx, scalar)
+            call arrays % getFluxXYZPointers(cIdx, scalarX, scalarY, scalarZ)
+
+            ! Update flux moments
+            !$omp simd aligned(scalar, scalarX, scalarY, scalarZ)
+            do g = 1, nG
+              scalar(g) = scalar(g) + delta(g)
+              scalarX(g) = scalarX(g) + xInc(g)
+              scalarY(g) = scalarY(g) + yInc(g)
+              scalarZ(g) = scalarZ(g) + zInc(g)
+            end do
+
+            call arrays % incrementVolume(cIdx, length)
+            call arrays % incrementCentroid(cIdx, rC)
+            call arrays % incrementMoments(cIdx, matScore)
+            call arrays % hitCell(cIdx)
+
+          call arrays % unsetLock(cIdx)
+
+        end if
+
+      ! Handle void cells. Assume flat source.
+      ! Does not accumulate geometric info.
+      else
+
+        ! Accumulate to scalar flux
+        if (activeRay) then
+
+          len_2 = lenFlt * one_two
+          !$omp simd
+          do g = 1, nG
+            inc(g) = lenFlt * (angular(g) + source(g) * len_2)
+          end do
+
+          call arrays % setLock(cIdx)
+            call arrays % getFluxPointer(cIdx, scalar)
+            !$omp simd
+            do g = 1, nG
+              scalar(g) = scalar(g) + inc(g)
+            end do
+            call arrays % incrementVolume(cIdx, length)
+            call arrays % hitCell(cIdx)
+          call arrays % unsetLock(cIdx)
+
+        end if
+
+        !$omp simd
+        do g = 1, nG
+          angular(g) = angular(g) + source(g) * lenFlt
+        end do
+
+      end if
+
+      ! Check for a vacuum hit
+      if (hitVacuum) then
+        !$omp simd
+        do g = 1, nG
+          angular(g) = 0.0_defFlt
+        end do
+      end if
+
+    end do
+
 
   end subroutine transportSweepLinIso
   
