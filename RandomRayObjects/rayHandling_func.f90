@@ -11,6 +11,7 @@ module rayHandling_func
   use coord_class,                    only : coordList
   use geometry_inter,                 only : distCache
   use geometryStd_class,              only : geometryStd
+  use pieceConstantField_inter,       only : pieceConstantField
 
   ! Random ray modules
   use arraysRR_class,                 only : arraysRR
@@ -137,7 +138,7 @@ contains
   !! scoring scalar flux and volume.
   !! Records the number of integrations/ray movements.
   !!
-  subroutine transportSweep(r, ints, nG, doCache, dead, termination, arrays)
+  subroutine transportSweep(r, ints, nG, doCache, dead, termination, arrays, mapTemp)
     type(ray), intent(inout)                :: r
     integer(longInt), intent(out)           :: ints
     integer(shortInt), intent(in)           :: nG
@@ -145,6 +146,7 @@ contains
     real(defReal), intent(in)               :: dead
     real(defReal), intent(in)               :: termination
     class(arraysRR), pointer, intent(inout) :: arrays
+    logical(defBool), intent(in)            :: mapTemp
     integer(shortInt)                       :: simType
     character(100), parameter :: Here = 'transportSweep (rayHandling_func.f90)'
 
@@ -152,13 +154,13 @@ contains
 
     select case(simType)
       case (flatIso)
-        call transportSweepFlatIso(r, ints, nG, doCache, dead, termination, arrays)
+        call transportSweepFlatIso(r, ints, nG, doCache, dead, termination, arrays, mapTemp)
       case (linearIso)
-        call transportSweepLinearIso(r, ints, nG, doCache, dead, termination, arrays)
+        call transportSweepLinearIso(r, ints, nG, doCache, dead, termination, arrays, mapTemp)
       case (flatAni)
-        call transportSweepFlatAni(r, ints, nG, doCache, dead, termination, arrays)
+        call transportSweepFlatAni(r, ints, nG, doCache, dead, termination, arrays, mapTemp)
       case (linearAni)
-        call transportSweepLIFA(r, ints, nG, doCache, dead, termination, arrays)
+        call transportSweepLIFA(r, ints, nG, doCache, dead, termination, arrays, mapTemp)
       case default
         call fatalError(Here,'Unsupported simulation type')
     end select
@@ -168,7 +170,7 @@ contains
   !!
   !! Transport sweep for flat isotropic sources
   !!
-  subroutine transportSweepFlatIso(r, ints, nG, doCache, dead, termination, arrays)
+  subroutine transportSweepFlatIso(r, ints, nG, doCache, dead, termination, arrays, mapTemp)
     type(ray), intent(inout)             :: r
     integer(longInt), intent(out)        :: ints
     integer(shortInt), intent(in)        :: nG
@@ -176,24 +178,40 @@ contains
     real(defReal), intent(in)            :: dead
     real(defReal), intent(in)            :: termination
     class(arraysRR), pointer, intent(in) :: arrays
+    logical(defBool), intent(in)         :: mapTemp
     class(dataRR), pointer               :: XSData
     class(geometryStd), pointer          :: geom
+    class(pieceConstantField), pointer   :: tempField
     integer(shortInt)                    :: matIdx, g, cIdx, event, matIdx0
     real(defReal)                        :: totalLength, length
     logical(defBool)                     :: activeRay, hitVacuum
     type(distCache)                      :: cache
-    real(defFlt)                         :: lenFlt, len_2
-    real(defFlt), dimension(nG)          :: attenuate, delta, angular, tau, inc
-    real(defFlt), pointer, dimension(:)  :: source, total
+    type(coordList)                      :: coords
+    real(defFlt)                         :: lenFlt, len_2, temp, temp0
+    real(defFlt), dimension(nG)          :: attenuate, delta, angular, tau, inc, total
+    real(defFlt), pointer, dimension(:)  :: source !total
     real(defReal), pointer, dimension(:) :: scalar
     
     XSData => arrays % getDataPointer()
     geom => arrays % getGeomPointer()
 
+    if (mapTemp) then
+      tempField => arrays % getTempPointer()
+    end if
+
     ! Set initial angular flux to angle average of cell source
     cIdx = r % coords % uniqueID
     matIdx  = r % coords % matIdx
-    call XSData % getTotalPointer(matIdx, total)
+    !call XSData % getTotalPointer(matIdx, total)
+
+    coords = r % coords
+    
+    if (mapTemp) then
+      temp = tempField % at(coords)
+      total = XSData % getTotalXS(matIdx, temp)
+    else
+      total = XSData % getTotalXS(matIdx)
+    end if
     
     ! Catch for regions with voids
     ! Assumes these are defined as 'void'
@@ -215,6 +233,11 @@ contains
 
     ints = 0
     matIdx0 = matIdx
+    if (mapTemp) then
+      temp0 = temp
+    else 
+      temp0 = ZERO
+    end if
     totalLength = ZERO
     activeRay = .false.
     do while (totalLength < termination)
@@ -222,11 +245,27 @@ contains
       ! Get material and cell the ray is moving through
       matIdx = r % coords % matIdx
       cIdx   = r % coords % uniqueID
-      if (matIdx0 /= matIdx) then
+      coords = r % coords
+
+      if (mapTemp) then
+        temp = tempField % at(coords)
+      else
+        temp = ZERO
+      end if
+
+      if (matIdx0 /= matIdx .or. temp0 /= temp) then
         matIdx0 = matIdx
         
         ! Cache total cross section
-        call XSData % getTotalPointer(matIdx, total)
+        !call XSData % getTotalPointer(matIdx, total)
+
+        if (mapTemp) then
+          temp0 = temp
+          total = XSData % getTotalXS(matIdx, temp)
+        else
+          total = XSData % getTotalXS(matIdx)
+        end if
+
       end if
 
       ! Set maximum flight distance and ensure ray is active
@@ -323,7 +362,7 @@ contains
   !!
   !! Transport sweep for linear isotropic sources
   !!
-  subroutine transportSweepLinearIso(r, ints, nG, doCache, dead, termination, arrays)
+  subroutine transportSweepLinearIso(r, ints, nG, doCache, dead, termination, arrays, mapTemp)
     type(ray), intent(inout)                :: r
     integer(longInt), intent(out)           :: ints
     integer(shortInt), intent(in)           :: nG
@@ -331,30 +370,46 @@ contains
     real(defReal), intent(in)               :: dead
     real(defReal), intent(in)               :: termination
     class(arraysRR), pointer, intent(inout) :: arrays
+    logical(defBool), intent(in)            :: mapTemp
     class(dataRR), pointer                  :: XSData
     class(geometryStd), pointer             :: geom
+    class(pieceConstantField), pointer      :: tempField
     integer(shortInt)                       :: matIdx, g, cIdx, event, matIdx0
     real(defReal)                           :: totalLength, length, len2_12
     real(defReal), dimension(nDim)          :: mid, r0, rC, mu0, rNorm
     real(defReal), dimension(matSize)       :: matScore
     logical(defBool)                        :: activeRay, hitVacuum
     type(distCache)                         :: cache
-    real(defFlt)                            :: lenFlt, lenFlt2_2, len_2
+    type(coordList)                         :: coords
+    real(defFlt)                            :: lenFlt, lenFlt2_2, len_2, temp, temp0
     real(defFlt), dimension(nDim)           :: muFlt, r0NormFlt, rNormFlt
     real(defFlt), dimension(nG)             :: delta, angular, tau, flatQ, gradQ, &
                                                F1, F2, angular0, G0, G1, G2, H, &
-                                               xInc, yInc, zInc, inc
-    real(defFlt), pointer, dimension(:)     :: source, total, sourceX, sourceY, sourceZ
+                                               xInc, yInc, zInc, inc, total
+    real(defFlt), pointer, dimension(:)     :: source, sourceX, sourceY, sourceZ
     real(defReal), pointer, dimension(:)    :: scalar, scalarX, scalarY, scalarZ
     character(100), parameter :: Here = 'transportSweepLinearIso (rayHandling_func.f90)'
     
     XSData => arrays % getDataPointer()
     geom => arrays % getGeomPointer()
 
+    if (mapTemp) then
+      tempField => arrays % getTempPointer()
+    end if
+
     ! Set initial angular flux to angle average of cell source
     cIdx = r % coords % uniqueID
     matIdx  = r % coords % matIdx
-    call XSData % getTotalPointer(matIdx, total)
+
+    coords = r % coords
+
+    !call XSData % getTotalPointer(matIdx, total)
+    if (mapTemp) then
+      temp = tempField % at(coords)
+      total = XSData % getTotalXS(matIdx, temp)
+    else
+      total = XSData % getTotalXS(matIdx)
+    end if
     
     ! Catch for regions with voids
     ! Assumes these are defined as 'void'
@@ -371,6 +426,11 @@ contains
       
     ints = 0
     matIdx0 = matIdx
+    if (mapTemp) then
+      temp0 = temp
+    else
+      temp0 = ZERO
+    end if
     totalLength = ZERO
     activeRay = .false.
     do while (totalLength < termination)
@@ -381,15 +441,30 @@ contains
       muFlt = real(mu0,defFlt)
 
       ! Get material and cell the ray is moving through
-      matIdx  = r % coords % matIdx
-      cIdx    = r % coords % uniqueID
-      if (matIdx0 /= matIdx) then
-        matIdx0 = matIdx
-        
-        ! Cache total cross section
-        call XSData % getTotalPointer(matIdx, total)
+      matIdx = r % coords % matIdx
+      cIdx   = r % coords % uniqueID
+      coords = r % coords
+      if (mapTemp) then
+        temp = tempField % at(coords)
+      else
+        temp = ZERO
       end if
+      
+      if (matIdx0 /= matIdx .or. temp0 /= temp) then
+        matIdx0 = matIdx
 
+        ! Cache total cross section
+        !call XSData % getTotalPointer(matIdx, total)
+
+        if (mapTemp) then
+          temp0 = temp
+          total = XSData % getTotalXS(matIdx, temp)
+        else
+          total = XSData % getTotalXS(matIdx)
+        end if
+
+      end if
+      
       ! Set maximum flight distance and ensure ray is active
       call checkRayLength(totalLength, dead, termination, activeRay, length)
 
@@ -598,7 +673,7 @@ contains
   !!
   !! Transport sweep for LIFA sources
   !!
-  subroutine transportSweepLIFA(r, ints, nG, doCache, dead, termination, arrays)
+  subroutine transportSweepLIFA(r, ints, nG, doCache, dead, termination, arrays, mapTemp)
     type(ray), intent(inout)                              :: r
     integer(longInt), intent(out)                         :: ints
     integer(shortInt), intent(in)                         :: nG
@@ -606,13 +681,14 @@ contains
     real(defReal), intent(in)                             :: dead
     real(defReal), intent(in)                             :: termination
     class(arraysRR), pointer, intent(inout)               :: arrays
+    logical(defBool), intent(in)                          :: mapTemp
 
   end subroutine transportSweepLIFA
   
   !!
   !! Transport sweep for flat aniisotropic sources
   !!
-  subroutine transportSweepFlatAni(r, ints, nG, doCache, dead, termination, arrays)
+  subroutine transportSweepFlatAni(r, ints, nG, doCache, dead, termination, arrays, mapTemp)
     type(ray), intent(inout)                              :: r
     integer(longInt), intent(out)                         :: ints
     integer(shortInt), intent(in)                         :: nG
@@ -620,6 +696,7 @@ contains
     real(defReal), intent(in)                             :: dead
     real(defReal), intent(in)                             :: termination
     class(arraysRR), pointer, intent(inout)               :: arrays
+    logical(defBool), intent(in)                          :: mapTemp
 
   end subroutine transportSweepFlatAni
   

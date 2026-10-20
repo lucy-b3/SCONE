@@ -17,8 +17,8 @@ module tallyClerkFactory_func
   use dancoffBellClerk_class,          only : dancoffBellClerk
   use shannonEntropyClerk_class,       only : shannonEntropyClerk
   use centreOfMassClerk_class,         only : centreOfMassClerk
-  use mgXsClerk_class,                 only : mgXsClerk
   use rayClerk_class,                  only : rayClerk
+  use mgXsClerk_class,                 only : mgXsClerk
 
   implicit none
   private

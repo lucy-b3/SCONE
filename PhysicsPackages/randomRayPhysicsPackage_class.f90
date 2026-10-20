@@ -20,6 +20,11 @@ module randomRayPhysicsPackage_class
                                              gr_fieldIdx => fieldIdx, gr_fieldPtr => fieldPtr
   use geometryFactory_func,           only : new_geometry
 
+  ! Fields
+  use field_inter,                    only : field
+  use pieceConstantField_inter,       only : pieceConstantField, pieceConstantField_CptrCast
+  use fieldFactory_func,              only : new_field
+
   ! Nuclear Data
   use nuclearDataReg_mod,             only : ndReg_init         => init, &
                                              ndReg_getMatNames  => getMatNames, &
@@ -34,6 +39,8 @@ module randomRayPhysicsPackage_class
   use visualiser_class,               only : visualiser
 
   ! Tally map for fission rate
+  use tallyMap_inter,                 only : tallyMap
+  use tallyMapFactory_func,           only : new_tallyMap
   use tallyAdmin_class,               only : tallyAdmin
 
   ! Random ray specific modules
@@ -44,6 +51,9 @@ module randomRayPhysicsPackage_class
   ! Random ray - or a standard particle
   use particle_class,                 only : ray => particle
   use particleDungeon_class,          only : particleDungeon
+
+  ! Coupling
+  use couplingAdmin_class,            only : couplingAdmin
 
   implicit none
   private
@@ -155,6 +165,19 @@ module randomRayPhysicsPackage_class
     logical(defBool)   :: printCells  = .false.
     type(visualiser)   :: viz
 
+    logical(defBool)   :: mapTemp  = .false.
+    class(tallyMap), allocatable :: tempMap
+    logical(defBool)   :: mapFission  = .false.
+    class(tallyMap), allocatable :: fissionMap
+    logical(defBool)   :: mapFlux     = .false.
+    class(tallyMap), allocatable :: fluxMap
+    logical(defBool)   :: mapPower     = .false.
+    class(tallyMap), allocatable :: powerMap
+    real(defReal)      :: power = ZERO
+
+    ! Coupling handler
+    type(couplingAdmin) :: couplingInfo
+
     ! Results space
     ! keffScore is public for integration testing
     real(defReal)                        :: keff = ONE
@@ -221,7 +244,7 @@ contains
     call dict % get(self % active, 'active')
     call dict % get(self % inactive, 'inactive')
     call dict % getOrDefault(self % keff, 'keff', ONE)
-    
+    call dict % getOrDefault(self % power, 'power', ZERO)   
     call dict % getOrDefault(volP, 'volPolicy', 1)
     call dict % getOrDefault(missP, 'missPolicy', 1)
     
@@ -242,7 +265,7 @@ contains
 
     ! Get output format and verify
     ! Initialise output file before calculation (so mistake in format will be cought early)
-    call dict % getOrDefault(self % outputFormat, 'outputFormat', 'asciiMATLAB')
+    call dict % getOrDefault(self % outputFormat, 'outputFormat', 'asciiJSON')
     call test_out % init(self % outputFormat)
 
     ! Check settings
@@ -252,6 +275,36 @@ contains
     if (self % dead < ZERO) call fatalError(Here, 'Dead length must be positive.')
     if (self % termination <= self % dead) call fatalError(Here,&
             'Ray termination length must be greater than ray dead length')
+
+    ! Check whether there is a map for outputting fission rates
+    ! If so, read and initialise the map to be used
+    if (dict % isPresent('fissionMap')) then
+      self % mapFission = .true.
+      tempDict => dict % getDictPtr('fissionMap')
+      call new_tallyMap(self % fissionMap, tempDict)
+    else
+      self % mapFission = .false.
+    end if
+
+    ! Check whether there is a map for outputting one-group fluxes
+    ! If so, read and initialise the map to be used
+    if (dict % isPresent('fluxMap')) then
+      self % mapFlux = .true.
+      tempDict => dict % getDictPtr('fluxMap')
+      call new_tallyMap(self % fluxMap, tempDict)
+    else
+      self % mapFlux = .false.
+    end if
+
+    ! Check whether there is a map for outputting cell-wise powers
+    ! If so, read and initialise the map to be used
+    if (dict % isPresent('powerMap')) then
+      self % mapPower = .true.
+      tempDict => dict % getDictPtr('powerMap')
+      call new_tallyMap(self % powerMap, tempDict)
+    else
+      self % mapPower = .false.
+    end if
 
     ! Register timer
     self % timerMain = registerTimer('simulationTime')
@@ -300,6 +353,25 @@ contains
       call self % tally % init(tempDict)
     end if
 
+    ! Check whether there is an initial temperature map
+    ! If present, build temperature field
+    if (dict % isPresent('temperature')) then
+      tempDict => dict % getDictPtr('temperature')
+      call new_field(tempDict, nameTemperature)
+      self % mapTemp = .true.
+    end if
+
+    if (dict % isPresent('density')) then
+      tempDict => dict % getDictPtr('density')
+      call new_field(tempDict, nameDensity)
+    end if
+
+    ! Check if the calculation is coupled
+    if (dict % isPresent('coupling')) then
+      tempDict => dict % getDictPtr('coupling')
+      call self % couplingInfo % init(tempDict)
+    end if
+
     ! Activatee nuclear data
     call ndReg_activate(P_NEUTRON_MG, nucData, self % geom % activeMats(), silent = .not. self % loud)
 
@@ -346,7 +418,12 @@ contains
     ! Initialise RR arrays and nuclear data
     call self % arrays % init(self % mgData, self % geom, &
             self % pop * (self % termination - self % dead), self % rho, self % lin, &
-            .false., self % loud, volPolicy = volP, missPolicy = missP, set2D = set2D)
+            .false., self % loud, mapTemp = self % mapTemp, volPolicy = volP, missPolicy = missP, set2D = set2D)
+
+    ! Attach a tally admin for coupling
+    if (self % couplingInfo % doCoupling()) then
+      call self % couplingInfo % attachTally(self % tally)
+    end if
     
   end subroutine init
 
@@ -415,7 +492,7 @@ contains
       it = itInac + itAct
       
       ONE_KEFF = ONE / self % keff
-      call arrayPtr % updateSource(ONE_KEFF)
+      call arrayPtr % updateSource(ONE_KEFF, it)
 
       ! Reset and start transport timer
       call timerReset(self % timerTransport)
@@ -435,7 +512,7 @@ contains
 
         ! Transport ray until termination criterion met
         call transportSweep(r, ints, self % nG, self % cache, self % dead, &
-                self % termination, arrayPtr)
+                self % termination, arrayPtr, self % mapTemp)
         intersections = intersections + ints
 
       end do
@@ -451,6 +528,9 @@ contains
       ! Normalise flux estimate and combines with source
       call arrayPtr % normaliseFluxAndVolume(it)
 
+      !Calculate power distribution from flux
+      call arrayPtr % calculatePower(self % power)
+
       ! Calculate new k and accumulate stats
       self % keff = arrayPtr % calculateKeff(self % keff)
       if (isActive) then
@@ -459,13 +539,21 @@ contains
       end if
 
       ! Accumulate flux scores and tally results
-      if (isActive) then
-        call arrayPtr % accumulateFluxScores()
-        if (associated(self % tally)) then
-          call arrayPtr % tallyResults(self % tally)
-          call self % tally % reportCycleEnd(dummyDungeon)
-        end if
+      !if (isActive) then
+        !call arrayPtr % accumulateFluxScores()
+        !if (associated(self % tally)) then
+          !call arrayPtr % tallyResults(self % tally)
+          !call self % tally % reportCycleEnd(dummyDungeon)
+        !end if
+      !end if
+
+      if (associated(self % tally)) then
+        call arrayPtr % tallyResults(self % tally)
+        call self % tally % reportCycleEnd(dummyDungeon)
       end if
+
+      ! Accumulate flux scores
+      if (isActive) call arrayPtr % accumulateFluxScores()
 
       ! Calculate proportion of cells that were hit
       hitRate = arrayPtr % getCellHitRate(it)
@@ -476,6 +564,8 @@ contains
         keepRunning = (itAct < self % active)
       else
         isActive = (itInac >= self % inactive)
+        ! Deactivate coupling for active cycles
+        if (isActive) call self % couplingInfo % endCoupling()
       end if
 
       ! Set previous iteration flux to scalar flux
@@ -511,6 +601,9 @@ contains
                 trim(numToChar(transport_T*10**9/(self % nG * intersections)))
       end if
 
+      ! Perform coupling operations
+      call self % couplingInfo % couple(it)
+
     end do
 
     ! Finalise flux and keff scores
@@ -538,6 +631,7 @@ contains
     class(randomRayPhysicsPackage), target, intent(inout) :: self
     type(outputFile), target                              :: out
     character(nameLen)                                    :: name
+    class(outputFile), pointer                            :: outPtr
     class(visualiser), pointer                            :: vizPtr
 
     call out % init(self % outputFormat, filename = self % outputFile)
@@ -583,6 +677,21 @@ contains
       call self % tally % print(out)
       call out % endBlock()
     end if
+
+    outPtr => out
+    ! Send fission rates to map output
+    !if (self % mapFission) call self % arrays % outputMap(outPtr, self % fissionMap, .true.)
+    !if (self % mapFission) call self % arrays % outputMap(outPtr, self % fissionMap, 1)
+
+    ! Send fluxes to map output
+    !if (self % mapFlux) call self % arrays % outputMap(outPtr, self % fluxMap, .false.)
+    !if (self % mapFlux) call self % arrays % outputMap(outPtr, self % fluxMap, 2)
+    !outPtr => null()
+
+    ! Send powers to map output
+    !if (self % mapPower) call self % arrays % outputMap(outPtr, self % powerMap, .false.)
+    !if (self % mapPower) call self % arrays % outputMap(outPtr, self % powerMap, 3)
+    !outPtr => null()
     
     ! Send all fluxes and SDs to VTK
     vizPtr => self % viz
@@ -642,8 +751,12 @@ contains
     self % pop         = 0
     self % inactive    = 0
     self % active      = 0
+    self % power       = 0
     self % cache       = .false.
     self % lin         = .false.
+    self % mapFission  = .false.
+    self % mapFlux     = .false.
+    self % mapTemp     = .false.
     self % plotResults = .false.
     self % keff        = ONE
     self % keffScore   = ZERO

@@ -221,6 +221,7 @@ contains
     ! Append all bins
     do i = 1, self % width
       scoreVal = self % response(i) % get(p, xsData) * flux
+      !print *, scoreVal
       call mem % score(scoreVal, addr + i)
 
     end do

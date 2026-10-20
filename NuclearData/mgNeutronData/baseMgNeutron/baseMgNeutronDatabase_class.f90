@@ -76,7 +76,10 @@ module baseMgNeutronDatabase_class
     procedure :: init
     procedure :: activate
     procedure :: initMajorant
+
+    ! Local interface
     procedure :: nGroups
+    procedure :: nTemps
 
   end type baseMgNeutronDatabase
 
@@ -363,16 +366,19 @@ contains
     do i=1,nMat
       ! Get Path to the xsFile
       matDef => mm_getMatPtr(i)
-      call matDef % extraInfo % get(path,'xsFile')
+      ! COMMENTED BY PAUL
+      !call matDef % extraInfo % get(path,'xsFile')
 
       ! Print status
       if(loud) then
-        print '(A)', "Building material: " // trim(matDef % name) // " From: " // trim(path)
+        print '(A)', "Building material: " // trim(matDef % name)! // " From: " // trim(path)
       end if
 
       ! Load dictionary
-      call fileToDict(tempDict, path)
-      call self % mats(i) % init(tempDict, scatterKey)
+      !COMMENTED BY PAUL
+      !call fileToDict(tempDict, path)
+      !call self % mats(i) % init(tempDict, scatterKey)
+      call self % mats(i) % init(matDef % extraInfo, scatterKey)
 
     end do
 
@@ -380,9 +386,12 @@ contains
     self % nG = self % mats(1) % nGroups()
     do i = 2,nMat
       if(self % nG /= self % mats(i) % nGroups()) then
-        call fatalError(Here,'Inconsistant # of groups in materials in matIdx'//numToChar(i))
+        call fatalError(Here,'Inconsistent # of groups in materials in matIdx '//numToChar(i))
       end if
     end do
+
+    ! Load number of temperatures (update later)
+    self % nT = 3
 
   end subroutine init
 
@@ -428,14 +437,31 @@ contains
   !!
   !! See nuclearDatabase documentation for details
   !!
-  subroutine initMajorant(self, loud)
+  subroutine initMajorant(self, loud, maxTemp, scaleDensity)
     class(baseMgNeutronDatabase), intent(inout) :: self
     logical(defBool), intent(in)                :: loud
+    real(defReal), optional, intent(in)         :: maxTemp
+    real(defReal), optional, intent(in)         :: scaleDensity
     integer(shortInt)                           :: g, i, idx
-    real(defReal)                               :: xs
+    real(defReal)                               :: xs, densityFactor
     integer(shortInt), parameter                :: TOTAL_XS = 1
 
+    ! Scale density
+    if (present(scaleDensity)) then
+      if (scaleDensity < ONE) then
+        densityFactor = ONE
+      else
+        densityFactor = scaleDensity
+      end if
+    else
+      densityFactor = ONE
+    end if
+
+    ! Currently ignores maxTemp input
+    ! TODO: Update should there be a temperature model developed for MG XSs
+
     ! Allocate majorant
+    if (allocated(self % majorant)) deallocate(self % majorant)
     allocate (self % majorant(self % nG))
 
     ! Loop over energy groups
@@ -445,7 +471,7 @@ contains
         idx = self % activeMats(i)
         xs = max(xs, self % mats(idx) % data(TOTAL_XS, g))
       end do
-      self % majorant(g) = xs
+      self % majorant(g) = xs * densityFactor
     end do
 
     if (loud) print '(A)', 'MG unionised majorant cross section calculation completed'
@@ -468,6 +494,23 @@ contains
     nG = self % nG
 
   end function nGroups
+
+  !!
+  !! Return number of energy groups in this database
+  !!
+  !! Args:
+  !!   None
+  !!
+  !! Errors:
+  !!   None
+  !!
+  pure function nTemps(self) result(nT)
+    class(baseMgNeutronDatabase), intent(in) :: self
+    integer(shortInt)                        :: nT
+
+    nT = self % nT
+
+  end function nTemps
 
   !!
   !! Cast nuclearDatabase pointer to baseMgNeutronDatabase type pointer

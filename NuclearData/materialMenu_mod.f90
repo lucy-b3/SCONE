@@ -117,6 +117,7 @@ module materialMenu_mod
     character(nameLen)                         :: name   = ''
     integer(shortInt)                          :: matIdx = 0
     real(defReal)                              :: T      = ZERO
+    real(defReal), dimension(:), allocatable   :: T2 ! Stores info in feedback case
     real(defReal),dimension(:),allocatable     :: dens
     type(nuclideInfo),dimension(:),allocatable :: nuclides
     type(dictionary)                           :: extraInfo
@@ -322,9 +323,21 @@ contains
       call fatalError(Here, 'The material temperature must be specified when TMS is on')
     end if
 
-    call dict % getOrDefault(self % T, 'temp', ZERO)
-    if (self % T < ZERO) call fatalError(Here, 'The temperature of material '//numToChar(idx)//&
+    !call dict % getOrDefault(self % T, 'temp', ZERO)
+    !if (self % T < ZERO) call fatalError(Here, 'The temperature of material '//numToChar(idx)//&
+                                                !' is negative: '//numToChar(self % T))
+    if (dict % isPresent('hotFile')) then
+      allocate(self % T2(3))
+      call dict % getOrDefault(self % T2, 'temp', [ZERO,ZERO,ZERO])
+      if (self % T2(1) < ZERO) call fatalError(Here, 'The temperature of material '//numToChar(idx)//&
+                                                ' is negative: '//numToChar(self % T2(1)))
+      self % T = self % T2(1)
+
+    else
+      call dict % getOrDefault(self % T, 'temp', ZERO)
+      if (self % T < ZERO) call fatalError(Here, 'The temperature of material '//numToChar(idx)//&
                                                 ' is negative: '//numToChar(self % T))
+    end if
 
     ! Get composition dictionary and load composition
     compDict => dict % getDictPtr('composition')

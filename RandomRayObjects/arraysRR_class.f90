@@ -14,6 +14,12 @@ module arraysRR_class
   ! Geometry
   use coord_class,                    only : coordList
   use geometryStd_class,              only : geometryStd
+  use geometryReg_mod,                only : gr_geomPtr  => geomPtr, gr_geomIdx  => geomIdx, &
+                                             gr_fieldIdx => fieldIdx, gr_fieldPtr => fieldPtr
+
+  use field_inter,                    only : field
+  use cartesianField_class,           only : cartesianField
+  use pieceConstantField_inter,       only : pieceConstantField, pieceConstantField_CptrCast
 
   ! Visualisation
   use visualiser_class,               only : visualiser
@@ -87,6 +93,7 @@ module arraysRR_class
     class(geometryStd), pointer :: geom        => null()
     type(dataRR)                :: XSData      
     integer(shortInt)           :: nG          = 0
+    integer(shortInt)           :: nT          = 0
     integer(shortInt)           :: nCells      = 0
     real(defReal)               :: lengthPerIt = ZERO
     real(defFlt)                :: rho         = 0.0_defFlt
@@ -96,11 +103,17 @@ module arraysRR_class
     integer(shortInt)           :: volPolicy   = hybrid !simAverage
     integer(shortInt)           :: missPolicy  = hybrid !srcPolicy
     logical(defBool)            :: set2D       = .false. ! Stabilises LS in 2D problems
+
+    class(pieceConstantField), pointer        :: tempField    => null()
+    logical(defBool)                      :: feedback     = .false.
     
     ! Flux arrays
     real(defReal), dimension(:), allocatable    :: scalarFlux
     real(defReal), dimension(:), allocatable    :: prevFlux
     real(defReal), dimension(:,:), allocatable  :: fluxScores
+
+    real(defFlt), dimension(:), allocatable    :: power
+    real(defReal), dimension(:,:), allocatable :: powerScores
     
     ! Source arrays
     real(defFlt), dimension(:), allocatable      :: source
@@ -155,6 +168,7 @@ module arraysRR_class
     ! Access procedures
     procedure :: getDataPointer
     procedure :: getGeomPointer
+    procedure :: getTempPointer
     procedure :: getFluxPointer
     procedure :: getSourcePointer
     procedure :: getSource
@@ -162,6 +176,8 @@ module arraysRR_class
     procedure :: getPrevFlux
     procedure :: getFluxScore
     procedure :: getFluxSD
+    procedure :: getPowerScore
+    procedure :: getPowerSD
     procedure :: getNG
     procedure :: getVolume
     procedure :: getCellPos
@@ -199,6 +215,7 @@ module arraysRR_class
     procedure :: accumulateFluxScores
     procedure :: finaliseFluxScores
     procedure :: calculateKeff
+    procedure :: calculatePower
     procedure :: zeroPrevFlux
 
     ! Tally results for use with MC tally machinery
@@ -245,7 +262,7 @@ contains
   !! The object is fed sizes and requirements by the physics package.
   !! This will allocate the necessary arrays
   !!
-  subroutine init(self, db, geom, lengthPerIt, rho, lin, doKinetics, loud, &
+  subroutine init(self, db, geom, lengthPerIt, rho, lin, doKinetics, loud, mapTemp, &
                   dictFS, volPolicy, missPolicy, set2D)
     class(arraysRR), intent(inout)                      :: self
     class(baseMgNeutronDatabase), pointer, intent(in)   :: db
@@ -255,17 +272,26 @@ contains
     logical(defBool), intent(in)                        :: lin
     logical(defBool), intent(in)                        :: doKinetics
     logical(defBool), intent(in)                        :: loud
+    logical(defBool), intent(in)                        :: mapTemp
     class(dictionary), pointer, intent(inout), optional :: dictFS
     integer(shortInt), intent(in), optional             :: volPolicy, missPolicy
     logical(defBool), intent(in), optional              :: set2D
     integer(shortInt)                                   :: ani, i
     real(defReal), dimension(6)                         :: bb
+    class(field), pointer                               :: field
     character(100), parameter :: Here = 'init (arraysRR_class.f90)'
 
-    call self % XSData % init(db, doKinetics, loud)
+    call self % XSData % init(db, doKinetics, loud, mapTemp)
     self % nG          = self % XSdata % getNG()
+    self % nT          = self % XSdata % getNT()
     self % geom        => geom
     self % nCells      = self % geom % numberOfCells()
+
+    self % feedback = mapTemp
+    if (self % feedback) then
+      field => gr_fieldPtr(gr_fieldIdx(nameTemperature)) ! Need to generalise
+      self % tempField => pieceConstantField_CptrCast(field)
+    end if
     
     self % lengthPerIt = lengthPerIt
     self % rho = real(rho, defFlt)
@@ -310,6 +336,8 @@ contains
     allocate(self % scalarFlux(self % nG * self % nCells))
     allocate(self % prevFlux(self % nG * self % nCells))
     allocate(self % fluxScores(2, self % nG * self % nCells))
+    allocate(self % power(self % nCells))
+    allocate(self % powerScores(2, self % nCells))
     allocate(self % source(self % nG * self % nCells))
     allocate(self % volumeTracks(self % nCells))
     allocate(self % allVolumeTracks(self % nCells))
@@ -321,6 +349,8 @@ contains
     self % scalarFlux    = ZERO
     self % prevFlux      = ONE
     self % fluxScores    = ZERO
+    self % power         = ZERO
+    self % powerScores   = ZERO
     self % source        = 0.0_defFlt
     self % volumeTracks  = ZERO
     self % allVolumeTracks = ZERO
@@ -635,6 +665,17 @@ contains
     geomPtr => self % geom
 
   end function getGeomPointer
+
+  !!
+  !! Return a pointer to the geometry object
+  !!
+  function getTempPointer(self) result(tempPtr)
+    class(arraysRR), intent(in), target :: self
+    class(pieceConstantField), pointer         :: tempPtr
+
+    tempPtr => self % tempField
+
+  end function getTempPointer
   
   !!
   !! Return a pointer to the source vector for a given cell
@@ -739,6 +780,32 @@ contains
     flux = self % fluxScores(2, self % nG * (cIdx - 1) + g)
 
   end function getFluxSD
+
+  !!
+  !! Return final power value given cell
+  !!
+  function getPowerScore(self, cIdx) result(power)
+    class(arraysRR), intent(in)   :: self
+    integer(shortInt), intent(in) :: cIdx
+    real(defReal)                 :: power
+
+    power = self % powerScores(1, cIdx)
+
+    !print *, power
+  end function getPowerScore
+
+  !!
+  !! Return final power standard deviation given cell
+  !! Will return square of power scores if called before finaliseFluxScores
+  !!
+  function getPowerSD(self, cIdx) result(power)
+    class(arraysRR), intent(in)   :: self
+    integer(shortInt), intent(in) :: cIdx
+    real(defReal)                 :: power
+
+    power = self % powerScores(2, cIdx)
+
+  end function getPowerSD
   
   !!
   !! Return final flux moment values given cell and group
@@ -1078,16 +1145,26 @@ contains
     integer(shortInt), intent(in)             :: it
     real(defReal)                             :: norm, normIt
     real(defReal), save                       :: vol, volAve, volNaive, D
-    real(defFlt), save                        :: sigGG, tot
-    real(defFlt), dimension(:), pointer, save :: total
+    real(defFlt), save                        :: sigGG, tot, temp
+    !real(defFlt), dimension(:), pointer, save :: total
+    type(particle), save                      :: s
+    real(defReal)                             :: pos(3), dir(3)
+    real(defFlt), allocatable, dimension(:), save  :: total
+    real(defFlt), allocatable, dimension(:), save        :: scatterVec
     integer(shortInt), save                   :: g, matIdx, idx
     integer(shortInt)                         :: cIdx
     logical(defBool), save                    :: hit, isSrc, smallCell
     character(100), parameter :: Here = 'normaliseFluxAndVolumeFlatIso (arraysRR_class.f90)'
-    !$omp threadprivate(total, vol, idx, g, matIdx, sigGG, D, hit, isSrc, volAve, volNaive, tot, smallCell)
+    !$omp threadprivate(s, total, scatterVec, temp, vol, idx, g, matIdx, sigGG, D, hit, isSrc, &
+    !$omp volAve, volNaive, tot, smallCell)
 
     norm = ONE / self % lengthPerIt
     normIt = ONE / (self % lengthPerIt * it)
+
+    !$omp parallel
+    if (.not. allocated(total)) allocate(total(self % nG))
+    if (.not. allocated(scatterVec)) allocate(scatterVec(self % nG))
+    !$omp end parallel
     
     !$omp parallel do 
     cellLoop: do cIdx = 1, self % nCells
@@ -1129,7 +1206,24 @@ contains
       ! Reset cycle-wise estimator
       self % volumeTracks(cIdx) = ZERO
             
-      call self % XSData % getTotalPointer(matIdx, total)
+      !call self % XSData % getTotalPointer(matIdx, total)
+      ! Fudge particle state to search tally map
+      pos = self % cellPos(:,cIdx)
+      dir = [0.5,0.5,0.5]
+
+      call s % coords % init(pos, dir)
+      s % coords % matIdx = matIdx
+
+      if (self % feedback) then
+        temp = self % tempField % at(s % coords)
+
+        total = self % XSData % getTotalXS(matIdx, temp)
+
+      else
+
+        total = self % XSData % getTotalXS(matIdx)
+
+      end if
             
       groupLoop: do g = 1, self % nG
 
@@ -1152,7 +1246,15 @@ contains
             self % scalarFlux(idx) = self % scalarFlux(idx) / (vol * tot)
 
             ! Presumes non-zero total XS
-            sigGG = self % XSData % getScatterXS(matIdx, g, g)
+            !sigGG = self % XSData % getScatterXS(matIdx, g, g)
+            if (self % feedback) then
+              scatterVec = self % XSData % getScatterXS(matIdx, g, temp)
+            else
+              scatterVec = self % XSData % getScatterXS(matIdx, g)
+            end if
+
+            sigGG = scatterVec(g)
+
             if ((sigGG < 0) .and. (total(g) > 0)) then
               D = -real(self % rho * sigGG / tot, defReal)
             else
@@ -1213,13 +1315,19 @@ contains
     integer(shortInt), intent(in)             :: it
     real(defReal)                             :: norm, normVol
     real(defReal), save                       :: vol, invVol, volNaive, volAve, norm_V
-    real(defFlt), save                        :: D, sigGG
-    real(defFlt), dimension(:), pointer, save :: total
+    real(defFlt), save                        :: D, sigGG, temp
+    !real(defFlt), dimension(:), pointer, save :: total
     integer(shortInt)                         :: cIdx
     integer(shortInt), save                   :: g, matIdx, idx, dIdx, mIdx
     logical(defBool), save                    :: hit, isSrc, smallCell
+    type(particle), save                      :: s
+    real(defReal)                             :: pos(3), dir(3)
+    real(defFlt), allocatable, dimension(:), save  :: total
+    real(defFlt), allocatable, dimension(:), save        :: scatterVec
+
     character(100), parameter :: Here = 'normaliseFluxAndVolumeLinearIso (arraysRR_class.f90)'
-    !$omp threadprivate(total, vol, idx, mIdx, dIdx, g, matIdx, invVol, norm_V, D, sigGG, hit, isSrc, volNaive, volAve, smallCell)
+    !$omp threadprivate(total, s, temp, scatterVec, vol, idx, mIdx, dIdx, g, matIdx, invVol, &
+    !$omp norm_V, D, sigGG, hit, isSrc, volNaive, volAve, smallCell)
 
     norm = ONE / self % lengthPerIt
     normVol = ONE / (self % lengthPerIt * it)
@@ -1293,7 +1401,24 @@ contains
 
       end if
 
-      call self % XSData % getTotalPointer(matIdx, total)
+      !call self % XSData % getTotalPointer(matIdx, total)
+      ! Fudge particle state to search tally map
+      pos = self % cellPos(:,cIdx)
+      dir = [0.5,0.5,0.5]
+
+      call s % coords % init(pos, dir)
+      s % coords % matIdx = matIdx
+
+      if (self % feedback) then
+        temp = self % tempField % at(s % coords)
+
+        total = self % XSData % getTotalXS(matIdx, temp)
+
+      else
+
+        total = self % XSData % getTotalXS(matIdx)
+
+      end if
 
       groupLoop: do g = 1, self % nG
 
@@ -1322,7 +1447,16 @@ contains
             ! Apply the standard MoC post-sweep treatment and
             ! stabilisation for negative XSs
             ! Presumes non-zero total XS
-            sigGG = self % XSData % getScatterXS(matIdx, g, g)
+            !sigGG = self % XSData % getScatterXS(matIdx, g, g)
+
+            if (self % feedback) then
+              scatterVec = self % XSData % getScatterXS(matIdx, g, temp)
+            else
+              scatterVec = self % XSData % getScatterXS(matIdx, g)
+            end if
+
+            sigGG = scatterVec(g)
+
             if (sigGG < 0) then
               D = -self % rho * sigGG / total(g)
             else
@@ -1442,12 +1576,84 @@ contains
   end subroutine normaliseFluxAndVolumeLIFA
   
   !!
+  !! Calculates thermal power from flux distribution
+  !! 
+  subroutine calculatePower(self, targetPow)
+    class(arraysRR), intent(inout) :: self
+    real(defReal), intent(in)      :: targetPow
+    real(defReal), save            :: vol
+    real(defFlt), save             :: pow
+    real(defFlt), dimension(self % nG):: fissXS
+    type(particle), save           :: s
+    integer(shortInt), save        :: g, matIdx, idx
+    real(defFlt), save             :: temp
+    integer(shortInt)              :: cIdx
+    real(defReal)                  :: pos(3), dir(3)
+    character(100), parameter :: Here = 'calculatePower (arraysRR_class.f90)'
+    !$omp threadprivate(vol, pow, idx, g, matIdx, s, temp)
+
+    !!$omp parallel do
+    !$omp parallel do private(fissXS, pos, dir)
+    do cIdx = 1, self % nCells
+
+      matIdx = self % geom % geom % graph % getMatFromUID(cIdx)
+
+      vol = self % volume(cIdx)
+
+      ! Save effort by skipping if volume is too small
+      if (vol < volume_tolerance) then
+        self % power(cIdx) = 0.0_defFlt
+        cycle
+      end if
+
+      ! Fudge particle state to search tally map
+      pos = self % cellPos(:,cIdx)
+      dir = [0.5,0.5,0.5]
+
+      call s % coords % init(pos, dir)
+      s % coords % matIdx = matIdx
+
+      if (self % feedback) then
+        temp = self % tempField % at(s % coords)
+        fissXS = self % XSData % getFissionXS(matIdx, temp)
+      else
+        fissXS = self % XSData % getFissionXS(matIdx)
+      end if
+
+      self % power(cIdx) = 0.0_defFlt
+
+      do g = 1, self % nG
+        idx = self % nG * (cIdx - 1) + g
+
+        pow = self % scalarFlux(idx) &
+             * energyPerFission &
+             * self % volume(cIdx) &
+             * joulesPerMeV &
+             * fissXS(g)
+
+        self % power(cIdx) = self % power(cIdx) + pow
+
+      end do
+
+      if (self % power(cIdx) < 0.0_defFlt) then
+        print *, "Negative power found"
+      end if
+
+    end do
+    !$omp end parallel do
+
+    self % power = self % power * (targetPow / sum(self % power))
+
+  end subroutine calculatePower  
+
+  !!
   !! Update all sources given a prevFlux
   !! This nesting allows using combined OMP + SIMD
   !!
-  subroutine updateSource(self, ONE_KEFF)
+  subroutine updateSource(self, ONE_KEFF, it)
     class(arraysRR), intent(inout) :: self
     real(defReal), intent(in)      :: ONE_KEFF
+    integer(shortInt), intent(in)  :: it
     real(defFlt)                   :: ONE_K
     integer(shortInt)              :: cIdx
     character(100), parameter      :: Here = 'updateSource (arraysRR_class.f90)'
@@ -1458,13 +1664,13 @@ contains
       case(flatIso)
         !$omp parallel do 
         do cIdx = 1, self % nCells
-          call self % sourceUpdateKernelFlatIso(cIdx, ONE_K)
+          call self % sourceUpdateKernelFlatIso(cIdx, ONE_K, it)
         end do
         !$omp end parallel do
       case(linearIso)
         !$omp parallel do 
         do cIdx = 1, self % nCells
-          call self % sourceUpdateKernelLinearIso(cIdx, ONE_K)
+          call self % sourceUpdateKernelLinearIso(cIdx, ONE_K, it)
         end do
         !$omp end parallel do
       case default
@@ -1476,13 +1682,16 @@ contains
   !!
   !! Kernel to update sources given a cell index
   !!
-  subroutine sourceUpdateKernelFlatIso(self, cIdx, ONE_KEFF)
+  subroutine sourceUpdateKernelFlatIso(self, cIdx, ONE_KEFF, it)
     class(arraysRR), target, intent(inout)   :: self
     integer(shortInt), intent(in)            :: cIdx
     real(defFlt), intent(in)                 :: ONE_KEFF
-    real(defFlt)                             :: scatter, fission
-    real(defFlt), dimension(self % nG)       :: fluxFlt
-    real(defFlt), dimension(:), pointer      :: nuFission, chi, scatterXS, scatterVec
+    integer(shortInt), intent(in)            :: it
+    real(defFlt)                             :: scatter, fission, chi, scatterXS, temp
+    real(defFlt), dimension(self % nG)       :: fluxFlt, nuFission, scatterVec
+    type(particle)                           :: s
+    real(defReal)                            :: pos(3), dir(3)
+    !real(defFlt), dimension(:), pointer      :: nuFission, chi, scatterXS, scatterVec
     integer(shortInt)                        :: matIdx, g, gIn, baseIdx, idx, sIdx1, sIdx2
 
     ! Identify material
@@ -1490,6 +1699,17 @@ contains
     
     ! Guard against void cells
     if (matIdx > self % XSData % getNMat()) then
+      if (it .eq. 1) then
+        print *, "****************"
+        print *, "Unknown material found"
+        print *, "cIdx: " //numToChar(cIdx)
+        print *, "matIdx: " //numToChar(matIdx)
+      end if
+      !print *, "cell x pos: " // numToChar(self % cellPos(1,cIdx))
+      !print *, "cell x pos: " // numToChar(self % cellPos(2,cIdx))
+      !print *, "cell x pos: " // numToChar(self % cellPos(3,cIdx))
+      !print *, "****************"
+
       baseIdx = self % nG * (cIdx - 1)
       do g = 1, self % nG
         idx = baseIdx + g
@@ -1502,10 +1722,28 @@ contains
     end if
 
     ! Obtain XSs
-    call self % XSData % getProdPointers(matIdx, nuFission, scatterXS, chi)
+    !call self % XSData % getProdPointers(matIdx, nuFission, scatterXS, chi)
+    ! Fudge a particle state to search tally map
+    pos = self % cellPos(:,cIdx)
+    dir = [0.5,0.5,0.5]
+    call s % coords % init(pos, dir)
+    s % coords % matIdx = matIdx
+    if (self % feedback) then
+      if (it == 1) then
+        temp = self % XSData % getTemperature(matIdx,2)
+      else
+        temp = self % tempField % at(s % coords)
+      end if
+    end if
 
     baseIdx = self % nG * (cIdx - 1)
     fluxFlt = real(self % prevFlux((baseIdx + 1):(baseIdx + self % nG)), defFlt)
+
+    if (self % feedback) then
+      nuFission = self % XSData % getNuFissXS(matIdx, temp)
+    else 
+      nuFission = self % XSData % getNuFissXS(matIdx)
+    end if
 
     ! Calculate fission source
     fission = 0.0_defFlt
@@ -1519,7 +1757,12 @@ contains
 
       sIdx1 = self % nG * (g - 1) + 1
       sIdx2 = self % nG * g
-      scatterVec => scatterXS(sIdx1:sIdx2)
+      !scatterVec => scatterXS(sIdx1:sIdx2)
+      if (self % feedback) then
+        scatterVec = self % XSData % getScatterXS(matIdx, g, temp)
+      else
+        scatterVec = self % XSData % getScatterXS(matIdx, g)
+      end if
 
       ! Calculate scattering source
       scatter = 0.0_defFlt
@@ -1531,7 +1774,9 @@ contains
       ! Output index
       idx = baseIdx + g
 
-      self % source(idx) = chi(g) * fission + scatter
+      chi = self % XSData % getChi(matIdx, g)
+
+      self % source(idx) = chi * fission + scatter
       if (allocated(self % fixedSource)) then
         self % source(idx) = self % source(idx) + self % fixedSource(idx)
       end if
@@ -1544,16 +1789,19 @@ contains
   !! Kernel to update sources given a cell index for linear sources
   !! with isotropic scattering
   !!
-  subroutine sourceUpdateKernelLinearIso(self, cIdx, ONE_KEFF)
+  subroutine sourceUpdateKernelLinearIso(self, cIdx, ONE_KEFF, it)
     class(arraysRR), target, intent(inout)  :: self
     integer(shortInt), intent(in)           :: cIdx
     real(defFlt), intent(in)                :: ONE_KEFF
+    integer(shortInt), intent(in)            :: it
     real(defFlt)                            :: scatter, xScatter, yScatter, zScatter, &
                                                fission, xFission, yFission, zFission, &
-                                               xSource, ySource, zSource
+                                               xSource, ySource, zSource, chi, scatterXS, temp
     real(defFlt), dimension(matSize)        :: invM
-    real(defFlt), dimension(self % nG)      :: fluxFlt, xFlt, yFlt, zFlt
-    real(defFlt), dimension(:), pointer     :: nuFission, chi, scatterXS, scatterVec
+    type(particle)                           :: s
+    real(defReal)                            :: pos(3), dir(3)
+    real(defFlt), dimension(self % nG)      :: fluxFlt, xFlt, yFlt, zFlt, nuFission, scatterVec
+    !real(defFlt), dimension(:), pointer     :: nuFission, chi, scatterXS, scatterVec
     integer(shortInt)                       :: matIdx, g, gIn, baseIdx, idx, sIdx1, sIdx2
 
     ! Invert moment matrix
@@ -1579,7 +1827,20 @@ contains
     end if
      
     ! Obtain XSs
-    call self % XSData % getProdPointers(matIdx, nuFission, scatterXS, chi)
+    !call self % XSData % getProdPointers(matIdx, nuFission, scatterXS, chi)
+
+    ! Fudge a particle state to search tally map
+    pos = self % cellPos(:,cIdx)
+    dir = [0.5,0.5,0.5]
+    call s % coords % init(pos, dir)
+    s % coords % matIdx = matIdx
+    if (self % feedback) then
+      if (it == 1) then
+        temp = self % XSData % getTemperature(matIdx,2)
+      else
+        temp = self % tempField % at(s % coords)
+      end if
+    end if
 
     baseIdx = self % nG * (cIdx - 1)
     fluxFlt  = real(self % prevFlux((baseIdx + 1):(baseIdx + self % nG)), defFlt)
@@ -1592,6 +1853,12 @@ contains
     xFission = 0.0_defFlt
     yFission = 0.0_defFlt
     zFission = 0.0_defFlt
+
+    if (self % feedback) then
+      nuFission = self % XSData % getNuFissXS(matIdx, temp)
+    else
+      nuFission = self % XSData % getNuFissXS(matIdx)
+    end if
 
     !$omp simd reduction(+:fission, xFission, yFission, zFission)
     do gIn = 1, self % nG
@@ -1610,13 +1877,20 @@ contains
 
       sIdx1 = self % nG * (g - 1) + 1
       sIdx2 = self % nG * g
-      scatterVec => scatterXS(sIdx1:sIdx2)
+      !scatterVec => scatterXS(sIdx1:sIdx2)
 
       ! Calculate scattering source
       scatter = 0.0_defFlt
       xScatter = 0.0_defFlt
       yScatter = 0.0_defFlt
       zScatter = 0.0_defFlt
+
+      if (self % feedback) then
+        scatterVec = self % XSData % getScatterXS(matIdx, g, temp)
+      else
+        scatterVec = self % XSData % getScatterXS(matIdx, g)
+      end if
+
       !$omp simd reduction(+:scatter, xScatter, yScatter, zScatter)
       do gIn = 1, self % nG
         scatter = scatter + fluxFlt(gIn) * scatterVec(gIn)
@@ -1628,14 +1902,16 @@ contains
       ! Output index
       idx = baseIdx + g
 
-      self % source(idx) = chi(g) * fission + scatter
+      chi = self % XSData % getChi(matIdx, g)
+
+      self % source(idx) = chi * fission + scatter
       if (allocated(self % fixedSource)) then
         self % source(idx) = self % source(idx) + self % fixedSource(idx)
       end if
       
-      xSource = chi(g) * xFission + xScatter
-      ySource = chi(g) * yFission + yScatter
-      zSource = chi(g) * zFission + zScatter
+      xSource = chi * xFission + xScatter
+      ySource = chi * yFission + yScatter
+      zSource = chi * zFission + zScatter
       
       if (allocated(self % fixedX)) then
         xSource = xSource + self % fixedX(idx)
@@ -1804,8 +2080,12 @@ contains
     real(defReal), intent(out)           :: fissionRate, prevFissionRate
     real(defReal)                        :: vol
     integer(shortInt)                    :: g, matIdx
-    real(defFlt), dimension(:), pointer  :: nuSigmaF
+    !real(defFlt), dimension(:), pointer  :: nuSigmaF
     real(defReal), dimension(:), pointer :: flux, prevFlux
+    type(particle)                       :: s
+    real(defReal)                        :: pos(3), dir(3)
+    real(defFlt)                         :: temp
+    real(defFlt), dimension(self % nG)   :: nuSigmaF
 
     fissionRate     = ZERO
     prevFissionRate = ZERO
@@ -1820,9 +2100,22 @@ contains
     vol = self % volume(cIdx)
     if (vol < volume_tolerance) return
 
-    call self % XSData % getNuFissPointer(matIdx, nuSigmaF)
+    !call self % XSData % getNuFissPointer(matIdx, nuSigmaF)
     flux => self % scalarFlux((self % nG * (cIdx - 1) + 1):(self % nG * cIdx))
     prevFlux => self % prevFlux((self % nG * (cIdx - 1) + 1):(self % nG * cIdx))
+
+    ! Fudge a particle state to search tally map
+    pos = self % cellPos(:,cIdx)
+    dir = [0.5,0.5,0.5]
+    call s % coords % init(pos, dir)
+    s % coords % matIdx = matIdx
+
+    if (self % feedback) then
+      temp = self % tempField % at(s % coords)
+      nuSigmaF = self % XSData % getNuFissXS(matIdx, temp)
+    else
+      nuSigmaF = self % XSData % getNuFissXS(matIdx)
+    end if
 
     !$omp simd reduction(+: fissionRate, prevFissionRate)
     do g = 1, self % nG
@@ -1981,7 +2274,7 @@ contains
   !!
   subroutine accumulateFluxScoresFlat(self)
     class(arraysRR), intent(inout) :: self
-    real(defReal), save            :: flux
+    real(defReal), save            :: flux, pow
     integer(shortInt)              :: idx
     !$omp threadprivate(flux)
 
@@ -1993,6 +2286,15 @@ contains
     end do
     !$omp end parallel do
 
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % power)
+      pow = real(self % power(idx),defReal)
+      !print *, pow
+      self % powerScores(1, idx) = self % powerScores(1, idx) + pow
+      self % powerScores(2, idx) = self % powerScores(2, idx) + pow * pow
+    end do
+    !$omp end parallel do
+
   end subroutine accumulateFluxScoresFlat
   
   !!
@@ -2001,7 +2303,7 @@ contains
   !!
   subroutine accumulateFluxScoresLinear(self)
     class(arraysRR), intent(inout) :: self
-    real(defReal), save            :: flux
+    real(defReal), save            :: flux, pow
     integer(shortInt)              :: idx
     !$omp threadprivate(flux)
 
@@ -2034,6 +2336,15 @@ contains
       flux = self % scalarZ(idx)
       self % zScores(1, idx) = self % zScores(1, idx) + flux
       self % zScores(2, idx) = self % zScores(2, idx) + flux * flux
+    end do
+    !$omp end parallel do
+
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % power)
+      pow = real(self % power(idx),defReal)
+      !print *, pow
+      self % powerScores(1, idx) = self % powerScores(1, idx) + pow
+      self % powerScores(2, idx) = self % powerScores(2, idx) + pow * pow
     end do
     !$omp end parallel do
 
@@ -2139,6 +2450,22 @@ contains
     end do
     !$omp end parallel do
 
+
+    !Finalise powers
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % power)
+      self % powerScores(1, idx) = self % powerScores(1, idx) * N1
+      self % powerScores(2, idx) = self % powerScores(2, idx) * N1
+      self % powerScores(2, idx) = Nm1 * (self % powerScores(2, idx) - &
+            self % powerScores(1, idx) * self % powerScores(1, idx))
+      if (self % powerScores(2, idx) <= ZERO) then
+        self % powerScores(2, idx) = ZERO
+      else
+        self % powerScores(2, idx) = sqrt(self % powerScores(2, idx))
+      end if
+    end do
+    !$omp end parallel do
+
   end subroutine finaliseFluxScoresFlat
   
   !!
@@ -2198,6 +2525,21 @@ contains
         self % zScores(2, idx) = ZERO
       else
         self % zScores(2, idx) = sqrt(self % zScores(2, idx))
+      end if
+    end do
+    !$omp end parallel do
+
+    !Finalise powers
+    !$omp parallel do schedule(static)
+    do idx = 1, size(self % power)
+      self % powerScores(1, idx) = self % powerScores(1, idx) * N1
+      self % powerScores(2, idx) = self % powerScores(2, idx) * N1
+      self % powerScores(2, idx) = Nm1 * (self % powerScores(2, idx) - &
+            self % powerScores(1, idx) * self % powerScores(1, idx))
+      if (self % powerScores(2, idx) <= ZERO) then
+        self % powerScores(2, idx) = ZERO
+      else
+        self % powerScores(2, idx) = sqrt(self % powerScores(2, idx))
       end if
     end do
     !$omp end parallel do
@@ -2385,6 +2727,8 @@ contains
     if(allocated(self % scalarFlux)) deallocate(self % scalarFlux)
     if(allocated(self % prevFlux)) deallocate(self % prevFlux)
     if(allocated(self % fluxScores)) deallocate(self % fluxScores)
+    if(allocated(self % power)) deallocate(self % power)
+    if(allocated(self % powerScores)) deallocate(self % powerScores)
     if(allocated(self % source)) deallocate(self % source)
     if(allocated(self % fixedSource)) deallocate(self % fixedSource)
     if(allocated(self % sourceIdx)) deallocate(self % sourceIdx)

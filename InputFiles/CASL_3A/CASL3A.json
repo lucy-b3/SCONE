@@ -1,0 +1,15 @@
+{
+  "seed":614275280,
+  "pop":75000,
+  "Inactive_Cycles":1000,
+  "Active_Cycles":2000,
+  "Total_CPU_Time":4.99024E+04,
+  "Total_Transport_Time":9.01348E+02,
+  "Time_Per_Integration":2.25178E-09,
+  "Clock_Time":1.27117E+03,
+  "Hit_rate":9.99914E-01,
+  "keff":{
+    "keff":[5.24325E-01,2.44689E-05]
+  }
+}
+

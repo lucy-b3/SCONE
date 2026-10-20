@@ -58,6 +58,8 @@ module scoreMemory_class
   !!     lastCycle(): Return true if the next call to closeCycle will close a batch.
   !!
   !!     getBatchSize(): Returns number of cycles that constitute a single batch.
+  !!     
+  !!     rest(): Resets the memory: zeros all scores and reverts cycles/batches to 0.
   !!
   !! Example use case:
   !!
@@ -99,6 +101,7 @@ module scoreMemory_class
     procedure :: closeBin
     procedure :: lastCycle
     procedure :: getBatchSize
+    procedure :: reset
 
     ! Private procedures
     procedure, private :: score_defReal
@@ -188,6 +191,7 @@ contains
 
     ! Add the score
     thread_idx = ompGetThreadNum() + 1
+    !print *, thread_idx
     self % parallelBins(idx, thread_idx) = &
             self % parallelBins(idx, thread_idx) + score
 
@@ -445,5 +449,18 @@ contains
     end if
 
   end function getScore
+
+  !!
+  !! Resets score memory to having no scores, cycles, or batches
+  !!
+  subroutine reset(self)
+    class(scoreMemory), intent(inout) :: self
+
+    self % bins = ZERO
+    self % parallelBins = ZERO
+    self % batchN = 0
+    self % cycles = 0
+
+  end subroutine reset
 
 end module scoreMemory_class

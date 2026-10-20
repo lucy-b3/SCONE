@@ -72,6 +72,7 @@ module tallyAdmin_class
   !!   reportCycleStart -> Process start of cycle reports in all clerks
   !!   reportCycleEnd   -> Process end of cycle reports in all clerks
   !!   getResult        -> Return tallyResult object from a named Clerk
+  !!   resetMemory      -> Resets score memory for all tallies
   !!   display     -> Call "display" on all clerks registered to display
   !!   isConverged -> Return .true. if all convergance targets have been reached
   !!   print       -> Prints results to an output file object
@@ -141,6 +142,7 @@ module tallyAdmin_class
 
     ! Interaction procedures
     procedure :: getResult
+    procedure :: resetMemory
 
     ! Display procedures
     procedure :: display
@@ -740,7 +742,7 @@ contains
     !$omp end parallel do
 
     ! Calculate normalisation factor
-    if (self % normBInAddr /= NO_NORM ) then
+    if( self % normBinAddr /= NO_NORM ) then
       normScore  = self % mem % getScore(self % normBinAddr)
       if (normScore == ZERO) then
         call fatalError(Here, 'Normalisation score from clerk:' // self % normClerkName // 'is 0')
@@ -842,5 +844,16 @@ contains
     end select
 
   end subroutine addToReports
+
+
+  !!
+  !! Resets memory to a fresh state
+  !!
+  subroutine resetMemory(self)
+    class(tallyAdmin),intent(inout) :: self
+
+    call self % mem % reset()
+
+  end subroutine resetMemory
 
 end module tallyAdmin_class

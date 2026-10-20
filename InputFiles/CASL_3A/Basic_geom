@@ -1,0 +1,156 @@
+!!
+!! CASL Benchmark 3A
+!! A 3D assembly with detailed spacer grids
+!!
+
+type randomRayPhysicsPackage;
+
+pop      75000;
+active   200;
+inactive  100;
+dead       40;
+termination 440;
+plot 0;
+cache 1;
+XSdata   mg;
+dataType mg;
+outputFile CASL3A_RR_noTH;
+!printFlux 1 ;
+lin 0;
+
+power 1.734e7; !60kW per pin, also used in the coupling tally as norm
+
+geometry {
+  type geometryStd;
+  boundary ( 1 1 1 1 0 0);
+  graph {type extended;}
+  
+  surfaces{
+	!boundary {id 1; type box; origin (0 0 200); halfwidth (10.71 10.71 250);}
+	boundary {id 1; type box; origin (0 0 0); halfwidth (10.71 10.71 250);}
+  }
+  
+  
+  cells{
+
+	}
+  
+  universes{
+
+    fuelPinWater {id 142; type azimPinUniverse; naz 8; radii (0.4096 0.418 0.475 0.0); fills (UO2 Gap Zircaloy Water);}
+
+	
+    // Fuel assemblies
+    fuelWater {
+      id 402;
+      type latUniverse;
+      pitch (1.26 1.26 0);
+      padMat Water;
+      shape (17 17 0);
+      map (
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 
+      142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 142 
+      );
+    }
+	
+
+    stackFuel1 {
+      id 706;
+      type latUniverse;
+      pitch (21.42 21.42 12.5);
+	  !origin (0 0 200);
+      padMat Water;
+      shape (1 1 40);
+      map (402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402);
+    }
+	
+    root {id 1; type rootUniverse; border 1; fill u<706>;}
+  }
+  
+}
+
+viz {
+    plotBMP {
+        type bmp;
+        axis y;
+        centre (0.0 0.0 250.0);
+        width (21.42 21.42);
+        res (1000 1000);
+        output basic_geom;
+        what uniqueID;
+        offset 0;
+    }
+}
+
+nuclearData {
+  handles {
+    mg { type baseMgNeutronDatabase; PN P0;}
+  }
+
+  materials {
+
+    Zircaloy {
+	  temp 293;
+      xsFile ./CASL3A_all_mats_xs/Zircaloy;
+      composition { }
+    }
+
+    Inconel {
+	  temp 293;
+      xsFile ./CASL3A_all_mats_xs/Inconel;
+      composition { }
+    } 	
+    
+    Water {
+	  temp 293;
+      xsFile ./CASL3A_all_mats_xs/Water;
+      composition { }
+    }
+    
+    UO2 {
+	  temp 293;
+      xsFile ./CASL3A_all_mats_xs/UO2;
+      composition { }
+    }
+
+    Gap {
+	  temp 293;
+      xsFile ./CASL3A_all_mats_xs/Gap;
+      composition { }
+    }
+    
+    TopNozzle {
+	  temp 293;
+      xsFile ./CASL3A_all_mats_xs/TopNozzle;
+      composition { }
+    }
+    
+    BottomNozzle {
+	  temp 293;
+      xsFile ./CASL3A_all_mats_xs/BottomNozzle;
+      composition { }
+    }
+    
+    CorePlates {
+	  temp 293;
+      xsFile ./CASL3A_all_mats_xs/CorePlates;
+      composition { }
+    }
+    
+}
+}

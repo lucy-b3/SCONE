@@ -16,7 +16,7 @@ module physicsPackageFactory_func
   use vizPhysicsPackage_class,             only : vizPhysicsPackage
   use rayVolPhysicsPackage_class,          only : rayVolPhysicsPackage
   use randomRayPhysicsPackage_class,       only : randomRayPhysicsPackage
-  use fixedSourceRRPhysicsPackage_class,   only : fixedSourceRRPhysicsPackage
+! use fixedSourceRRPhysicsPackage_class,   only : fixedSourceRRPhysicsPackage
 !  use dynamPhysicsPackage_class, only : dynamPhysicsPackage
 
   implicit none
@@ -30,7 +30,7 @@ module physicsPackageFactory_func
                                                                              'fixedSourcePhysicsPackage    ',&
                                                                              'vizPhysicsPackage            ',&
                                                                              'randomRayPhysicsPackage      ',&
-                                                                             'fixedSourceRRPhysicsPackage  ',&
+                                                                            ! 'fixedSourceRRPhysicsPackage  ',&
                                                                              'rayVolPhysicsPackage         ']
 
   !!
@@ -67,8 +67,8 @@ contains
       case('randomRayPhysicsPackage')
         allocate( randomRayPhysicsPackage :: new)
 
-      case('fixedSourceRRPhysicsPackage')
-        allocate( fixedSourceRRPhysicsPackage :: new)
+      !case('fixedSourceRRPhysicsPackage')
+        !allocate( fixedSourceRRPhysicsPackage :: new)
 
       case('rayVolPhysicsPackage')
         allocate( rayVolPhysicsPackage :: new)
