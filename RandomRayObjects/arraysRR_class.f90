@@ -1699,12 +1699,12 @@ contains
     
     ! Guard against void cells
     if (matIdx > self % XSData % getNMat()) then
-      if (it .eq. 1) then
-        print *, "****************"
-        print *, "Unknown material found"
-        print *, "cIdx: " //numToChar(cIdx)
-        print *, "matIdx: " //numToChar(matIdx)
-      end if
+      !if (it .eq. 1) then
+        !print *, "****************"
+        !print *, "Unknown material found"
+        !print *, "cIdx: " //numToChar(cIdx)
+        !print *, "matIdx: " //numToChar(matIdx)
+      !end if
       !print *, "cell x pos: " // numToChar(self % cellPos(1,cIdx))
       !print *, "cell x pos: " // numToChar(self % cellPos(2,cIdx))
       !print *, "cell x pos: " // numToChar(self % cellPos(3,cIdx))

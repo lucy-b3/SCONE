@@ -2,23 +2,26 @@
 !! CASL Benchmark 3A
 !! A 3D assembly with detailed spacer grids
 !!
+type eigenPhysicsPackage;
 
-type randomRayPhysicsPackage;
-
-pop      75000;
-active   200;
-inactive  100;
-dead       40;
-termination 440;
-plot 0;
-cache 1;
-XSdata   mg;
+pop      500000;
+active   500;
+inactive 100;
+XSdata mg;
 dataType mg;
-outputFile CASL3A;
-!printFlux 1 ;
-lin 0;
+outputFile CASL3A_MGMC;
+outputFormat asciiJSON;
 
-power 1.734e7; !60kW per pin, also used in the coupling tally as norm
+collisionOperator { neutronMG {type neutronMGstd; } } 
+
+transportOperator { type transportOperatorST;  } 
+                   
+inactiveTally {
+	  } 
+
+activeTally {
+} 
+
 
 geometry {
   type geometryStd;
@@ -459,118 +462,118 @@ geometry {
     stackBottomNozzle {id 702; type latUniverse; origin (0 0 3.0265); pitch (21.42 21.42 6.053); padMat Water; shape (1 1 1); map (630);}
     stackBottomGuides {id 703; type latUniverse; origin (0 0 8.167); pitch (21.42 21.42 4.228); padMat Water; shape (1 1 1); map (320);}
     stackBottomPlugs {id 704; type latUniverse; origin (0 0 11.116); pitch (21.42 21.42 1.67); padMat Water; shape (1 1 1); map (350);}
-    stackBottomGrid {id 705; type latUniverse; origin (0 0 13.884); pitch (21.42 21.42 3.866); padMat Water; shape (1 1 1); map (400);}
+    stackBottomGrid {id 705; type latUniverse; origin (0 0 13.884); pitch (21.42 21.42 0.7732); padMat Water; shape (1 1 5); map (400 400 400 400 400);}
 
     stackFuel1 {
       id 706;
       type latUniverse;
       origin (0 0 44.556);
-      pitch (21.42 21.42 5.7478);
+      pitch (21.42 21.42 1.14956);
       padMat Water;
-      shape (1 1 10);
-      map (402 402 402 402 402 402 402 402 402 402);
+      shape (1 1 50);
+      map (402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402);
     }
 
-    stackGrid6 {id 707; type latUniverse; origin (0 0 75.2); pitch (21.42 21.42 3.81); padMat Water; shape (1 1 1); map (401);}
+    stackGrid6 {id 707; type latUniverse; origin (0 0 75.2); pitch (21.42 21.42 0.762); padMat Water; shape (1 1 5); map (401 401 401 401 401);}
 
     stackFuel2 {
       id 708;
       type latUniverse;
       origin (0 0 101.3);
-      pitch (21.42 21.42 4.839);
+      pitch (21.42 21.42 0.9678);
       padMat Water;
-      shape (1 1 10);
-      map (402 402 402 402 402 402 402 402 402 402);
+      shape (1 1 50);
+      map (402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402);
     }
 
-    stackGrid5 {id 709; type latUniverse; origin (0 0 127.4); pitch (21.42 21.42 3.81); padMat Water; shape (1 1 1); map (401);}
+    stackGrid5 {id 709; type latUniverse; origin (0 0 127.4); pitch (21.42 21.42 0.762); padMat Water; shape (1 1 5); map (401 401 401 401 401);}
 
     stackFuel3 {
       id 710;
       type latUniverse;
       origin (0 0 153.5);
-      pitch (21.42 21.42 4.839);
+      pitch (21.42 21.42 0.9678);
       padMat Water;
-      shape (1 1 10);
-      map (402 402 402 402 402 402 402 402 402 402);
+      shape (1 1 50);
+      map (402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402);
     }
 
-    stackGrid4 {id 711; type latUniverse; origin (0 0 179.6); pitch (21.42 21.42 3.81); padMat Water; shape (1 1 1); map (401);}
+    stackGrid4 {id 711; type latUniverse; origin (0 0 179.6); pitch (21.42 21.42 0.762); padMat Water; shape (1 1 5); map (401 401 401 401 401);}
 
     stackFuel4 {
       id 712;
       type latUniverse;
       origin (0 0 205.7);
-      pitch (21.42 21.42 4.839);
+      pitch (21.42 21.42 0.9678);
       padMat Water;
-      shape (1 1 10);
-      map (402 402 402 402 402 402 402 402 402 402);
+      shape (1 1 50);
+      map (402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402);
     }
 
-    stackGrid3 {id 713; type latUniverse; origin (0 0 231.8); pitch (21.42 21.42 3.81); padMat Water; shape (1 1 1); map (401);}
+    stackGrid3 {id 713; type latUniverse; origin (0 0 231.8); pitch (21.42 21.42 0.762); padMat Water; shape (1 1 5); map (401 401 401 401 401);}
 
     stackFuel5 {
       id 714;
       type latUniverse;
       origin (0 0 257.9);
-      pitch (21.42 21.42 4.839);
+      pitch (21.42 21.42 0.9678);
       padMat Water;
-      shape (1 1 10);
-      map (402 402 402 402 402 402 402 402 402 402);
+      shape (1 1 50);
+      map (402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402);
     }
 
-    stackGrid2 {id 715; type latUniverse; origin (0 0 284.0); pitch (21.42 21.42 3.81); padMat Water; shape (1 1 1); map (401);}
+    stackGrid2 {id 715; type latUniverse; origin (0 0 284.0); pitch (21.42 21.42 0.762); padMat Water; shape (1 1 5); map (401 401 401 401 401);}
 
     stackFuel6 {
       id 716;
       type latUniverse;
       origin (0 0 310.1);
-      pitch (21.42 21.42 4.839);
+      pitch (21.42 21.42 0.9678);
       padMat Water;
-      shape (1 1 10);
-      map (402 402 402 402 402 402 402 402 402 402);
+      shape (1 1 50);
+      map (402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402);
     }
 
-    stackGrid1 {id 717; type latUniverse; origin (0 0 336.2); pitch (21.42 21.42 3.81); padMat Water; shape (1 1 1); map (401);}
+    stackGrid1 {id 717; type latUniverse; origin (0 0 336.2); pitch (21.42 21.42 0.762); padMat Water; shape (1 1 5); map (401 401 401 401 401);}
 
     stackFuel7 {
       id 718;
       type latUniverse;
       origin (0 0 357.908);
-      pitch (21.42 21.42 4.95075);
+      pitch (21.42 21.42 0.79212);
       padMat Water;
-      shape (1 1 8);
-      map (402 402 402 402 402 402 402 402);
+      shape (1 1 50);
+      map (402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402 402);
     }
 
     stackTopGrid {
       id 719;
       type latUniverse;
       origin (0 0 388.2);
-      pitch (21.42 21.42 3.866);
+      pitch (21.42 21.42 0.7732);
       padMat Water;
-      shape (1 1 1);
-      map (310);
+      shape (1 1 5);
+      map (310 310 310 310 310);
     }
 
     stackPlenum {
       id 720;
       type latUniverse;
       origin (0 0 381.989);
-      pitch (21.42 21.42 8.556);
+      pitch (21.42 21.42 0.8556);
       padMat Water;
-      shape (1 1 1);
-      map (312);
+      shape (1 1 10);
+      map (312 312 312 312 312 312 312 312 312 312);
     }
 
     stackPlenum2 {
       id 725;
       type latUniverse;
       origin (0 0 391.922);
-      pitch (21.42 21.42 3.578);
+      pitch (21.42 21.42 0.7156);
       padMat Water;
-      shape (1 1 1);
-      map (312);
+      shape (1 1 5);
+      map (312 312 312 312 312);
     }
 
     stackTopPlugs {id 721; type latUniverse; origin (0 0 394.546); pitch (21.42 21.42 1.67); padMat Water; shape (1 1 1); map (350);}
@@ -587,6 +590,21 @@ geometry {
 
     root {id 1; type rootUniverse; border 1; fill u<111>;}
   }
+}
+
+
+
+viz {
+    plotBMP {
+        type bmp;
+        axis y;
+        centre (0.0 0.0 205.0);
+        !width (100 100);
+        res (500 2000);
+        output CASL_geom_MC;
+        what material;
+        offset 0;
+    }
 }
 
 

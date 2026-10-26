@@ -276,16 +276,18 @@ geometry {
 }
 
 
+
 viz {
-  bmpZ {
-    type bmp;
-    output imgXZ;
-    what material;
-    centre (0.0 0.0 380.6804);
-    width (21 50);
-    axis y;
-    res (1000 1000);
-  }
+    plotBMP {
+        type bmp;
+        axis y;
+        centre (0.0 0.0 205.0);
+        !width (100 100);
+        res (500 2000);
+        output CASL_geom_MC;
+        what material;
+        offset 0;
+    }
 }
 
 
